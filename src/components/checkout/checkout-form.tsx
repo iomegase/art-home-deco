@@ -1,0 +1,79 @@
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { readCart } from "@/features/cart/storage";
+
+export function CheckoutForm() {
+  const searchParams = useSearchParams();
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const shippingMethod = searchParams.get("shipping") ?? "pickup";
+
+  async function submitCheckout(formData: FormData) {
+    setSubmitting(true);
+    setError(null);
+
+    const response = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: readCart(),
+        shippingMethod,
+        customer: {
+          email: String(formData.get("email") ?? ""),
+          firstName: String(formData.get("firstName") ?? ""),
+          lastName: String(formData.get("lastName") ?? ""),
+          phone: String(formData.get("phone") ?? ""),
+        },
+      }),
+    });
+
+    const payload = await response.json();
+
+    if (!response.ok) {
+      setSubmitting(false);
+      setError(payload.error ?? "Impossible de lancer le paiement.");
+      return;
+    }
+
+    if (payload.checkoutUrl) {
+      window.location.href = payload.checkoutUrl;
+      return;
+    }
+
+    setSubmitting(false);
+    setError("Stripe n'est pas encore configure pour ce projet.");
+  }
+
+  return (
+    <form action={submitCheckout} className="max-w-2xl space-y-5">
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="block text-sm font-bold">
+          Prenom
+          <input name="firstName" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
+        </label>
+        <label className="block text-sm font-bold">
+          Nom
+          <input name="lastName" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
+        </label>
+      </div>
+      <label className="block text-sm font-bold">
+        Email
+        <input name="email" type="email" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
+      </label>
+      <label className="block text-sm font-bold">
+        Telephone
+        <input name="phone" className="mt-2 w-full border border-line bg-background px-3 py-3" />
+      </label>
+      {error ? <p className="border border-line bg-surface p-4 text-sm font-bold">{error}</p> : null}
+      <button
+        type="submit"
+        disabled={submitting}
+        className="bg-brand px-6 py-4 text-sm font-bold text-brand-contrast disabled:bg-muted"
+      >
+        {submitting ? "Preparation du paiement..." : "Continuer vers Stripe"}
+      </button>
+    </form>
+  );
+}
