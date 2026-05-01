@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #eeeff2;           /* fond global */
+  --surface: #ddd8cf;      /* cartes claires */
+  --surface-2: #c7bda3;    /* hero / variantes chaudes */
+  --text: #17181a;         /* texte principal */
+  --text-soft: #5f666d;    /* texte secondaire */
+  --accent: #8faec2;       /* bleu grisé */
+  --accent-2: #e4b7ac;     /* saumon doux */
+  --border: #d2d6db;
+  --ink-inverse: #f7f3ea;  /* texte sur fond foncé */
+  --cta: #0f1113;          /* bouton principal */
+  --cta-hover: #23272b;
+}
+
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-brand: var(--brand);
+  --color-brand-contrast: var(--brand-contrast);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --font-sans: var(--font-body);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), sans-serif;
+  letter-spacing: 0.01em;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), serif;
+}
+
+
