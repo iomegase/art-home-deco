@@ -10,7 +10,7 @@ export async function GET() {
     integrations: {
       stripe: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_WEBHOOK_SECRET),
       resend: Boolean(env.RESEND_API_KEY && env.EMAIL_FROM),
-      shopcaisse: Boolean(env.SHOPCAISSE_API_KEY && env.SHOPCAISSE_STOCK_SYNC_URL),
+      shopcaisse: Boolean(env.SHOPCAISSE_API_URL && env.SHOPCAISSE_API_KEY && env.SHOPCAISSE_WEBHOOK_SECRET),
     },
   });
 }

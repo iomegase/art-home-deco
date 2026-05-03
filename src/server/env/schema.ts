@@ -1,11 +1,24 @@
 import { z } from "zod";
 
-const emptyString = z.literal("").transform(() => undefined);
-const optionalString = z.union([z.string().min(1), emptyString]).optional();
-const optionalUrl = z.union([z.string().url(), emptyString]).optional();
-const optionalEmail = z.union([z.email(), emptyString]).optional();
-const optionalPassword = z.union([z.string().min(8), emptyString]).optional();
-const optionalSecret = z.union([z.string().min(32), emptyString]).optional();
+function emptyToUndefined(value: unknown) {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const normalized = value.trim();
+
+  if (normalized === "" || normalized === '""' || normalized === "''") {
+    return undefined;
+  }
+
+  return normalized;
+}
+
+const optionalString = z.preprocess(emptyToUndefined, z.string().min(1).optional()).optional();
+const optionalUrl = z.preprocess(emptyToUndefined, z.url().optional()).optional();
+const optionalEmail = z.preprocess(emptyToUndefined, z.email().optional()).optional();
+const optionalPassword = z.preprocess(emptyToUndefined, z.string().min(8).optional()).optional();
+const optionalSecret = z.preprocess(emptyToUndefined, z.string().min(32).optional()).optional();
 
 export const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
@@ -20,14 +33,14 @@ export const envSchema = z.object({
   SHOPCAISSE_API_KEY: optionalString,
   SHOPCAISSE_STORE_ID: optionalString,
   SHOPCAISSE_API_TIMEOUT_MS: z.coerce.number().int().positive().optional(),
-  SHOPCAISSE_STOCK_SYNC_URL: optionalUrl,
-  SHOPCAISSE_STOCK_VERIFY_URL: optionalUrl,
-  SHOPCAISSE_MOVEMENT_URL: optionalUrl,
+  SHOPCAISSE_WEBHOOK_SECRET: optionalSecret,
+  SHOPCAISSE_WEBHOOK_SIGNATURE_HEADER: optionalString,
   RESEND_API_KEY: optionalString,
   EMAIL_FROM: optionalString,
   EMAIL_REPLY_TO: optionalString,
   ADMIN_ORDER_EMAIL: optionalEmail,
-  OPENAI_API_KEY: optionalString,
+  GEMINI_API_KEY: optionalString,
+  GEMINI_MODEL: optionalString,
 });
 
 export type AppEnv = z.infer<typeof envSchema>;

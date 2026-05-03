@@ -42,3 +42,15 @@ export async function findIntegrationEventById(id: string) {
     where: { id },
   });
 }
+
+export async function findLatestIntegrationEventByTarget(input: {
+  provider: string;
+  eventType: string;
+  targetType: string;
+  targetId: string;
+}) {
+  return db.integrationEvent.findFirst({
+    where: input,
+    orderBy: { createdAt: "desc" },
+  });
+}

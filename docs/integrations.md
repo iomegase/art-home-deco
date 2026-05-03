@@ -10,7 +10,7 @@ Resend, Nodemailer, Brevo ou Mailgun.
 Cloudinary, S3 ou UploadThing.
 
 ## IA
-Gemini ou OpenAI pour brouillons de descriptions et articles.
+Gemini pour brouillons de descriptions et articles, avec fallback local sans appel externe si la cle est absente.
 
 ## Shopcaisse
 Source de référence stock. Mapping via SKU, barcode ou externalStockId.

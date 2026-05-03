@@ -9,8 +9,8 @@ export default async function AdminHomePage() {
   const integrations = [
     { label: "Stripe", status: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_WEBHOOK_SECRET) },
     { label: "Resend", status: Boolean(env.RESEND_API_KEY && env.EMAIL_FROM) },
-    { label: "Shopcaisse", status: Boolean(env.SHOPCAISSE_API_KEY && env.SHOPCAISSE_STOCK_SYNC_URL) },
-    { label: "OpenAI", status: Boolean(env.OPENAI_API_KEY) },
+    { label: "Shopcaisse", status: Boolean(env.SHOPCAISSE_API_URL && env.SHOPCAISSE_API_KEY && env.SHOPCAISSE_WEBHOOK_SECRET) },
+    { label: "Gemini", status: Boolean(env.GEMINI_API_KEY) },
   ];
 
   return (
@@ -54,6 +54,12 @@ export default async function AdminHomePage() {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/admin/blog" className="border border-line px-4 py-2 text-sm font-bold">
+              Articles blog
+            </Link>
+            <Link href="/admin/blog/new" className="border border-line px-4 py-2 text-sm font-bold">
+              Brouillon IA blog
+            </Link>
             <Link href="/admin/settings/shopcaisse" className="bg-brand px-4 py-2 text-sm font-bold text-brand-contrast">
               Settings Shopcaisse
             </Link>

@@ -16,6 +16,7 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
         <h1 className="font-serif text-3xl">Admin</h1>
         <nav className="flex gap-4 text-sm">
           <Link href="/admin/products">Produits</Link>
+          <Link href="/admin/blog">Blog</Link>
           <Link href="/admin/orders">Commandes</Link>
           <Link href="/admin/settings">Paramètres</Link>
           <form action="/admin/logout" method="post">

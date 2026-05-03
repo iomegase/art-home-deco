@@ -9,9 +9,8 @@ export default async function AdminShopcaisseSettingsPage() {
     ["API base URL", Boolean(env.SHOPCAISSE_API_URL)],
     ["API key", Boolean(env.SHOPCAISSE_API_KEY)],
     ["Store ID", Boolean(env.SHOPCAISSE_STORE_ID)],
-    ["Stock sync URL", Boolean(env.SHOPCAISSE_STOCK_SYNC_URL)],
-    ["Stock verify URL", Boolean(env.SHOPCAISSE_STOCK_VERIFY_URL)],
-    ["Movement URL", Boolean(env.SHOPCAISSE_MOVEMENT_URL)],
+    ["Webhook secret", Boolean(env.SHOPCAISSE_WEBHOOK_SECRET)],
+    ["Signature header", Boolean(env.SHOPCAISSE_WEBHOOK_SIGNATURE_HEADER ?? "x-server-authorization-hmac-sha256")],
   ] as const;
 
   return (

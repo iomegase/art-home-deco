@@ -1,4 +1,3 @@
-import { runShopcaisseSyncAction } from "@/features/shopcaisse/actions";
 import { listRecentIntegrationEvents } from "@/server/repositories/integration.repository";
 import { listActiveProducts } from "@/server/repositories/catalog.repository";
 
@@ -17,8 +16,12 @@ export default async function AdminShopcaisseSyncPage() {
         <h2 className="mt-2 font-serif text-4xl">Synchronisation manuelle</h2>
         <div className="mt-8 border border-line bg-surface p-6">
           <p className="text-sm text-muted">
-            Lance une lecture du endpoint explicite configure dans `SHOPCAISSE_STOCK_SYNC_URL`, mappe les
-            produits via `externalStockId`, `sku` ou `barcode`, puis met a jour le cache local.
+            L&apos;integration EasyShop est maintenant pilotee par le webhook officiel signe HMAC. La mise a
+            jour locale du stock se fait a reception des evenements `company.items`.
+          </p>
+          <p className="mt-3 text-sm text-muted">
+            Une synchronisation manuelle sortante n&apos;est pas exposee tant que l&apos;endpoint public EasyShop
+            de lecture catalogue/stock n&apos;est pas documente proprement.
           </p>
           <dl className="mt-5 grid gap-3 text-sm">
             <div className="flex justify-between gap-4">
@@ -30,11 +33,6 @@ export default async function AdminShopcaisseSyncPage() {
               <dd className="font-bold">{syncedProducts}</dd>
             </div>
           </dl>
-          <form action={runShopcaisseSyncAction} className="mt-6">
-            <button type="submit" className="bg-brand px-5 py-3 text-sm font-bold text-brand-contrast">
-              Lancer la sync stock
-            </button>
-          </form>
         </div>
       </div>
 

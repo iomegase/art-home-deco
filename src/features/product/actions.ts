@@ -111,7 +111,7 @@ export async function generateAiProductDraftAction(formData: FormData) {
     throw new Error("Produit introuvable.");
   }
 
-  const draft = generateAiProductDraftUseCase({
+  const draft = await generateAiProductDraftUseCase({
     title: product.title,
     category: product.categories[0]?.category.title,
     shippingClass: product.shippingClass,

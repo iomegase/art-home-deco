@@ -1,16 +1,14 @@
 import { db } from "@/server/db/client";
 import { logger } from "@/lib/logger";
-import { getEnv } from "@/server/env";
-import { shopcaisseRequest } from "./client";
+import { ShopcaisseConfigError } from "./errors";
 import { mapShopcaisseStockPayload } from "./mapper";
 
-export async function syncShopcaisseStock() {
-  const env = getEnv();
+export async function applyShopcaisseStockSnapshot(
+  payload: unknown,
+  context?: { sourceEvent?: string; targetType?: string; targetId?: string },
+) {
   const startedAt = new Date();
-  const remotePayload = await shopcaisseRequest<unknown>({
-    url: env.SHOPCAISSE_STOCK_SYNC_URL,
-  });
-  const remoteItems = mapShopcaisseStockPayload(remotePayload);
+  const remoteItems = mapShopcaisseStockPayload(payload);
 
   let updatedCount = 0;
   let unmatchedCount = 0;
@@ -51,6 +49,7 @@ export async function syncShopcaisseStock() {
       data: {
         stock: Math.max(0, Math.floor(item.quantity)),
         stockSource: "shopcaisse",
+        externalProvider: "easyshop",
         lastStockSyncAt: startedAt,
         lastStockSyncStatus: "success",
         lastStockSyncError: null,
@@ -60,45 +59,31 @@ export async function syncShopcaisseStock() {
     updatedCount += 1;
   }
 
-  await logger.integration("info", {
-    provider: "shopcaisse",
-    eventType: "stock_sync",
-    status: "success",
-    message: "Shopcaisse stock synchronization completed.",
-    payload: {
-      updatedCount,
-      unmatchedCount,
-      remoteCount: remoteItems.length,
-    },
-  });
-
-  return {
+  const result = {
     updatedCount,
     unmatchedCount,
     remoteCount: remoteItems.length,
   };
-}
-
-export async function verifyShopcaisseStockBeforeCheckout(items: Array<{ sku: string; quantity: number }>) {
-  const env = getEnv();
-
-  if (!env.SHOPCAISSE_STOCK_VERIFY_URL) {
-    return { verified: false as const, reason: "not_configured" as const };
-  }
-
-  const payload = await shopcaisseRequest<unknown>({
-    url: env.SHOPCAISSE_STOCK_VERIFY_URL,
-    method: "POST",
-    body: { items },
-  });
 
   await logger.integration("info", {
     provider: "shopcaisse",
-    eventType: "stock_verify",
+    eventType: context?.sourceEvent ?? "stock_sync",
     status: "success",
-    message: "Shopcaisse stock verification completed.",
-    payload,
+    targetType: context?.targetType,
+    targetId: context?.targetId,
+    message: "EasyShop stock snapshot applied to local catalog.",
+    payload: result,
   });
 
-  return { verified: true as const, payload };
+  return result;
+}
+
+export async function syncShopcaisseStock() {
+  throw new ShopcaisseConfigError(
+    "Manual EasyShop sync requires a documented outbound items endpoint. Webhook sync remains available.",
+  );
+}
+
+export async function verifyShopcaisseStockBeforeCheckout() {
+  return { verified: false as const, reason: "not_supported_without_documented_endpoint" as const };
 }
