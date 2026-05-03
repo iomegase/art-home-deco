@@ -18,6 +18,7 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
           <Link href="/admin/products">Produits</Link>
           <Link href="/admin/blog">Blog</Link>
           <Link href="/admin/orders">Commandes</Link>
+          <Link href="/admin/clients">Clients</Link>
           <Link href="/admin/settings">Paramètres</Link>
           <form action="/admin/logout" method="post">
             <button type="submit" className="underline">Déconnexion</button>

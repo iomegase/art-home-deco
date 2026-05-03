@@ -25,6 +25,11 @@ export function CheckoutForm() {
           firstName: String(formData.get("firstName") ?? ""),
           lastName: String(formData.get("lastName") ?? ""),
           phone: String(formData.get("phone") ?? ""),
+          addressLine1: String(formData.get("addressLine1") ?? ""),
+          addressLine2: String(formData.get("addressLine2") ?? ""),
+          postalCode: String(formData.get("postalCode") ?? ""),
+          city: String(formData.get("city") ?? ""),
+          country: String(formData.get("country") ?? "France"),
         },
       }),
     });
@@ -66,6 +71,32 @@ export function CheckoutForm() {
         Telephone
         <input name="phone" className="mt-2 w-full border border-line bg-background px-3 py-3" />
       </label>
+      {shippingMethod !== "pickup" ? (
+        <>
+          <label className="block text-sm font-bold">
+            Adresse
+            <input name="addressLine1" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
+          </label>
+          <label className="block text-sm font-bold">
+            Complement d&apos;adresse
+            <input name="addressLine2" className="mt-2 w-full border border-line bg-background px-3 py-3" />
+          </label>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <label className="block text-sm font-bold">
+              Code postal
+              <input name="postalCode" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
+            </label>
+            <label className="block text-sm font-bold">
+              Ville
+              <input name="city" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
+            </label>
+          </div>
+          <label className="block text-sm font-bold">
+            Pays
+            <input name="country" defaultValue="France" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
+          </label>
+        </>
+      ) : null}
       {error ? <p className="border border-line bg-surface p-4 text-sm font-bold">{error}</p> : null}
       <button
         type="submit"

@@ -3,10 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import {
-  renderOrderShippedEmail,
-  renderReadyForPickupEmail,
-} from "@/emails/templates/order-status-update";
+import { renderOrderShippedEmail } from "@/emails/templates/order-status-update";
 import { findOrderForAdmin, updateOrderFulfillment } from "@/server/repositories/order.repository";
 import { requireAdmin } from "@/server/security/auth";
 import { sendTransactionalEmail } from "@/server/services/email.service";
@@ -16,13 +13,15 @@ const fulfillmentSchema = z.object({
   orderStatus: z.enum([
     "pending",
     "paid",
-    "preparing",
-    "ready_for_pickup",
+    "validated",
+    "label_ready",
     "shipped",
-    "completed",
+    "delivered",
     "cancelled",
   ]),
   trackingNumber: z.string().optional(),
+  carrier: z.string().optional(),
+  labelUrl: z.string().url().optional().or(z.literal("")),
 });
 
 export async function updateOrderFulfillmentAction(formData: FormData) {
@@ -32,6 +31,8 @@ export async function updateOrderFulfillmentAction(formData: FormData) {
     id: String(formData.get("id") ?? ""),
     orderStatus: String(formData.get("orderStatus") ?? ""),
     trackingNumber: String(formData.get("trackingNumber") ?? ""),
+    carrier: String(formData.get("carrier") ?? ""),
+    labelUrl: String(formData.get("labelUrl") ?? ""),
   });
 
   const existingOrder = await findOrderForAdmin(parsed.id);
@@ -47,17 +48,6 @@ export async function updateOrderFulfillmentAction(formData: FormData) {
   const updatedOrder = await updateOrderFulfillment(parsed);
 
   if (existingOrder.orderStatus !== updatedOrder.orderStatus) {
-    if (updatedOrder.orderStatus === "ready_for_pickup") {
-      await sendTransactionalEmail({
-        to: updatedOrder.customerEmail,
-        subject: `Commande ${updatedOrder.orderNumber} prete au retrait`,
-        html: renderReadyForPickupEmail({
-          orderNumber: updatedOrder.orderNumber,
-          customerFirstName: updatedOrder.customerFirstName,
-        }),
-      });
-    }
-
     if (updatedOrder.orderStatus === "shipped") {
       await sendTransactionalEmail({
         to: updatedOrder.customerEmail,
@@ -73,5 +63,8 @@ export async function updateOrderFulfillmentAction(formData: FormData) {
 
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${parsed.id}`);
+  if (updatedOrder.trackingToken) {
+    revalidatePath(`/commande/suivi/${updatedOrder.trackingToken}`);
+  }
   redirect(`/admin/orders/${parsed.id}`);
 }

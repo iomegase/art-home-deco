@@ -22,6 +22,9 @@ export default async function OrderSuccessPage({ searchParams }: OrderSuccessPag
       <ClearCartOnMount />
       <p className="section-title text-terracotta">Paiement confirme</p>
       <h1 className="mt-3 font-serif text-5xl leading-none md:text-7xl">Merci pour votre commande.</h1>
+      <p className="mt-6 max-w-2xl text-base leading-7 text-muted">
+        Votre paiement a ete valide. Un email de confirmation vous a ete envoye.
+      </p>
       {order ? (
         <section className="mt-8 border border-line bg-surface p-6">
           <h2 className="font-serif text-3xl">{order.orderNumber}</h2>

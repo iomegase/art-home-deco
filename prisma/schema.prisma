@@ -72,10 +72,16 @@ model ProductCategory {
 model Order {
   id                    String   @id @default(cuid())
   orderNumber           String   @unique
+  customerId            String?
   customerEmail         String
   customerFirstName     String
   customerLastName      String
   customerPhone         String?
+  shippingAddressLine1  String?
+  shippingAddressLine2  String?
+  shippingPostalCode    String?
+  shippingCity          String?
+  shippingCountry       String?
   subtotalCents         Int
   shippingCostCents     Int
   totalCents            Int
@@ -85,7 +91,14 @@ model Order {
   shippingMethod        String
   stripeSessionId       String?  @unique
   stripePaymentIntentId String?
+  trackingToken         String?  @unique
+  trackingTokenExpiresAt DateTime?
+  carrier               String?
   trackingNumber        String?
+  labelUrl              String?
+  labelGeneratedAt      DateTime?
+  shippedAt             DateTime?
+  deliveredAt           DateTime?
   shopcaisseSyncStatus  String?
   shopcaisseSyncAt      DateTime?
   shopcaisseSyncError   String?
@@ -93,6 +106,7 @@ model Order {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
   items OrderItem[]
 }
 
@@ -126,6 +140,18 @@ model BlogPost {
   status          String    @default("draft")
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
 }
 
 model IntegrationEvent {

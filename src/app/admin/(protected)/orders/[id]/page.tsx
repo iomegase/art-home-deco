@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { updateOrderFulfillmentAction } from "@/features/order/actions";
 import { formatOrderStatus, formatShippingMethod } from "@/features/order/format";
@@ -11,10 +12,10 @@ type AdminOrderPageProps = {
 const statuses = [
   "pending",
   "paid",
-  "preparing",
-  "ready_for_pickup",
+  "validated",
+  "label_ready",
   "shipped",
-  "completed",
+  "delivered",
   "cancelled",
 ];
 
@@ -57,6 +58,39 @@ export default async function AdminOrderPage({ params }: AdminOrderPageProps) {
             <span className="text-muted">Tracking</span>
             <span className="font-bold">{order.trackingNumber ?? "Non renseigne"}</span>
           </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-muted">Transporteur</span>
+            <span className="font-bold">{order.carrier ?? "Non renseigne"}</span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-muted">Suivi client</span>
+            <span className="font-bold">
+              {order.trackingToken ? (
+                <Link href={`/commande/suivi/${order.trackingToken}`} className="underline">
+                  Ouvrir
+                </Link>
+              ) : (
+                "Non disponible"
+              )}
+            </span>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <h3 className="font-serif text-3xl">Adresse de livraison</h3>
+          {order.shippingAddressLine1 ? (
+            <div className="mt-4 border border-line bg-surface p-5 text-sm">
+              <p>{order.customerFirstName} {order.customerLastName}</p>
+              <p>{order.shippingAddressLine1}</p>
+              {order.shippingAddressLine2 ? <p>{order.shippingAddressLine2}</p> : null}
+              <p>
+                {order.shippingPostalCode} {order.shippingCity}
+              </p>
+              <p>{order.shippingCountry}</p>
+            </div>
+          ) : (
+            <p className="mt-4 text-sm text-muted">Aucune adresse enregistree pour cette commande.</p>
+          )}
         </div>
 
         <div className="mt-8">
@@ -113,14 +147,38 @@ export default async function AdminOrderPage({ params }: AdminOrderPageProps) {
               className="mt-2 w-full border border-line bg-background px-3 py-2"
             />
           </label>
-          {order.shippingMethod === "pickup" ? (
-            <p className="text-sm text-muted">Pour un retrait boutique, utilisez le statut “Prete au retrait”.</p>
+          <label className="text-sm font-bold">
+            Transporteur
+            <input
+              name="carrier"
+              defaultValue={order.carrier ?? "colissimo"}
+              className="mt-2 w-full border border-line bg-background px-3 py-2"
+            />
+          </label>
+          <label className="text-sm font-bold">
+            URL etiquette
+            <input
+              name="labelUrl"
+              defaultValue={order.labelUrl ?? ""}
+              className="mt-2 w-full border border-line bg-background px-3 py-2"
+            />
+          </label>
+          {order.labelUrl ? (
+            <a
+              href={order.labelUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="border border-line px-4 py-2 text-center text-sm font-bold"
+            >
+              Imprimer l&apos;etiquette
+            </a>
           ) : (
-            <p className="text-sm text-muted">
-              Generez l&apos;etiquette dans ColiShip, puis renseignez ici le numero de suivi avant de passer en
-              “Expediee”.
-            </p>
+            <p className="text-sm text-muted">Etiquette non disponible.</p>
           )}
+          <p className="text-sm text-muted">
+            Quand l&apos;etiquette existe, passez la commande en “Etiquette prete”. Utilisez “Expediee” uniquement
+            quand le colis est remis au transporteur.
+          </p>
           <button type="submit" className="bg-brand px-5 py-3 text-sm font-bold text-brand-contrast">
             Mettre a jour
           </button>

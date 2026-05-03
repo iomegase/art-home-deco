@@ -1,9 +1,11 @@
 import type Stripe from "stripe";
 import { renderAdminNewOrderEmail } from "@/emails/templates/admin-new-order";
-import { renderOrderConfirmationEmail } from "@/emails/templates/order-confirmation";
+import { renderOrderTrackingLinkEmail } from "@/emails/templates/order-tracking-link";
 import { logger } from "@/lib/logger";
 import { db } from "@/server/db/client";
 import { getEnv } from "@/server/env";
+import { findOrCreateCustomer } from "@/server/services/customer/customer.service";
+import { createTrackingToken } from "@/server/services/customer/tracking-token";
 import { sendTransactionalEmail } from "@/server/services/email.service";
 import { pushShopcaisseStockMovement } from "@/server/services/shopcaisse/movements";
 
@@ -15,6 +17,7 @@ type PaidOrderEmailData = {
   customerLastName: string;
   totalCents: number;
   shippingMethod: string;
+  trackingToken: string;
   items: Array<{ title: string; quantity: number; lineTotalCents: number }>;
   movementItems: Array<{ sku: string; quantity: number }>;
 };
@@ -57,11 +60,21 @@ async function markOrderPaidFromStripeSession(session: Stripe.Checkout.Session, 
       });
     }
 
+    const customer = await findOrCreateCustomer({
+      email: order.customerEmail,
+      firstName: order.customerFirstName,
+      lastName: order.customerLastName,
+      phone: order.customerPhone ?? undefined,
+      client: tx,
+    });
+
     const updatedOrder = await tx.order.update({
       where: { id: order.id },
       data: {
+        customerId: customer.id,
         paymentStatus: "paid",
         orderStatus: "paid",
+        trackingToken: order.trackingToken ?? createTrackingToken(),
         stripePaymentIntentId:
           typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id,
         stockDecrementedAt: new Date(),
@@ -77,6 +90,7 @@ async function markOrderPaidFromStripeSession(session: Stripe.Checkout.Session, 
       customerLastName: updatedOrder.customerLastName,
       totalCents: updatedOrder.totalCents,
       shippingMethod: updatedOrder.shippingMethod,
+      trackingToken: updatedOrder.trackingToken ?? "",
       items: updatedOrder.items.map((item) => ({
         title: item.title,
         quantity: item.quantity,
@@ -107,6 +121,8 @@ export async function handleStripeWebhookUseCase(event: Stripe.Event) {
   const paidOrder = await markOrderPaidFromStripeSession(session, orderId);
 
   if (paidOrder) {
+    const trackingUrl = `${env.NEXT_PUBLIC_APP_URL}/commande/suivi/${paidOrder.trackingToken}`;
+
     try {
       const movement = await pushShopcaisseStockMovement({
         orderId: paidOrder.orderId,
@@ -137,7 +153,14 @@ export async function handleStripeWebhookUseCase(event: Stripe.Event) {
       await sendTransactionalEmail({
         to: paidOrder.customerEmail,
         subject: `Commande ${paidOrder.orderNumber} confirmee`,
-        html: renderOrderConfirmationEmail(paidOrder),
+        html: renderOrderTrackingLinkEmail({
+          orderNumber: paidOrder.orderNumber,
+          customerFirstName: paidOrder.customerFirstName,
+          totalCents: paidOrder.totalCents,
+          shippingMethod: paidOrder.shippingMethod,
+          trackingUrl,
+          items: paidOrder.items,
+        }),
       });
     } catch (error) {
       await logger.integration("error", {

@@ -2,11 +2,11 @@ import type { OrderStatus, ShippingMethod } from "@/types/domain";
 
 const orderStatusLabels: Record<OrderStatus, string> = {
   pending: "En attente",
-  paid: "Payee",
-  preparing: "En preparation",
-  ready_for_pickup: "Prete au retrait",
+  paid: "Paiement confirme",
+  validated: "Commande validee",
+  label_ready: "Etiquette prete",
   shipped: "Expediee",
-  completed: "Terminee",
+  delivered: "Livree",
   cancelled: "Annulee",
 };
 

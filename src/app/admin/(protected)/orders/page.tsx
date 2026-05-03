@@ -29,6 +29,7 @@ export default async function AdminOrdersPage() {
               <th className="px-4 py-3">Client</th>
               <th className="px-4 py-3">Paiement</th>
               <th className="px-4 py-3">Statut</th>
+              <th className="px-4 py-3">Tracking</th>
               <th className="px-4 py-3">Livraison</th>
               <th className="px-4 py-3">Total</th>
             </tr>
@@ -44,6 +45,7 @@ export default async function AdminOrdersPage() {
                 <td className="px-4 py-4">{order.customerEmail}</td>
                 <td className="px-4 py-4">{order.paymentStatus}</td>
                 <td className="px-4 py-4">{formatOrderStatus(order.orderStatus)}</td>
+                <td className="px-4 py-4">{order.trackingNumber ?? "—"}</td>
                 <td className="px-4 py-4">{formatShippingMethod(order.shippingMethod)}</td>
                 <td className="px-4 py-4">{formatPriceCents(order.totalCents)}</td>
               </tr>

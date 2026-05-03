@@ -3,10 +3,10 @@ export type OrderPaymentStatus = "pending" | "paid" | "failed" | "refunded";
 export type OrderStatus =
   | "pending"
   | "paid"
-  | "preparing"
-  | "ready_for_pickup"
+  | "validated"
+  | "label_ready"
   | "shipped"
-  | "completed"
+  | "delivered"
   | "cancelled";
 
 export type ShippingMethod = "pickup" | "colissimo_home" | "colissimo_pickup";
@@ -18,6 +18,11 @@ export type OrderCustomer = {
   firstName: string;
   lastName: string;
   phone?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  postalCode?: string;
+  city?: string;
+  country?: string;
 };
 
 export type OrderItem = {
@@ -41,8 +46,14 @@ export type Order = {
   paymentStatus: OrderPaymentStatus;
   orderStatus: OrderStatus;
   shippingMethod: ShippingMethod;
+  trackingToken?: string;
+  carrier?: string;
   stripeSessionId?: string;
   stripePaymentIntentId?: string;
+  labelUrl?: string;
+  labelGeneratedAt?: Date;
+  shippedAt?: Date;
+  deliveredAt?: Date;
   trackingNumber?: string;
   shopcaisseSyncStatus?: ShopcaisseSyncStatus;
   shopcaisseSyncAt?: Date;

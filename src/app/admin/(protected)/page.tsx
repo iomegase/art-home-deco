@@ -54,6 +54,9 @@ export default async function AdminHomePage() {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/admin/clients" className="border border-line px-4 py-2 text-sm font-bold">
+              Clients
+            </Link>
             <Link href="/admin/blog" className="border border-line px-4 py-2 text-sm font-bold">
               Articles blog
             </Link>

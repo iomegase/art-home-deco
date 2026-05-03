@@ -2,6 +2,7 @@ import { getStripeClient } from "@/lib/stripe/client";
 import type { CheckoutRequest } from "@/schemas/api/checkout.schema";
 import { db } from "@/server/db/client";
 import { getEnv } from "@/server/env";
+import { createTrackingToken } from "@/server/services/customer/tracking-token";
 import { recalculateCartUseCase } from "./recalculate-cart.use-case";
 
 function createOrderNumber(): string {
@@ -38,6 +39,13 @@ export async function createCheckoutSessionUseCase(input: CheckoutRequest) {
       paymentStatus: "pending",
       orderStatus: "pending",
       shippingMethod: quote.shippingMethod,
+      shippingAddressLine1: input.customer.addressLine1,
+      shippingAddressLine2: input.customer.addressLine2,
+      shippingPostalCode: input.customer.postalCode,
+      shippingCity: input.customer.city,
+      shippingCountry: input.customer.country,
+      trackingToken: createTrackingToken(),
+      carrier: quote.shippingMethod === "pickup" ? null : "colissimo",
       shopcaisseSyncStatus: "not_required",
       items: {
         create: quote.lines.map((line) => ({
