@@ -84,7 +84,7 @@ README.md
 ## Variables minimales
 ```env
 NEXT_PUBLIC_APP_URL=http://localhost:3000
-DATABASE_URL=file:./dev.db
+DATABASE_URL=postgresql://<user>:<password>@<host>/<database>?sslmode=require
 
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=

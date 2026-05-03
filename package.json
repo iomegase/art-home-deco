@@ -11,7 +11,9 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
-    "db:seed": "node prisma/seed.mjs"
+    "db:seed": "node prisma/seed.mjs",
+    "db:export:sqlite": "node scripts/migrate/export-sqlite-data.mjs",
+    "db:import:postgres": "node scripts/migrate/import-postgres-data.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

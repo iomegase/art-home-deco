@@ -23,7 +23,7 @@ const optionalSecret = z.preprocess(emptyToUndefined, z.string().min(32).optiona
 export const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   NEXT_PUBLIC_APP_URL: z.url().default("http://localhost:3000"),
-  DATABASE_URL: z.string().min(1).default("file:./dev.db"),
+  DATABASE_URL: z.string().min(1),
   STRIPE_SECRET_KEY: optionalString,
   STRIPE_WEBHOOK_SECRET: optionalString,
   ADMIN_EMAIL: optionalEmail,
