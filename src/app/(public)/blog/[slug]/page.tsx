@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { findPublishedBlogPostBySlug } from "@/server/repositories/blog.repository";
 
+export const dynamic = "force-dynamic";
+
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
 };

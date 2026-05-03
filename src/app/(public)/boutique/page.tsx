@@ -3,6 +3,8 @@ import { CategoryNav } from "@/components/product/category-nav";
 import { ProductCard } from "@/components/product/product-card";
 import { listActiveProducts, listCategories } from "@/server/repositories/catalog.repository";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Boutique",
   description: "Parcourez les collections Art Home Deco.",

@@ -8,6 +8,8 @@ import {
   listCategories,
 } from "@/server/repositories/catalog.repository";
 
+export const dynamic = "force-dynamic";
+
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
 };

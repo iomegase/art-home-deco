@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { listPublishedBlogPosts } from "@/server/repositories/blog.repository";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Journal decoration",
   description: "Guides d'achat, conseils deco, idees cadeaux et inspirations maison Art Home Deco.",

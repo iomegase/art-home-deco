@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { listPublishedBlogPosts } from "@/server/repositories/blog.repository";
 import { listActiveProducts, listCategories } from "@/server/repositories/catalog.repository";
 
+export const dynamic = "force-dynamic";
+
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

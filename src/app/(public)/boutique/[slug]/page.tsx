@@ -6,6 +6,8 @@ import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { formatPriceCents, formatStockLabel } from "@/features/product/format";
 import { findActiveProductBySlug } from "@/server/repositories/catalog.repository";
 
+export const dynamic = "force-dynamic";
+
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
