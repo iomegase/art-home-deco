@@ -39,6 +39,12 @@ export const envSchema = z.object({
   EMAIL_FROM: optionalString,
   EMAIL_REPLY_TO: optionalString,
   ADMIN_ORDER_EMAIL: optionalEmail,
+  R2_ACCOUNT_ID: optionalString,
+  R2_ACCESS_KEY_ID: optionalString,
+  R2_SECRET_ACCESS_KEY: optionalString,
+  R2_BUCKET_NAME: optionalString,
+  R2_PUBLIC_BASE_URL: optionalUrl,
+  R2_REGION: optionalString,
   GEMINI_API_KEY: optionalString,
   GEMINI_MODEL: optionalString,
 });

@@ -131,9 +131,14 @@ export default async function AdminNewProductPage({ searchParams }: AdminNewProd
             <ol className="mt-4 grid gap-3 text-sm leading-6 text-muted">
               <li>1. Importer les references et les identifiants stock.</li>
               <li>2. Ouvrir un produit depuis la liste admin.</li>
-              <li>3. Generer un brouillon IA sur la fiche si utile.</li>
-              <li>4. Relire, corriger puis passer le statut en `active`.</li>
+              <li>3. Uploader les images sur la fiche produit via Cloudflare R2.</li>
+              <li>4. Generer un brouillon IA sur la fiche si utile.</li>
+              <li>5. Relire, corriger puis passer le statut en `active`.</li>
             </ol>
+            <p className="mt-4 text-sm leading-6 text-muted">
+              Le multi-upload d&apos;images n&apos;est disponible qu&apos;apres creation du produit, depuis la page
+              d&apos;edition.
+            </p>
           </div>
           <div className="border border-line bg-surface p-6">
             <h3 className="font-serif text-2xl">Liens utiles</h3>

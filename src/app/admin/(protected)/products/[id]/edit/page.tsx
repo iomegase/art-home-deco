@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ProductImageManager } from "@/components/admin/product-image-manager";
 import { generateAiProductDraftAction, updateProductForAdminAction } from "@/features/product/actions";
 import { listCategories } from "@/server/repositories/catalog.repository";
 import { findProductForAdmin } from "@/server/repositories/admin-product.repository";
@@ -211,8 +212,11 @@ export default async function AdminEditProductPage({ params, searchParams }: Adm
                 className="mt-2 w-full border border-line bg-background px-3 py-3"
               />
             </label>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
             <label className="text-sm font-bold">
-              Image URL principale
+              Image URL principale de secours
               <input
                 name="imageUrl"
                 defaultValue={primaryImage?.url ?? ""}
@@ -228,6 +232,11 @@ export default async function AdminEditProductPage({ params, searchParams }: Adm
               />
             </label>
           </div>
+
+          <p className="text-xs leading-6 text-muted">
+            Le multi-upload R2 se gere dans le panneau Visuels. Ces deux champs restent disponibles pour corriger
+            manuellement l&apos;image principale existante si necessaire.
+          </p>
 
           <fieldset className="grid gap-3">
             <legend className="text-sm font-bold">Categories</legend>
@@ -263,6 +272,8 @@ export default async function AdminEditProductPage({ params, searchParams }: Adm
         </form>
 
         <div className="grid gap-5">
+          <ProductImageManager productId={product.id} productTitle={product.title} images={product.images} />
+
           <form action={generateAiProductDraftAction} className="border border-line bg-surface p-6">
             <input type="hidden" name="id" value={product.id} />
             <h3 className="font-serif text-2xl">Brouillon IA</h3>

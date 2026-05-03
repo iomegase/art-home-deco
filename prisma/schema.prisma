@@ -39,11 +39,19 @@ model Product {
 }
 
 model ProductImage {
-  id        String  @id @default(cuid())
-  productId String
-  url       String
-  alt       String?
-  position  Int     @default(0)
+  id              String   @id @default(cuid())
+  productId       String
+  url             String
+  alt             String?
+  position        Int      @default(0)
+  storageProvider String   @default("r2")
+  storageKey      String?
+  mimeType        String?
+  width           Int?
+  height          Int?
+  sizeBytes       Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
