@@ -118,12 +118,7 @@ export async function getAdminSession(): Promise<{ userId: string; role: "admin"
   return { userId: payload.email, role: payload.role };
 }
 
-export async function clearAdminSession(): Promise<void> {
-  const cookieStore = await cookies();
-  cookieStore.delete(ADMIN_SESSION_COOKIE);
-}
-
-export async function requireAdmin(): Promise<{ userId: string; role: "admin" | "owner" }> {
+export async function getRequiredAdminSession(): Promise<{ userId: string; role: "admin" | "owner" }> {
   const session = await getAdminSession();
 
   if (!session) {
@@ -131,4 +126,13 @@ export async function requireAdmin(): Promise<{ userId: string; role: "admin" | 
   }
 
   return session;
+}
+
+export async function clearAdminSession(): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.delete(ADMIN_SESSION_COOKIE);
+}
+
+export async function requireAdmin(): Promise<{ userId: string; role: "admin" | "owner" }> {
+  return getRequiredAdminSession();
 }

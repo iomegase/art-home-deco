@@ -26,6 +26,7 @@ export const envSchema = z.object({
   RESEND_API_KEY: optionalString,
   EMAIL_FROM: optionalString,
   EMAIL_REPLY_TO: optionalString,
+  ADMIN_ORDER_EMAIL: optionalEmail,
   OPENAI_API_KEY: optionalString,
 });
 

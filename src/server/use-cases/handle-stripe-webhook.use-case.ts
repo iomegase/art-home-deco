@@ -1,6 +1,9 @@
 import type Stripe from "stripe";
+import { renderAdminNewOrderEmail } from "@/emails/templates/admin-new-order";
 import { renderOrderConfirmationEmail } from "@/emails/templates/order-confirmation";
+import { logger } from "@/lib/logger";
 import { db } from "@/server/db/client";
+import { getEnv } from "@/server/env";
 import { sendTransactionalEmail } from "@/server/services/email.service";
 import { pushShopcaisseStockMovement } from "@/server/services/shopcaisse/movements";
 
@@ -9,6 +12,7 @@ type PaidOrderEmailData = {
   orderNumber: string;
   customerEmail: string;
   customerFirstName: string;
+  customerLastName: string;
   totalCents: number;
   shippingMethod: string;
   items: Array<{ title: string; quantity: number; lineTotalCents: number }>;
@@ -70,6 +74,7 @@ async function markOrderPaidFromStripeSession(session: Stripe.Checkout.Session, 
       orderNumber: updatedOrder.orderNumber,
       customerEmail: updatedOrder.customerEmail,
       customerFirstName: updatedOrder.customerFirstName,
+      customerLastName: updatedOrder.customerLastName,
       totalCents: updatedOrder.totalCents,
       shippingMethod: updatedOrder.shippingMethod,
       items: updatedOrder.items.map((item) => ({
@@ -86,6 +91,8 @@ async function markOrderPaidFromStripeSession(session: Stripe.Checkout.Session, 
 }
 
 export async function handleStripeWebhookUseCase(event: Stripe.Event) {
+  const env = getEnv();
+
   if (event.type !== "checkout.session.completed") {
     return { handled: false };
   }
@@ -126,11 +133,41 @@ export async function handleStripeWebhookUseCase(event: Stripe.Event) {
       });
     }
 
-    await sendTransactionalEmail({
-      to: paidOrder.customerEmail,
-      subject: `Commande ${paidOrder.orderNumber} confirmee`,
-      html: renderOrderConfirmationEmail(paidOrder),
-    });
+    try {
+      await sendTransactionalEmail({
+        to: paidOrder.customerEmail,
+        subject: `Commande ${paidOrder.orderNumber} confirmee`,
+        html: renderOrderConfirmationEmail(paidOrder),
+      });
+    } catch (error) {
+      await logger.integration("error", {
+        provider: "resend",
+        eventType: "order_confirmation_email",
+        status: "failed",
+        targetType: "order",
+        targetId: paidOrder.orderId,
+        message: error instanceof Error ? error.message : "Email client impossible a envoyer.",
+      });
+    }
+
+    if (env.ADMIN_ORDER_EMAIL) {
+      try {
+        await sendTransactionalEmail({
+          to: env.ADMIN_ORDER_EMAIL,
+          subject: `Nouvelle commande ${paidOrder.orderNumber}`,
+          html: renderAdminNewOrderEmail(paidOrder),
+        });
+      } catch (error) {
+        await logger.integration("error", {
+          provider: "resend",
+          eventType: "admin_new_order_email",
+          status: "failed",
+          targetType: "order",
+          targetId: paidOrder.orderId,
+          message: error instanceof Error ? error.message : "Email boutique impossible a envoyer.",
+        });
+      }
+    }
   }
 
   return { handled: true };

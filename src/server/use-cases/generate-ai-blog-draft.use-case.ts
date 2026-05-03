@@ -1,4 +1,5 @@
 import type { AiBlogDraftInput } from "@/schemas/forms/ai-blog-draft.schema";
+import { slugify } from "@/lib/slugify";
 import { getEnv } from "@/server/env";
 
 export type AiBlogDraft = {
@@ -10,15 +11,6 @@ export type AiBlogDraft = {
   generatedWithAI: true;
   reviewedByHuman: false;
 };
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
 
 export async function generateAiBlogDraftUseCase(input: AiBlogDraftInput): Promise<AiBlogDraft> {
   const env = getEnv();

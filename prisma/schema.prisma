@@ -135,6 +135,8 @@ model IntegrationEvent {
   status      String
   targetType  String?
   targetId    String?
+  actorEmail  String?
+  batchLabel  String?
   message     String?
   payloadJson String?
   createdAt   DateTime @default(now())

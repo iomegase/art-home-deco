@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "easyshop-v1",
+      "source": "@easyshop-v1/v1.0#20ai3dimiyblxi5",
+      "integrity": "sha512-v69flBjwNiZi5uBrMlb9w6c/ueNk1Ty25yFkzEVkXG3/d5qJa1BwMUBFPJKUtb5Z1qqsfIrfMiHTmM1Wc+RGEQ==",
+      "installerVersion": "6.1.3"
+    }
+  ]
+}
