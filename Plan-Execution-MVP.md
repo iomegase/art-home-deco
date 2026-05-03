@@ -7,7 +7,7 @@ Passer du pack de planification et du socle déjà présent à un MVP e-commerce
 
 ### État actuel constaté
 - Le dépôt est déjà structuré comme un projet Next.js App Router en TypeScript.
-- La stack déclarée inclut Next.js 16, React 19, Tailwind CSS 4, Prisma, Stripe, Resend, Zod, Sanity et next-sanity.
+- La stack déclarée inclut Next.js 16, React 19, Tailwind CSS 4, Prisma, Stripe, Resend et Zod.
 - Les fichiers de pilotage Codex existent déjà : `README.md`, `AGENTS.md`, `Plan.md`, `docs/architecture.md`, `docs/data-models.md`, `docs/business-rules.md`, `docs/shopcaisse-api.md`.
 - La partie catalogue existe déjà en partie : homepage, page boutique, page produit, récupération produits actifs, catégories, JSON-LD Product.
 - Le modèle Prisma existe avec `Product`, `ProductImage`, `Category`, `Order`, `OrderItem`, `BlogPost`, `IntegrationEvent`.
