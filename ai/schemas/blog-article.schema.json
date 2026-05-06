@@ -1,0 +1,131 @@
+{
+  "type": "object",
+  "required": [
+    "title",
+    "seoTitle",
+    "metaDescription",
+    "slug",
+    "excerpt",
+    "category",
+    "imageAlt",
+    "authorLabel",
+    "contentMarkdown",
+    "brandPerspectiveMarkdown",
+    "cta",
+    "seoChecklist"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Titre principal H1 de l'article. Ne doit pas contenir de Markdown."
+    },
+    "seoTitle": {
+      "type": "string",
+      "description": "Title SEO court, avec Art Home Déco si non déjà présent."
+    },
+    "metaDescription": {
+      "type": "string",
+      "description": "Description SEO unique de 140 à 160 caractères environ."
+    },
+    "slug": {
+      "type": "string",
+      "description": "Slug URL propre, en minuscules, sans accents."
+    },
+    "excerpt": {
+      "type": "string",
+      "description": "Introduction courte affichée sous le H1."
+    },
+    "category": {
+      "type": "string",
+      "description": "Catégorie éditoriale."
+    },
+    "imageAlt": {
+      "type": "string",
+      "description": "Texte alternatif descriptif de l'image principale."
+    },
+    "authorLabel": {
+      "type": "string",
+      "description": "Signature visible de l'article."
+    },
+    "contentMarkdown": {
+      "type": "string",
+      "description": "Contenu principal de l'article en Markdown. Utiliser uniquement H2, H3, paragraphes, listes et liens internes. Ne jamais utiliser de H1."
+    },
+    "brandPerspectiveMarkdown": {
+      "type": "string",
+      "description": "Bloc Markdown commençant par ## Le regard d’Art Home Déco."
+    },
+    "cta": {
+      "type": "object",
+      "required": [
+        "title",
+        "body",
+        "primaryLabel",
+        "primaryLink",
+        "secondaryLabel",
+        "secondaryLink"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "primaryLabel": {
+          "type": "string"
+        },
+        "primaryLink": {
+          "type": "string",
+          "enum": [
+            "/boutique"
+          ]
+        },
+        "secondaryLabel": {
+          "type": "string"
+        },
+        "secondaryLink": {
+          "type": "string",
+          "enum": [
+            "/contact"
+          ]
+        }
+      }
+    },
+    "seoChecklist": {
+      "type": "object",
+      "required": [
+        "hasLocalContext",
+        "hasBrandMention",
+        "hasNoKeywordStuffing",
+        "hasUsefulAdvice",
+        "hasImageAlt",
+        "hasCta",
+        "hasNoH1InMarkdown"
+      ],
+      "properties": {
+        "hasLocalContext": {
+          "type": "boolean"
+        },
+        "hasBrandMention": {
+          "type": "boolean"
+        },
+        "hasNoKeywordStuffing": {
+          "type": "boolean"
+        },
+        "hasUsefulAdvice": {
+          "type": "boolean"
+        },
+        "hasImageAlt": {
+          "type": "boolean"
+        },
+        "hasCta": {
+          "type": "boolean"
+        },
+        "hasNoH1InMarkdown": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

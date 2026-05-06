@@ -30,7 +30,7 @@ function buildFallbackProductDraft(input: {
         "Le brouillon IA doit etre relu, complete et ajuste selon la piece, les matieres et l'usage reel du produit.",
         `Classe logistique actuelle: ${input.shippingClass}. Verifier les contraintes de fragilite, de poids et de retrait avant publication.`,
       ].join("\n\n"),
-    seoTitle: `${input.title} | Art Home Deco`,
+    seoTitle: `${input.title} | Art Home Déco`,
     seoDescription: `Brouillon SEO pour ${keyword}. Validation humaine obligatoire avant publication en boutique.`,
     imageAlt: `Photo produit ${slugify(input.title).replace(/-/g, " ")}`,
   } satisfies AiProductDraft;

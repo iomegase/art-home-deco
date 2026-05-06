@@ -1,7 +1,6 @@
-import type { Prisma, PrismaClient } from "@prisma/client";
 import { db } from "@/server/db/client";
 
-type CustomerDbClient = PrismaClient | Prisma.TransactionClient;
+type CustomerDbClient = Pick<typeof db, "customer">;
 
 export async function findOrCreateCustomer(input: {
   email: string;

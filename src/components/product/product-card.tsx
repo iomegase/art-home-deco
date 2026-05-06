@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { trackSelectItem } from "@/lib/analytics/ecommerce";
 import { formatPriceCents, formatStockLabel } from "@/features/product/format";
 import type { CatalogProduct } from "@/server/repositories/catalog.repository";
 
@@ -13,7 +16,20 @@ export function ProductCard({ product }: ProductCardProps) {
   const isUnavailable = product.stock <= 0 || product.status === "out_of_stock";
 
   return (
-    <Link href={`/boutique/${product.slug}`} className="group block">
+    <Link
+      href={`/boutique/${product.slug}`}
+      className="group block"
+      onClick={() =>
+        trackSelectItem({
+          item_id: product.id,
+          item_name: product.title,
+          item_category: category,
+          price: product.priceCents / 100,
+          quantity: 1,
+          sku: product.sku,
+        })
+      }
+    >
       <article className="grid gap-4">
         <div className="relative aspect-[4/5] overflow-hidden bg-surface">
           {primaryImage ? (

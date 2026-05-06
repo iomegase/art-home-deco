@@ -1,0 +1,967 @@
+{
+  "generatedAt": "2026-05-05T09:54:14.307Z",
+  "source": "https://easyshop-v1.readme.io/reference/introduction",
+  "stats": {
+    "pages": 105,
+    "endpointsDetected": 66,
+    "byMethod": {
+      "POST": 11,
+      "DELETE": 6,
+      "PUT": 9,
+      "GET": 40
+    },
+    "byCategory": {
+      "Uncategorized": 24,
+      "Applications": 21,
+      "Authentication": 1,
+      "Customers": 59
+    }
+  },
+  "pages": [
+    {
+      "url": "https://easyshop-v1.readme.io/reference/applicationcontroller_create",
+      "navLabel": "Create a new application post",
+      "title": "Create a new application",
+      "h1": "Create a new application",
+      "method": "POST",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/applicationcontroller_delete",
+      "navLabel": "Delete an application del",
+      "title": "Delete an application",
+      "h1": "Delete an application",
+      "method": "DELETE",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/applicationcontroller_edit",
+      "navLabel": "Edit an application put",
+      "title": "Edit an application",
+      "h1": "Edit an application",
+      "method": "PUT",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/applicationcontroller_generatetoken",
+      "navLabel": "Generate a new token for the given application post",
+      "title": "Generate a new token for the given application",
+      "h1": "Generate a new token for the given application",
+      "method": "POST",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/applicationcontroller_get",
+      "navLabel": "Get an application by its id get",
+      "title": "Get an application by its id",
+      "h1": "Get an application by its id",
+      "method": "GET",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/applicationcontroller_getlogo",
+      "navLabel": "Get the logo of an application its id get",
+      "title": "Get the logo of an application its id",
+      "h1": "Get the logo of an application its id",
+      "method": "GET",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/applicationcontroller_list",
+      "navLabel": "List all your applications get",
+      "title": "List all your applications",
+      "h1": "List all your applications",
+      "method": "GET",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/applications",
+      "navLabel": "Applications",
+      "title": "Applications",
+      "h1": "Applications",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/applications-access-levels",
+      "navLabel": "Applications & Access levels",
+      "title": "Applications & Access levels",
+      "h1": "Applications & Access levels",
+      "method": "",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/authcheckscontroller_get",
+      "navLabel": "Get your current app token get",
+      "title": "Get your current app token",
+      "h1": "Get your current app token",
+      "method": "GET",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/authcheckscontroller_listpermissions",
+      "navLabel": "Get the extended list of your permissions get",
+      "title": "Get the extended list of your permissions",
+      "h1": "Get the extended list of your permissions",
+      "method": "GET",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/authentication",
+      "navLabel": "Authentication",
+      "title": "Authentication",
+      "h1": "Authentication",
+      "method": "",
+      "path": "",
+      "category": "Authentication"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/authorization",
+      "navLabel": "Authorization",
+      "title": "Authorization",
+      "h1": "Authorization",
+      "method": "",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/boardscontroller_get",
+      "navLabel": "Fetch the boards of a company of a given board type get",
+      "title": "Fetch the boards of a company of a given board type",
+      "h1": "Fetch the boards of a company of a given board type",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companies-item-boards",
+      "navLabel": "Companies - Item boards",
+      "title": "Companies - Item boards",
+      "h1": "Companies - Item boards",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companies-item-families",
+      "navLabel": "Companies - Item families",
+      "title": "Companies - Item families",
+      "h1": "Companies - Item families",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companies-items",
+      "navLabel": "Companies - Items",
+      "title": "Companies - Items",
+      "h1": "Companies - Items",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companies-price-lists",
+      "navLabel": "Companies - Price lists",
+      "title": "Companies - Price lists",
+      "h1": "Companies - Price lists",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiescontroller_get",
+      "navLabel": "Get a company by its id get",
+      "title": "Get a company by its id",
+      "h1": "Get a company by its id",
+      "method": "GET",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiescontroller_listcompanies",
+      "navLabel": "Companies",
+      "title": "List all the companies you have access to",
+      "h1": "List all the companies you have access to",
+      "method": "",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiesfamiliescontroller_list",
+      "navLabel": "List all the item families a given company get",
+      "title": "List all the item families a given company",
+      "h1": "List all the item families a given company",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiesfamiliescontroller_list2",
+      "navLabel": "List all the item families a given organisation get",
+      "title": "List all the item families a given organisation",
+      "h1": "List all the item families a given organisation",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiesitemscontroller_createitem",
+      "navLabel": "Create a simple item for a given company post",
+      "title": "Create a simple item for a given company",
+      "h1": "Create a simple item for a given company",
+      "method": "POST",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiesitemscontroller_deleteitem",
+      "navLabel": "Delete an item of a company del",
+      "title": "Delete an item of a company",
+      "h1": "Delete an item of a company",
+      "method": "DELETE",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiesitemscontroller_edititem",
+      "navLabel": "Edit an item of a company put",
+      "title": "Edit an item of a company",
+      "h1": "Edit an item of a company",
+      "method": "PUT",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiesitemscontroller_getitem",
+      "navLabel": "Fetch an item of a company get",
+      "title": "Fetch an item of a company",
+      "h1": "Fetch an item of a company",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiesitemscontroller_listitems",
+      "navLabel": "List all the items of a given company get",
+      "title": "List all the items of a given company",
+      "h1": "List all the items of a given company",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiesmenucontroller_listitems",
+      "navLabel": "Fetch the menu of a company get",
+      "title": "Fetch the menu of a company",
+      "h1": "Fetch the menu of a company",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiesmodifiergroupscontroller_list",
+      "navLabel": "List all the modifier groups of a given company get",
+      "title": "List all the modifier groups of a given company",
+      "h1": "List all the modifier groups of a given company",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiespricescontroller_createpricelist",
+      "navLabel": "Create a price list post",
+      "title": "Create a price list",
+      "h1": "Create a price list",
+      "method": "POST",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiespricescontroller_getpricelist",
+      "navLabel": "List all of prices for a price list and a company get",
+      "title": "List all of prices for a price list and a company",
+      "h1": "List all of prices for a price list and a company",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiespricescontroller_listpricelists",
+      "navLabel": "List all of price lists of a company get",
+      "title": "List all of price lists of a company",
+      "h1": "List all of price lists of a company",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiespricescontroller_setprice",
+      "navLabel": "Set the price of an item put",
+      "title": "Set the price of an item",
+      "h1": "Set the price of an item",
+      "method": "PUT",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiespricescontroller_setprices",
+      "navLabel": "Set the prices of a list of items put",
+      "title": "Set the prices of a list of items",
+      "h1": "Set the prices of a list of items",
+      "method": "PUT",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/companiessettingscontroller_getsettingcompanycurrency",
+      "navLabel": "Companies - Company currency",
+      "title": "Get the company's currency settings",
+      "h1": "Get the company&#x27;s currency settings",
+      "method": "GET",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/customer-loyalty",
+      "navLabel": "Customer Loyalty",
+      "title": "Customer Loyalty",
+      "h1": "Customer Loyalty",
+      "method": "",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/customers",
+      "navLabel": "Customers",
+      "title": "Customers",
+      "h1": "Customers",
+      "method": "",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/customerscontroller_create",
+      "navLabel": "Create a customer in a store post",
+      "title": "Create a customer in a store",
+      "h1": "Create a customer in a store",
+      "method": "POST",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/customerscontroller_delete",
+      "navLabel": "Delete a customer of a store del",
+      "title": "Delete a customer of a store",
+      "h1": "Delete a customer of a store",
+      "method": "DELETE",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/customerscontroller_edit",
+      "navLabel": "Edit a customer of a store put",
+      "title": "Edit a customer of a store",
+      "h1": "Edit a customer of a store",
+      "method": "PUT",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/customerscontroller_get",
+      "navLabel": "Fetch a customer of a store get",
+      "title": "Fetch a customer of a store",
+      "h1": "Fetch a customer of a store",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/customerscontroller_listdefault",
+      "navLabel": "List of the customers managed by the store get",
+      "title": "List of the customers managed by the store",
+      "h1": "List of the customers managed by the store",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/customersloyaltiescontroller_balanceforgroup",
+      "navLabel": "Fetch a customer&#x27;s loyalty balance get",
+      "title": "Fetch a customer's loyalty balance",
+      "h1": "Fetch a customer&#x27;s loyalty balance",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/customersloyaltiescontroller_insert",
+      "navLabel": "Add a new loyalty transaction on a given customer post",
+      "title": "Add a new loyalty transaction on a given customer",
+      "h1": "Add a new loyalty transaction on a given customer",
+      "method": "POST",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/customersloyaltiescontroller_list",
+      "navLabel": "History of the customer&#x27;s loyalty (most recent) get",
+      "title": "History of the customer's loyalty (most recent)",
+      "h1": "History of the customer&#x27;s loyalty (most recent)",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/customerssalescontroller_list",
+      "navLabel": "List of customer sales get",
+      "title": "List of customer sales",
+      "h1": "List of customer sales",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/faq",
+      "navLabel": "Frequently Asked Questions",
+      "title": "Frequently Asked Questions",
+      "h1": "Frequently Asked Questions",
+      "method": "",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/introduction",
+      "navLabel": "Introduction",
+      "title": "Introduction",
+      "h1": "Introduction",
+      "method": "",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/items",
+      "navLabel": "Item and item types",
+      "title": "Item and item types",
+      "h1": "Item and item types",
+      "method": "",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/main-resources",
+      "navLabel": "Main resources - Fetching",
+      "title": "Main resources - Fetching",
+      "h1": "Main resources - Fetching",
+      "method": "",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/modifier-groups",
+      "navLabel": "Modifier groups",
+      "title": "Modifier groups",
+      "h1": "Modifier groups",
+      "method": "",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/openinghourscontroller_getstorefromdomain",
+      "navLabel": "Fetch the opening hours of a store get",
+      "title": "Fetch the opening hours of a store",
+      "h1": "Fetch the opening hours of a store",
+      "method": "GET",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orders_accept",
+      "navLabel": "Accept an order put",
+      "title": "Accept an order",
+      "h1": "Accept an order",
+      "method": "PUT",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orders_cancel",
+      "navLabel": "Cancel an order del",
+      "title": "Cancel an order",
+      "h1": "Cancel an order",
+      "method": "DELETE",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orders_create",
+      "navLabel": "Create a new external order post",
+      "title": "Create a new external order",
+      "h1": "Create a new external order",
+      "method": "POST",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orders_get",
+      "navLabel": "Get an order by its id get",
+      "title": "Get an order by its id",
+      "h1": "Get an order by its id",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orders_get_pos",
+      "navLabel": "Get an order by its id get",
+      "title": "Get an order by its id",
+      "h1": "Get an order by its id",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orders_list",
+      "navLabel": "List of all the orders (from partners) get",
+      "title": "List of all the orders (from partners)",
+      "h1": "List of all the orders (from partners)",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orders_list_pos",
+      "navLabel": "List of all the orders (created on the pos) get",
+      "title": "List of all the orders (created on the pos)",
+      "h1": "List of all the orders (created on the pos)",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orders_update",
+      "navLabel": "Update the status and receipt of an order put",
+      "title": "Update the status and receipt of an order",
+      "h1": "Update the status and receipt of an order",
+      "method": "PUT",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orders-external-sources",
+      "navLabel": "Orders (external sources)",
+      "title": "Orders (external sources)",
+      "h1": "Orders (external sources)",
+      "method": "",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orderslotscontroller_getfuturestoreorderslot",
+      "navLabel": "Stores - Order Slots",
+      "title": "Fetch the future order slot of a store",
+      "h1": "Fetch the future order slot of a store",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orderspaymentscontroller_create",
+      "navLabel": "Create a new external order requiring a payment post",
+      "title": "Create a new external order requiring a payment",
+      "h1": "Create a new external order requiring a payment",
+      "method": "POST",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orderspaymentscontroller_getgateway",
+      "navLabel": "Fetch the payment gateway parameters get",
+      "title": "Fetch the payment gateway parameters",
+      "h1": "Fetch the payment gateway parameters",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orderspaymentscontroller_listgateways",
+      "navLabel": "Fetch the payment gateways for orders get",
+      "title": "Fetch the payment gateways for orders",
+      "h1": "Fetch the payment gateways for orders",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orderspaymentscontroller_paymenthook",
+      "navLabel": "Stores - Orders requiring payments",
+      "title": "/v1/stores/{store}/orders-with-payments/gateways/{gateway}/orders/{id}/verify",
+      "h1": "/v1/stores/{store}/orders-with-payments/gateways/{gateway}/orders/{id}/verify",
+      "method": "",
+      "path": "/v1/stores/{store}/orders-with-payments/gateways/{gateway}/orders/{id}/verify",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orderspaymentscontroller_paymenthookget",
+      "navLabel": "/v1/stores/{store}/orders-with-payments/gateways/{gateway}/orders/{id}/verify get",
+      "title": "/v1/stores/{store}/orders-with-payments/gateways/{gateway}/orders/{id}/verify",
+      "h1": "/v1/stores/{store}/orders-with-payments/gateways/{gateway}/orders/{id}/verify",
+      "method": "GET",
+      "path": "/v1/stores/{store}/orders-with-payments/gateways/{gateway}/orders/{id}/verify",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/orderspaymentscontroller_verify",
+      "navLabel": "Verify the content of an order post",
+      "title": "Verify the content of an order",
+      "h1": "Verify the content of an order",
+      "method": "POST",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/organisations-item-families",
+      "navLabel": "Organisations - Item families",
+      "title": "Organisations - Item families",
+      "h1": "Organisations - Item families",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/organisationscontroller_get",
+      "navLabel": "Get an organisation by its id get",
+      "title": "Get an organisation by its id",
+      "h1": "Get an organisation by its id",
+      "method": "GET",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/organisationscontroller_listorganisations",
+      "navLabel": "Organisations",
+      "title": "List all the organisations you have access to",
+      "h1": "List all the organisations you have access to",
+      "method": "",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/pagination",
+      "navLabel": "Pagination",
+      "title": "Pagination",
+      "h1": "Pagination",
+      "method": "",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/pos-orders",
+      "navLabel": "Pos - Orders",
+      "title": "Pos - Orders",
+      "h1": "Pos - Orders",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/poscontroller_get",
+      "navLabel": "Get a PoS by its id get",
+      "title": "Get a PoS by its id",
+      "h1": "Get a PoS by its id",
+      "method": "GET",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/poscontroller_listpos",
+      "navLabel": "Pos",
+      "title": "List all the PoS you have access to",
+      "h1": "List all the PoS you have access to",
+      "method": "",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/price-lists",
+      "navLabel": "Price lists",
+      "title": "Price lists",
+      "h1": "Price lists",
+      "method": "",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/publicapiwebsitecontroller_getwebsitefromdomain",
+      "navLabel": "Stores - Website",
+      "title": "Fetch the click and collect app from a domain",
+      "h1": "Fetch the click and collect app from a domain",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/sales",
+      "navLabel": "Sales & Register shifts",
+      "title": "Sales & Register shifts",
+      "h1": "Sales & Register shifts",
+      "method": "",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/salescontroller_get",
+      "navLabel": "Fetch a sale of a store by its id get",
+      "title": "Fetch a sale of a store by its id",
+      "h1": "Fetch a sale of a store by its id",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/salescontroller_getforshift",
+      "navLabel": "List of store sales for a given register shift get",
+      "title": "List of store sales for a given register shift",
+      "h1": "List of store sales for a given register shift",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/salescontroller_getshifts",
+      "navLabel": "List of register shifts for a given time period get",
+      "title": "List of register shifts for a given time period",
+      "h1": "List of register shifts for a given time period",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/salescontroller_list",
+      "navLabel": "List of all store sales get",
+      "title": "List of all store sales",
+      "h1": "List of all store sales",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/seatingplancontroller_get",
+      "navLabel": "Fetch the seating plan of a store get",
+      "title": "Fetch the seating plan of a store",
+      "h1": "Fetch the seating plan of a store",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/seatingplanroomscontroller_createroom",
+      "navLabel": "Create a new room in the seating plan post",
+      "title": "Create a new room in the seating plan",
+      "h1": "Create a new room in the seating plan",
+      "method": "POST",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/seatingplanroomscontroller_deleteroom",
+      "navLabel": "Delete a room of the seating plan del",
+      "title": "Delete a room of the seating plan",
+      "h1": "Delete a room of the seating plan",
+      "method": "DELETE",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/seatingplanroomscontroller_editroom",
+      "navLabel": "Edit a room of the seating plan put",
+      "title": "Edit a room of the seating plan",
+      "h1": "Edit a room of the seating plan",
+      "method": "PUT",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/seatingplanroomscontroller_getroom",
+      "navLabel": "Fetch a room of the seating plan get",
+      "title": "Fetch a room of the seating plan",
+      "h1": "Fetch a room of the seating plan",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/seatingplantablescontroller_createtable",
+      "navLabel": "Create a table in a room post",
+      "title": "Create a table in a room",
+      "h1": "Create a table in a room",
+      "method": "POST",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/seatingplantablescontroller_deletetable",
+      "navLabel": "Delete a table of a room del",
+      "title": "Delete a table of a room",
+      "h1": "Delete a table of a room",
+      "method": "DELETE",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/seatingplantablescontroller_edittable",
+      "navLabel": "Edit a table of a room put",
+      "title": "Edit a table of a room",
+      "h1": "Edit a table of a room",
+      "method": "PUT",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/seatingplantablescontroller_gettable",
+      "navLabel": "Fetch a table of a room get",
+      "title": "Fetch a table of a room",
+      "h1": "Fetch a table of a room",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/stockscontroller_get",
+      "navLabel": "List of the items in the current store stock get",
+      "title": "List of the items in the current store stock",
+      "h1": "List of the items in the current store stock",
+      "method": "GET",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/stores-customer-loyalty",
+      "navLabel": "Stores - Customer Loyalty",
+      "title": "Stores - Customer Loyalty",
+      "h1": "Stores - Customer Loyalty",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/stores-customer-sales",
+      "navLabel": "Stores - Customer Sales",
+      "title": "Stores - Customer Sales",
+      "h1": "Stores - Customer Sales",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/stores-customers",
+      "navLabel": "Stores - Customers",
+      "title": "Stores - Customers",
+      "h1": "Stores - Customers",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/stores-opening-hours",
+      "navLabel": "Stores - Opening Hours",
+      "title": "Stores - Opening Hours",
+      "h1": "Stores - Opening Hours",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/stores-orders",
+      "navLabel": "Stores - Orders",
+      "title": "Stores - Orders",
+      "h1": "Stores - Orders",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/stores-sales",
+      "navLabel": "Stores - Sales",
+      "title": "Stores - Sales",
+      "h1": "Stores - Sales",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/stores-seating-plan",
+      "navLabel": "Stores - Seating plan",
+      "title": "Stores - Seating plan",
+      "h1": "Stores - Seating plan",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/stores-stocks",
+      "navLabel": "Stores - Stocks",
+      "title": "Stores - Stocks",
+      "h1": "Stores - Stocks",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/storescontroller_get",
+      "navLabel": "Get a store by its id get",
+      "title": "Get a store by its id",
+      "h1": "Get a store by its id",
+      "method": "GET",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/storescontroller_liststores",
+      "navLabel": "Stores",
+      "title": "List all the stores you have access to",
+      "h1": "List all the stores you have access to",
+      "method": "",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/vat",
+      "navLabel": "VAT",
+      "title": "VAT",
+      "h1": "VAT",
+      "method": "",
+      "path": "",
+      "category": "Customers"
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/webhooks",
+      "navLabel": "Webhook notifications",
+      "title": "Webhook notifications",
+      "h1": "Webhook notifications",
+      "method": "",
+      "path": "",
+      "category": ""
+    },
+    {
+      "url": "https://easyshop-v1.readme.io/reference/weightscontroller_get",
+      "navLabel": "Stores - Weights",
+      "title": "List of the items weight in the current store",
+      "h1": "List of the items weight in the current store",
+      "method": "",
+      "path": "",
+      "category": "Applications"
+    }
+  ]
+}

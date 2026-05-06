@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://arthomedeco.fr"),
+  metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "Art Home Deco",
-    template: "%s | Art Home Deco",
+    default: "Art Home Déco",
+    template: "%s | Art Home Déco",
   },
   description:
     "Boutique de decoration au style editorial: objets de maison, matieres naturelles et inspirations chaleureuses.",

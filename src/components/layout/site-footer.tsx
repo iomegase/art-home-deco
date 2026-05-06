@@ -1,10 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { Container } from "@/components/ui/container";
+import { trackEmailClick, trackPhoneClick } from "@/lib/analytics/events";
 import { Phone, Mail } from "lucide-react";
 
 export function SiteFooter() {
   const currentYear = new Date().getFullYear();
+  const siret = process.env.NEXT_PUBLIC_COMPANY_SIRET;
+  const vatNumber = process.env.NEXT_PUBLIC_COMPANY_VAT;
 
   return (
     <footer className="border-t border-line/50 bg-background pt-16 pb-8">
@@ -16,7 +21,7 @@ export function SiteFooter() {
             <Link href="/" className="transition-opacity hover:opacity-80">
               <Image
                 src="/logo.png"
-                alt="Art Home Deco"
+                alt="Art Home Déco"
                 width={140}
                 height={40}
                 className="h-10 w-auto"
@@ -29,7 +34,7 @@ export function SiteFooter() {
                 <p>
                   <strong className="block text-foreground font-medium mb-1 uppercase tracking-wider text-xs">Art Home Déco</strong>
                   96 rue du Mont Blanc<br />
-                  74170 Saint Gervais les Bains
+                  74170 Saint-Gervais-les-Bains
                 </p>
               </div>
 
@@ -37,6 +42,7 @@ export function SiteFooter() {
                 {/* TÉLÉPHONE */}
                 <a 
                   href="tel:+33607859058" 
+                  onClick={() => trackPhoneClick()}
                   className="flex items-center gap-3 transition-colors hover:text-terracotta"
                 >
                   <Phone size={16} className="text-foreground/50" />
@@ -46,6 +52,7 @@ export function SiteFooter() {
                 {/* EMAIL */}
                 <a 
                   href="mailto:contact@arthome.com" 
+                  onClick={() => trackEmailClick()}
                   className="flex items-center gap-3 transition-colors hover:text-terracotta"
                 >
                   <Mail size={16} className="text-foreground/50" />
@@ -81,12 +88,12 @@ export function SiteFooter() {
         {/* BARRE INFÉRIEURE : COPYRIGHT & INFOS LÉGALES */}
         <div className="mt-20 border-t border-line/30 pt-8 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground/80">
-            © {currentYear} Art Home Deco. Tous droits réservés.
+            © {currentYear} Art Home Déco. Tous droits réservés.
           </p>
           
           <div className="flex flex-wrap gap-x-8 gap-y-2 text-[9px] uppercase tracking-[0.15em] text-muted-foreground/50">
-            <p>SIRET : 123 456 789 00012</p>
-            <p>TVA : FR 12 345678901</p>
+            {siret ? <p>SIRET : {siret}</p> : null}
+            {vatNumber ? <p>TVA : {vatNumber}</p> : null}
           </div>
         </div>
       </Container>

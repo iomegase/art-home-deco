@@ -58,4 +58,5 @@ export type Order = {
   shopcaisseSyncStatus?: ShopcaisseSyncStatus;
   shopcaisseSyncAt?: Date;
   shopcaisseSyncError?: string;
+  analyticsPurchaseTrackedAt?: Date;
 };

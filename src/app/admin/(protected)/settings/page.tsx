@@ -10,7 +10,7 @@ export default async function AdminSettingsPage() {
     ["Stripe", Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_WEBHOOK_SECRET)],
     ["Resend", Boolean(env.RESEND_API_KEY && env.EMAIL_FROM)],
     ["Shopcaisse", Boolean(env.SHOPCAISSE_API_KEY)],
-    ["Gemini", Boolean(env.GEMINI_API_KEY)],
+    ["Gemini", Boolean(env.GOOGLE_GENERATIVE_AI_API_KEY ?? env.GEMINI_API_KEY)],
   ] as const;
 
   return (

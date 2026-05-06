@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { trackAddToCart } from "@/lib/analytics/ecommerce";
+import type { AnalyticsProduct } from "@/types/analytics";
 import { addCartItem } from "@/features/cart/storage";
 
 type AddToCartButtonProps = {
   productId: string;
+  analyticsProduct: AnalyticsProduct;
   disabled?: boolean;
 };
 
-export function AddToCartButton({ productId, disabled = false }: AddToCartButtonProps) {
+export function AddToCartButton({ productId, analyticsProduct, disabled = false }: AddToCartButtonProps) {
   const [added, setAdded] = useState(false);
 
   return (
@@ -19,6 +22,7 @@ export function AddToCartButton({ productId, disabled = false }: AddToCartButton
         disabled={disabled}
         onClick={() => {
           addCartItem(productId, 1);
+          trackAddToCart(analyticsProduct, 1);
           setAdded(true);
         }}
         className="w-full bg-brand px-6 py-4 text-sm font-bold text-brand-contrast transition hover:bg-terracotta disabled:cursor-not-allowed disabled:bg-muted"

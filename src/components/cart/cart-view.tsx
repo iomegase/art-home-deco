@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { trackAddToCart, trackRemoveFromCart, trackViewItemList } from "@/lib/analytics/ecommerce";
 import { formatPriceCents } from "@/features/product/format";
 import { readCart, writeCart } from "@/features/cart/storage";
 import type { CartQuote } from "@/features/cart/types";
@@ -48,7 +49,25 @@ export function CartView() {
     });
   }, [shippingMethod, cartVersion]);
 
-  function updateQuantity(productId: string, quantity: number) {
+function updateQuantity(productId: string, quantity: number) {
+    const current = quote?.lines.find((line) => line.productId === productId);
+    if (current) {
+      const delta = quantity - current.quantity;
+      const analyticsProduct = {
+        item_id: current.productId,
+        item_name: current.title,
+        price: current.unitPriceCents / 100,
+        quantity: Math.abs(delta),
+        sku: current.sku,
+      };
+
+      if (delta > 0) {
+        trackAddToCart(analyticsProduct, delta);
+      } else if (delta < 0) {
+        trackRemoveFromCart(analyticsProduct, Math.abs(delta));
+      }
+    }
+
     const nextItems = readCart()
       .map((item) => (item.productId === productId ? { ...item, quantity } : item))
       .filter((item) => item.quantity > 0);
@@ -82,8 +101,17 @@ export function CartView() {
     );
   }
 
+  const analyticsItems = quote.lines.map((line) => ({
+    item_id: line.productId,
+    item_name: line.title,
+    price: line.unitPriceCents / 100,
+    quantity: line.quantity,
+    sku: line.sku,
+  }));
+
   return (
     <div className="grid gap-10 lg:grid-cols-[1fr_24rem]">
+      <TrackCartView products={analyticsItems} />
       <section className="grid gap-5">
         {quote.lines.map((line) => (
           <article key={line.productId} className="grid grid-cols-[6rem_1fr] gap-4 border-b border-line pb-5">
@@ -159,4 +187,12 @@ export function CartView() {
       </aside>
     </div>
   );
+}
+
+function TrackCartView({ products }: { products: Array<{ item_id: string; item_name: string; price: number; quantity: number; sku: string }> }) {
+  useEffect(() => {
+    trackViewItemList(products, "panier");
+  }, [products]);
+
+  return null;
 }

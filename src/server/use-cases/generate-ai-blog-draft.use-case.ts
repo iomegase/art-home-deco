@@ -1,77 +1,69 @@
 import type { AiBlogDraftInput } from "@/schemas/forms/ai-blog-draft.schema";
-import { slugify } from "@/lib/slugify";
-import { generateGeminiJson, isGeminiConfigured } from "@/server/services/ai/gemini";
+import { BLOG_IMAGE_FALLBACK_URL } from "@/features/blog/blog-context";
+import { generateBlogArticle } from "@/features/ai/server/generate-blog-article";
+import { isGeminiConfigured } from "@/server/services/ai/gemini";
 
 export type AiBlogDraft = {
   title: string;
   slug: string;
+  category: string;
+  excerpt: string;
+  content: string;
   metaTitle: string;
   metaDescription: string;
-  outline: string[];
+  imageUrl?: string;
+  imageAlt: string;
+  authorLabel: string;
+  brandPerspectiveMarkdown: string;
+  ctaTitle: string;
+  ctaBody: string;
+  ctaPrimaryLabel: string;
+  ctaPrimaryLink: "/boutique";
+  ctaSecondaryLabel: string;
+  ctaSecondaryLink: "/contact";
   generatedWithAI: true;
   reviewedByHuman: false;
 };
 
-function buildFallbackBlogDraft(input: AiBlogDraftInput): AiBlogDraft {
-  return {
-    title: input.topic,
-    slug: slugify(input.topic),
-    metaTitle: `${input.topic} | Art Home Deco`,
-    metaDescription: `Brouillon SEO sur ${input.targetKeyword}, a relire et enrichir avant publication.`,
-    outline: [
-      "Intention de recherche et contexte decoration",
-      "Criteres de choix concrets",
-      "Conseils de composition dans la maison",
-      "Produits ou categories a associer",
-      "Conclusion et appel vers la boutique",
-    ],
-    generatedWithAI: true,
-    reviewedByHuman: false,
-  };
+export class AiBlogDraftGenerationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "AiBlogDraftGenerationError";
+  }
 }
 
 export async function generateAiBlogDraftUseCase(input: AiBlogDraftInput): Promise<AiBlogDraft> {
-  const fallback = buildFallbackBlogDraft(input);
-
   if (!isGeminiConfigured()) {
-    return fallback;
+    throw new AiBlogDraftGenerationError("Gemini n'est pas configure.");
   }
 
   try {
-    const generated = await generateGeminiJson<{
-      title: string;
-      metaTitle: string;
-      metaDescription: string;
-      outline: string[];
-    }>({
-      systemInstruction:
-        "Tu aides un e-commerce de decoration a preparer un brouillon d'article SEO. Tu retournes uniquement un objet JSON valide, sans markdown.",
-      prompt: [
-        "Genere un brouillon d'article blog en francais.",
-        "Retourne strictement un JSON avec les cles: title, metaTitle, metaDescription, outline.",
-        "outline doit etre un tableau de 4 a 6 intertitres actionnables.",
-        `Sujet: ${input.topic}`,
-        `Intention: ${input.intent}`,
-        `Mot-cle cible: ${input.targetKeyword}`,
-        "Contraintes: metaDescription <= 160 caracteres, ton editorial, concret, orienté conseil maison et conversion douce.",
-      ].join("\n"),
-    });
-
-    const title = generated.title?.trim() || fallback.title;
+    const article = await generateBlogArticle(input);
 
     return {
-      title,
-      slug: slugify(title),
-      metaTitle: generated.metaTitle?.trim() || fallback.metaTitle,
-      metaDescription: generated.metaDescription?.trim() || fallback.metaDescription,
-      outline:
-        Array.isArray(generated.outline) && generated.outline.length > 0
-          ? generated.outline.map((item) => String(item).trim()).filter(Boolean)
-          : fallback.outline,
+      title: article.title,
+      slug: article.slug,
+      category: article.category,
+      excerpt: article.excerpt.trim(),
+      content: article.contentMarkdown.trim(),
+      metaTitle: article.seoTitle.trim(),
+      metaDescription: article.metaDescription.trim(),
+      imageUrl: BLOG_IMAGE_FALLBACK_URL,
+      imageAlt: article.imageAlt.trim(),
+      authorLabel: article.authorLabel.trim(),
+      brandPerspectiveMarkdown: article.brandPerspectiveMarkdown.trim(),
+      ctaTitle: article.cta.title.trim(),
+      ctaBody: article.cta.body.trim(),
+      ctaPrimaryLabel: article.cta.primaryLabel.trim(),
+      ctaPrimaryLink: article.cta.primaryLink,
+      ctaSecondaryLabel: article.cta.secondaryLabel.trim(),
+      ctaSecondaryLink: article.cta.secondaryLink,
       generatedWithAI: true,
       reviewedByHuman: false,
     };
-  } catch {
-    return fallback;
+  } catch (error) {
+    throw new AiBlogDraftGenerationError(
+      error instanceof Error ? error.message : "Une erreur est survenue lors de la generation du brouillon.",
+    );
   }
 }

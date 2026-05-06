@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { TrackViewItem } from "@/components/analytics/TrackViewItem";
 import { formatPriceCents, formatStockLabel } from "@/features/product/format";
 import { findActiveProductBySlug } from "@/server/repositories/catalog.repository";
 
@@ -53,10 +54,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
       url: `/boutique/${product.slug}`,
     },
   };
+  const analyticsProduct = {
+    item_id: product.id,
+    item_name: product.title,
+    item_category: category?.title,
+    price: product.priceCents / 100,
+    quantity: 1,
+    sku: product.sku,
+  };
 
   return (
     <article className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <TrackViewItem product={analyticsProduct} />
       <Link href="/boutique" className="text-sm font-bold text-muted hover:text-terracotta">
         Retour boutique
       </Link>
@@ -138,7 +148,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             ) : null}
           </dl>
 
-          <AddToCartButton productId={product.id} disabled={isUnavailable} />
+          <AddToCartButton productId={product.id} analyticsProduct={analyticsProduct} disabled={isUnavailable} />
 
           {product.description ? (
             <div className="mt-10 max-w-2xl text-base leading-8 text-muted">

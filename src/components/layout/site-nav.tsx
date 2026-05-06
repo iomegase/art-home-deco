@@ -50,7 +50,7 @@ export function SiteNav() {
         <NextLink href="/" className="z-[120] transition-opacity hover:opacity-80" onClick={closeMenu}>
           <Image
             src="/logo.png"
-            alt="Art Home Deco"
+            alt="Art Home Déco"
             width={120}
             height={40}
             className="h-8 w-auto md:h-9"

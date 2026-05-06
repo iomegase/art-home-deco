@@ -1,7 +1,10 @@
 import { db } from "@/server/db/client";
+import type { Prisma } from "@prisma/client";
 
 export type AdminOrderListItem = Awaited<ReturnType<typeof listOrdersForAdmin>>[number];
 export type AdminOrderDetails = NonNullable<Awaited<ReturnType<typeof findOrderForAdmin>>>;
+type OrderWithItems = Prisma.OrderGetPayload<{ include: { items: true } }>;
+export type PurchaseAnalyticsTrackResult = { tracked: false } | { tracked: true; order: OrderWithItems };
 
 export async function listOrdersForAdmin() {
   return db.order.findMany({
@@ -30,6 +33,36 @@ export async function findOrderByStripeSessionId(stripeSessionId: string) {
       items: true,
       customer: true,
     },
+  });
+}
+
+export async function markPurchaseAnalyticsTracked(stripeSessionId: string): Promise<PurchaseAnalyticsTrackResult> {
+  return db.$transaction(async (tx) => {
+    const order = await tx.order.findUnique({
+      where: { stripeSessionId },
+      include: {
+        items: true,
+      },
+    });
+
+    if (!order || order.paymentStatus !== "paid" || order.analyticsPurchaseTrackedAt) {
+      return { tracked: false as const };
+    }
+
+    const updated = await tx.order.update({
+      where: { id: order.id },
+      data: {
+        analyticsPurchaseTrackedAt: new Date(),
+      },
+      include: {
+        items: true,
+      },
+    });
+
+    return {
+      tracked: true as const,
+      order: updated,
+    };
   });
 }
 

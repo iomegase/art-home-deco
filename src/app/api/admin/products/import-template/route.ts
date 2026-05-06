@@ -43,7 +43,7 @@ const template = [
     "Brouillon long a relire avant publication",
     "https://images.unsplash.com/photo-1517705008128-361805f42e86",
     "vase brut atelier",
-    "Vase Brut Atelier | Art Home Deco",
+    "Vase Brut Atelier | Art Home Déco",
     "Brouillon SEO a valider avant mise en ligne",
   ].join(","),
 ].join("\n");

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PurchaseRelay } from "@/components/analytics/PurchaseRelay";
 import type { Metadata } from "next";
 import { ClearCartOnMount } from "@/components/cart/clear-cart-on-mount";
 import { formatOrderStatus, formatShippingMethod } from "@/features/order/format";
@@ -20,6 +21,7 @@ export default async function OrderSuccessPage({ searchParams }: OrderSuccessPag
   return (
     <main className="mx-auto max-w-4xl px-5 py-16 md:px-8 md:py-24">
       <ClearCartOnMount />
+      {sessionId ? <PurchaseRelay sessionId={sessionId} /> : null}
       <p className="section-title text-terracotta">Paiement confirme</p>
       <h1 className="mt-3 font-serif text-5xl leading-none md:text-7xl">Merci pour votre commande.</h1>
       <p className="mt-6 max-w-2xl text-base leading-7 text-muted">

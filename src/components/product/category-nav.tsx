@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { trackFilterUse } from "@/lib/analytics/events";
 import type { CatalogCategory } from "@/server/repositories/catalog.repository";
 
 type CategoryNavProps = {
@@ -11,6 +14,7 @@ export function CategoryNav({ categories, activeSlug }: CategoryNavProps) {
     <nav aria-label="Categories produits" className="flex gap-2 overflow-x-auto pb-2">
       <Link
         href="/boutique"
+        onClick={() => trackFilterUse("category", "all")}
         className={`shrink-0 border px-4 py-2 text-sm font-bold ${
           activeSlug ? "border-line text-muted" : "border-brand bg-brand text-brand-contrast"
         }`}
@@ -21,6 +25,7 @@ export function CategoryNav({ categories, activeSlug }: CategoryNavProps) {
         <Link
           key={category.id}
           href={`/categorie/${category.slug}`}
+          onClick={() => trackFilterUse("category", category.slug)}
           className={`shrink-0 border px-4 py-2 text-sm font-bold ${
             activeSlug === category.slug
               ? "border-brand bg-brand text-brand-contrast"

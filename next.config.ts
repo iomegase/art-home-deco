@@ -23,11 +23,24 @@ function buildR2RemotePattern() {
 const r2RemotePattern = buildR2RemotePattern();
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "6mb",
+    },
+  },
   images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "plus.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "les-feesmeres.com",
       },
       ...(r2RemotePattern ? [r2RemotePattern] : []),
     ],

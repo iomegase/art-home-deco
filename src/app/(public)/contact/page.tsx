@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { ButtonLink } from "@/components/ui/button-link";
+import { TrackableAnchor } from "@/components/analytics/TrackableAnchor";
+import { TrackableLink } from "@/components/analytics/TrackableLink";
 import { Container } from "@/components/ui/container";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Contactez Art Home Deco pour un conseil ou une commande.",
+  description: "Contactez Art Home Déco pour un conseil ou une commande.",
 };
 
 export default function ContactPage() {
@@ -19,15 +20,31 @@ export default function ContactPage() {
             anti-spam et envoi email.
           </p>
           <div className="mt-7">
-            <ButtonLink href="/boutique">Voir la boutique</ButtonLink>
+            <TrackableLink
+              href="/boutique"
+              track="contact_form_submit"
+              className="inline-flex rounded-full bg-brand px-5 py-3 text-sm font-bold text-brand-contrast"
+            >
+              Voir la boutique
+            </TrackableLink>
           </div>
         </section>
 
         <section className="showcase-panel rounded-[2rem] p-7 md:p-8">
           <h2 className="text-3xl">Informations</h2>
           <ul className="mt-4 space-y-3 text-sm text-muted">
-            <li>Email: bonjour@arthomedeco.fr</li>
-            <li>Telephone: +33 1 00 00 00 00</li>
+            <li>
+              Email:{" "}
+              <TrackableAnchor href="mailto:bonjour@arthomedeco.fr" track="email_click">
+                bonjour@arthomedeco.fr
+              </TrackableAnchor>
+            </li>
+            <li>
+              Telephone:{" "}
+              <TrackableAnchor href="tel:+33100000000" track="phone_click">
+                +33 1 00 00 00 00
+              </TrackableAnchor>
+            </li>
             <li>Du lundi au samedi: 10h - 19h</li>
           </ul>
         </section>

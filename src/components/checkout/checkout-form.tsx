@@ -1,7 +1,8 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { trackAddShippingInfo, trackBeginCheckout } from "@/lib/analytics/ecommerce";
 import { readCart } from "@/features/cart/storage";
 
 export function CheckoutForm() {
@@ -9,6 +10,54 @@ export function CheckoutForm() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const shippingMethod = searchParams.get("shipping") ?? "pickup";
+
+  useEffect(() => {
+    const cartItems = readCart();
+    if (cartItems.length === 0) {
+      return;
+    }
+
+    fetch("/api/cart/quote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: cartItems, shippingMethod }),
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          return null;
+        }
+        const payload = await response.json();
+        return payload.quote as
+          | {
+              totalCents: number;
+              lines: Array<{ productId: string; title: string; unitPriceCents: number; quantity: number; sku: string }>;
+            }
+          | undefined;
+      })
+      .then((quote) => {
+        if (!quote) {
+          return;
+        }
+
+        const cart = {
+          currency: "EUR" as const,
+          value: quote.totalCents / 100,
+          items: quote.lines.map((line) => ({
+            item_id: line.productId,
+            item_name: line.title,
+            price: line.unitPriceCents / 100,
+            quantity: line.quantity,
+            sku: line.sku,
+          })),
+        };
+
+        trackBeginCheckout(cart);
+        trackAddShippingInfo(cart, shippingMethod);
+      })
+      .catch(() => {
+        return;
+      });
+  }, [shippingMethod]);
 
   async function submitCheckout(formData: FormData) {
     setSubmitting(true);

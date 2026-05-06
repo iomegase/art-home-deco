@@ -1,83 +1,102 @@
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getEnv } from "@/server/env";
 
-const GEMINI_API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/";
-
-type GeminiTextPart = {
-  text?: string;
-};
-
-type GeminiGenerateContentResponse = {
-  candidates?: Array<{
-    content?: {
-      parts?: GeminiTextPart[];
-    };
-  }>;
+type GeminiJsonInput = {
+  prompt: string;
+  systemInstruction?: string;
+  model?: string;
+  temperature?: number;
+  topP?: number;
+  maxOutputTokens?: number;
 };
 
 function extractJsonObject(text: string) {
   const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-
-  if (start === -1 || end === -1 || end <= start) {
+  if (start === -1) {
     throw new Error("Gemini response did not contain a JSON object.");
   }
 
-  return text.slice(start, end + 1);
+  let depth = 0;
+  let inString = false;
+  let isEscaped = false;
+
+  for (let i = start; i < text.length; i += 1) {
+    const char = text[i];
+
+    if (inString) {
+      if (isEscaped) {
+        isEscaped = false;
+      } else if (char === "\\") {
+        isEscaped = true;
+      } else if (char === "\"") {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === "\"") {
+      inString = true;
+      continue;
+    }
+
+    if (char === "{") {
+      depth += 1;
+      continue;
+    }
+
+    if (char === "}") {
+      depth -= 1;
+      if (depth === 0) {
+        return text.slice(start, i + 1);
+      }
+    }
+  }
+
+  throw new Error("Gemini response contained an incomplete JSON object.");
+}
+
+function getGeminiApiKey() {
+  const env = getEnv();
+  return env.GOOGLE_GENERATIVE_AI_API_KEY ?? env.GEMINI_API_KEY;
 }
 
 export function isGeminiConfigured() {
-  const env = getEnv();
-  return Boolean(env.GEMINI_API_KEY);
+  return Boolean(getGeminiApiKey());
 }
 
-export async function generateGeminiJson<T>(input: {
-  prompt: string;
-  systemInstruction?: string;
-}) {
+export async function generateGeminiJson<T>(input: GeminiJsonInput) {
+  const apiKey = getGeminiApiKey();
   const env = getEnv();
 
-  if (!env.GEMINI_API_KEY) {
+  if (!apiKey) {
     throw new Error("Gemini API key is not configured.");
   }
 
-  const model = env.GEMINI_MODEL ?? "gemini-2.0-flash";
-  const response = await fetch(`${GEMINI_API_BASE_URL}models/${model}:generateContent`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-goog-api-key": env.GEMINI_API_KEY,
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const modelName = input.model ?? env.GEMINI_MODEL ?? "gemini-2.5-flash";
+  console.info("Gemini generateContent model", { model: modelName });
+  const model = genAI.getGenerativeModel({
+    model: modelName,
+    ...(input.systemInstruction ? { systemInstruction: input.systemInstruction } : {}),
+    generationConfig: {
+      temperature: input.temperature ?? 0.7,
+      topP: input.topP ?? 0.9,
+      maxOutputTokens: input.maxOutputTokens ?? 4096,
+      responseMimeType: "application/json",
     },
-    body: JSON.stringify({
-      ...(input.systemInstruction
-        ? {
-            systemInstruction: {
-              parts: [{ text: input.systemInstruction }],
-            },
-          }
-        : {}),
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: input.prompt }],
-        },
-      ],
-      generationConfig: {
-        temperature: 0.4,
-        responseMimeType: "application/json",
-      },
-    }),
   });
 
-  if (!response.ok) {
-    throw new Error(`Gemini request failed with status ${response.status}.`);
-  }
-
-  const payload = (await response.json()) as GeminiGenerateContentResponse;
-  const text = payload.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("").trim();
+  const result = await model.generateContent(input.prompt);
+  const response = await result.response;
+  const text = response.text().trim();
 
   if (!text) {
     throw new Error("Gemini response did not contain text.");
   }
 
-  return JSON.parse(extractJsonObject(text)) as T;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return JSON.parse(extractJsonObject(text)) as T;
+  }
 }

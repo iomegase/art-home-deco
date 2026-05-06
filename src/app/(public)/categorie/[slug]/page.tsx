@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { TrackViewItemList } from "@/components/analytics/TrackViewItemList";
 import { CategoryNav } from "@/components/product/category-nav";
 import { ProductCard } from "@/components/product/product-card";
 import {
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 
   return {
     title: category.title,
-    description: category.description ?? `Selection ${category.title} Art Home Deco.`,
+    description: category.description ?? `Selection ${category.title} Art Home Déco.`,
   };
 }
 
@@ -42,6 +43,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
+      <TrackViewItemList
+        listName={`categorie:${slug}`}
+        products={products.map((product) => ({
+          item_id: product.id,
+          item_name: product.title,
+          item_category: category.title,
+          price: product.priceCents / 100,
+          quantity: 1,
+          sku: product.sku,
+        }))}
+      />
       <header className="border-b border-line pb-10">
         <p className="section-title text-terracotta">Categorie</p>
         <h1 className="mt-3 text-5xl leading-none md:text-7xl">{category.title}</h1>
