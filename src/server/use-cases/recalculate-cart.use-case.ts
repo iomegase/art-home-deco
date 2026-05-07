@@ -32,6 +32,7 @@ export async function recalculateCartUseCase(input: CartQuoteRequest): Promise<C
 
     return {
       productId: product.id,
+      externalStockId: product.externalStockId ?? undefined,
       slug: product.slug,
       title: product.title,
       sku: product.sku,
@@ -56,6 +57,7 @@ export async function recalculateCartUseCase(input: CartQuoteRequest): Promise<C
 
   const quoteLines = lines.map((line) => ({
     productId: line.productId,
+    externalStockId: line.externalStockId,
     slug: line.slug,
     title: line.title,
     sku: line.sku,
@@ -64,6 +66,7 @@ export async function recalculateCartUseCase(input: CartQuoteRequest): Promise<C
     unitPriceCents: line.unitPriceCents,
     lineTotalCents: line.lineTotalCents,
     stock: line.stock,
+    shippingClass: line.shippingClass,
     pickupOnly: line.pickupOnly,
   }));
 

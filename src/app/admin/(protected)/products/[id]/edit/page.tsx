@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { AdminRefreshButton } from "@/components/admin/admin-refresh-button";
 import { ProductImageManager } from "@/components/admin/product-image-manager";
 import { generateAiProductDraftAction, updateProductForAdminAction } from "@/features/product/actions";
+import { shippingClassOptions } from "@/features/shipping/shipping-class-options";
 import { listCategories } from "@/server/repositories/catalog.repository";
 import { findProductForAdmin } from "@/server/repositories/admin-product.repository";
 
@@ -9,7 +11,6 @@ type AdminEditProductPageProps = {
   searchParams?: Promise<{ saved?: string; ai?: string }>;
 };
 
-const shippingClasses = ["XS", "S", "M", "L", "XL", "PICKUP_ONLY"] as const;
 const productStatuses = ["draft", "active", "archived", "out_of_stock"] as const;
 
 export default async function AdminEditProductPage({ params, searchParams }: AdminEditProductPageProps) {
@@ -48,6 +49,7 @@ export default async function AdminEditProductPage({ params, searchParams }: Adm
           <Link href="/admin/products" className="border border-line px-4 py-2 text-sm font-bold">
             Retour produits
           </Link>
+          <AdminRefreshButton label="Actualiser le produit" />
           <Link href={`/boutique/${product.slug}`} className="bg-brand px-4 py-2 text-sm font-bold text-brand-contrast">
             Voir la fiche
           </Link>
@@ -151,9 +153,9 @@ export default async function AdminEditProductPage({ params, searchParams }: Adm
                 defaultValue={product.shippingClass}
                 className="mt-2 w-full border border-line bg-background px-3 py-3"
               >
-                {shippingClasses.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
+                {shippingClassOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
                   </option>
                 ))}
               </select>
@@ -214,28 +216,21 @@ export default async function AdminEditProductPage({ params, searchParams }: Adm
             </label>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2">
-            <label className="text-sm font-bold">
-              Image URL principale de secours
-              <input
-                name="imageUrl"
-                defaultValue={primaryImage?.url ?? ""}
-                className="mt-2 w-full border border-line bg-background px-3 py-3"
-              />
-            </label>
+          <div className="grid gap-5">
             <label className="text-sm font-bold">
               Alt image principale
               <input
                 name="imageAlt"
-                defaultValue={primaryImage?.alt ?? ""}
+                defaultValue=""
+                placeholder={primaryImage?.alt ?? product.title}
                 className="mt-2 w-full border border-line bg-background px-3 py-3"
               />
             </label>
           </div>
 
           <p className="text-xs leading-6 text-muted">
-            Le multi-upload R2 se gere dans le panneau Visuels. Ces deux champs restent disponibles pour corriger
-            manuellement l&apos;image principale existante si necessaire.
+            Le multi-upload R2 se gere dans le panneau Visuels. Si une image produit manque ou ne peut pas
+            s&apos;afficher, le site utilise automatiquement `/logo.png` comme fallback visuel.
           </p>
 
           <fieldset className="grid gap-3">

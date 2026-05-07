@@ -9,7 +9,16 @@ export default async function AdminHomePage() {
   const integrations = [
     { label: "Stripe", status: Boolean(env.STRIPE_SECRET_KEY && env.STRIPE_WEBHOOK_SECRET) },
     { label: "Resend", status: Boolean(env.RESEND_API_KEY && env.EMAIL_FROM) },
-    { label: "Shopcaisse", status: Boolean(env.SHOPCAISSE_API_URL && env.SHOPCAISSE_API_KEY && env.SHOPCAISSE_WEBHOOK_SECRET) },
+    {
+      label: "Shopcaisse",
+      status: Boolean(
+        env.SHOPCAISSE_API_URL
+          && env.SHOPCAISSE_API_KEY
+          && env.SHOPCAISSE_COMPANY_ID
+          && env.SHOPCAISSE_STORE_ID
+          && env.SHOPCAISSE_POS_ID,
+      ),
+    },
     { label: "Gemini", status: Boolean(env.GOOGLE_GENERATIVE_AI_API_KEY ?? env.GEMINI_API_KEY) },
   ];
 

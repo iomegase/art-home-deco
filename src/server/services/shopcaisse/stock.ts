@@ -2,6 +2,10 @@ import { db } from "@/server/db/client";
 import { logger } from "@/lib/logger";
 import { ShopcaisseConfigError } from "./errors";
 import { mapShopcaisseStockPayload } from "./mapper";
+import {
+  verifyShopcaisseStockBeforeCheckout as verifyShopcaisseStockBeforeCheckoutFromCache,
+  type ShopcaisseStockVerificationInputItem,
+} from "./stock-verification";
 
 export async function applyShopcaisseStockSnapshot(
   payload: unknown,
@@ -84,6 +88,6 @@ export async function syncShopcaisseStock() {
   );
 }
 
-export async function verifyShopcaisseStockBeforeCheckout() {
-  return { verified: false as const, reason: "not_supported_without_documented_endpoint" as const };
+export async function verifyShopcaisseStockBeforeCheckout(items: ShopcaisseStockVerificationInputItem[]) {
+  return verifyShopcaisseStockBeforeCheckoutFromCache(items);
 }

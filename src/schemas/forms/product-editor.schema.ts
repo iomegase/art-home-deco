@@ -16,7 +16,6 @@ export const productEditorSchema = z.object({
   description: z.string().optional(),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
-  imageUrl: z.string().url().optional(),
   imageAlt: z.string().optional(),
   pickupOnly: z.boolean().default(false),
   estimatedWeightGrams: z.number().int().nonnegative().default(0),

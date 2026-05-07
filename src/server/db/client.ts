@@ -27,6 +27,27 @@ function isTransientDatabaseDisconnect(error: unknown) {
   );
 }
 
+export function isDatabaseUnavailableError(error: unknown) {
+  if (
+    error instanceof Prisma.PrismaClientInitializationError
+    || error instanceof Prisma.PrismaClientKnownRequestError
+  ) {
+    const message = error.message;
+    return (
+      message.includes("Can't reach database server")
+      || message.includes("P1001")
+      || message.includes("P1017")
+      || message.includes("Connection terminated unexpectedly")
+    );
+  }
+
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    message.includes("Can't reach database server")
+    || message.includes("Connection terminated unexpectedly")
+  );
+}
+
 function createPrismaClient() {
   return new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
@@ -58,10 +79,33 @@ const globalForPrisma = globalThis as unknown as {
   prisma?: AppPrismaClient;
 };
 
-export const db =
-  globalForPrisma.prisma ??
-  createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = db;
+function supportsShopcaisseCatalogCache(client: AppPrismaClient | undefined) {
+  return typeof client?.shopcaisseProductCache?.findMany === "function";
 }
+
+function resolvePrismaClient() {
+  if (process.env.NODE_ENV === "production") {
+    return globalForPrisma.prisma ?? createPrismaClient();
+  }
+
+  if (!globalForPrisma.prisma || !supportsShopcaisseCatalogCache(globalForPrisma.prisma)) {
+    if (globalForPrisma.prisma && !supportsShopcaisseCatalogCache(globalForPrisma.prisma)) {
+      console.warn("Recreating Prisma client to pick up newly generated model delegates.");
+    }
+
+    globalForPrisma.prisma = createPrismaClient();
+  }
+
+  return globalForPrisma.prisma;
+}
+
+export function getDbClient() {
+  return resolvePrismaClient();
+}
+
+export const db = new Proxy({} as AppPrismaClient, {
+  get(_target, prop) {
+    const client = resolvePrismaClient();
+    return client[prop as keyof AppPrismaClient];
+  },
+});

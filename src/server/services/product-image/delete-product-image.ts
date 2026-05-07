@@ -45,5 +45,18 @@ export async function deleteProductImage(productImageId: string) {
     ),
   );
 
+  await db.product.update({
+    where: { id: image.productId },
+    data: remainingImages.length === 0
+      ? {
+          imageStatus: "missing",
+          imageSource: "none",
+          imageAlt: null,
+          imageUpdatedAt: new Date(),
+          imageValidatedAt: null,
+        }
+      : {},
+  });
+
   return image.productId;
 }

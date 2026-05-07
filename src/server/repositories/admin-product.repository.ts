@@ -89,6 +89,16 @@ async function syncPrimaryImage(productId: string, imageUrl?: string, imageAlt?:
         position: 0,
       },
     });
+    await db.product.update({
+      where: { id: productId },
+      data: {
+        imageStatus: "approved",
+        imageSource: "manual_url",
+        imageAlt: normalizedAlt || firstImage.alt,
+        imageUpdatedAt: new Date(),
+        imageValidatedAt: new Date(),
+      },
+    });
     return;
   }
 
@@ -104,10 +114,26 @@ async function syncPrimaryImage(productId: string, imageUrl?: string, imageAlt?:
       position: 0,
     },
   });
+
+  await db.product.update({
+    where: { id: productId },
+    data: {
+      imageStatus: "approved",
+      imageSource: "manual_url",
+      imageAlt: normalizedAlt || undefined,
+      imageUpdatedAt: new Date(),
+      imageValidatedAt: new Date(),
+    },
+  });
 }
 
 export async function listAdminProducts() {
   return db.product.findMany({
+    where: {
+      status: {
+        not: "archived",
+      },
+    },
     include: {
       images: {
         orderBy: { position: "asc" },
@@ -121,6 +147,21 @@ export async function listAdminProducts() {
     },
     orderBy: [{ updatedAt: "desc" }, { title: "asc" }],
   });
+}
+
+export async function archiveProductForAdmin(productId: string) {
+  const product = await db.product.update({
+    where: { id: productId },
+    data: {
+      status: "archived",
+    },
+    select: {
+      id: true,
+      slug: true,
+    },
+  });
+
+  return product;
 }
 
 export async function findProductForAdmin(id: string) {
@@ -201,7 +242,7 @@ export async function updateProductForAdmin(input: ProductEditorInput) {
   });
 
   await syncProductCategories(product.id, input.categorySlugs);
-  await syncPrimaryImage(product.id, input.imageUrl, input.imageAlt);
+  await syncPrimaryImage(product.id, undefined, input.imageAlt);
 
   return product;
 }

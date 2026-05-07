@@ -33,6 +33,11 @@ export const productSchema = z.object({
   estimatedWeightGrams: z.number().int().nonnegative(),
   isFragile: z.boolean(),
   pickupOnly: z.boolean(),
+  imageStatus: z.string().optional(),
+  imageSource: z.string().optional(),
+  imageAlt: z.string().optional(),
+  imageUpdatedAt: z.date().optional(),
+  imageValidatedAt: z.date().optional(),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),
 });

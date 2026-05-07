@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { TrackViewItem } from "@/components/analytics/TrackViewItem";
+import { ProductGallery } from "@/components/product/product-gallery";
 import { formatPriceCents, formatStockLabel } from "@/features/product/format";
 import { findActiveProductBySlug } from "@/server/repositories/catalog.repository";
 
@@ -35,7 +35,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const primaryImage = product.images[0];
   const category = product.categories[0]?.category;
   const isUnavailable = product.stock <= 0 || product.status === "out_of_stock";
   const jsonLd = {
@@ -72,38 +71,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </Link>
 
       <div className="mt-8 grid gap-10 md:grid-cols-[0.95fr_1fr] md:items-start">
-        <div className="grid gap-4">
-          <div className="relative aspect-[4/5] overflow-hidden bg-surface">
-            {primaryImage ? (
-              <Image
-                src={primaryImage.url}
-                alt={primaryImage.alt ?? product.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                priority
-                className="object-cover"
-              />
-            ) : (
-              <div className="h-full w-full bg-[linear-gradient(135deg,var(--surface),var(--surface-strong))]" />
-            )}
-          </div>
-
-          {product.images.length > 1 ? (
-            <div className="grid grid-cols-4 gap-3">
-              {product.images.slice(1, 5).map((image) => (
-                <div key={image.id} className="relative aspect-square overflow-hidden bg-surface">
-                  <Image
-                    src={image.url}
-                    alt={image.alt ?? product.title}
-                    fill
-                    sizes="25vw"
-                    className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          ) : null}
-        </div>
+        <ProductGallery productTitle={product.title} images={product.images} />
 
         <div className="md:sticky md:top-24">
           {category ? (

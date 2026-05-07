@@ -54,6 +54,7 @@ export function SiteNav() {
             width={120}
             height={40}
             className="h-8 w-auto md:h-9"
+            style={{ width: "auto" }}
             priority
           />
         </NextLink>

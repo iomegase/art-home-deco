@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { trackSelectItem } from "@/lib/analytics/ecommerce";
 import { formatPriceCents, formatStockLabel } from "@/features/product/format";
+import { ProductImageFallback } from "@/components/product/product-image-fallback";
 import type { CatalogProduct } from "@/server/repositories/catalog.repository";
 
 type ProductCardProps = {
@@ -32,17 +32,13 @@ export function ProductCard({ product }: ProductCardProps) {
     >
       <article className="grid gap-4">
         <div className="relative aspect-[4/5] overflow-hidden bg-surface">
-          {primaryImage ? (
-            <Image
-              src={primaryImage.url}
-              alt={primaryImage.alt ?? product.title}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition duration-500 group-hover:scale-[1.035]"
-            />
-          ) : (
-            <div className="h-full w-full bg-[linear-gradient(135deg,var(--surface),var(--surface-strong))]" />
-          )}
+          <ProductImageFallback
+            src={primaryImage?.url}
+            alt={primaryImage?.alt ?? product.title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition duration-500 group-hover:scale-[1.035]"
+          />
           {isUnavailable ? (
             <span className="absolute left-3 top-3 bg-brand px-3 py-1 text-xs font-bold text-brand-contrast">
               Rupture

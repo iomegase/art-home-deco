@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { NewsletterSignupForm } from "@/components/analytics/NewsletterSignupForm";
 import { BlogImage } from "@/components/blog/blog-image";
+import { ProductImageFallback } from "@/components/product/product-image-fallback";
 import { getSiteSettings } from "@/server/repositories/site-settings.repository";
 import { listPublishedBlogPosts } from "@/server/repositories/blog.repository";
 import { listActiveProducts } from "@/server/repositories/catalog.repository";
@@ -131,12 +132,11 @@ export default async function Home() {
         <div className="mt-6 flex gap-5 overflow-x-auto px-5 pb-2 md:px-[max(2rem,calc((100vw-80rem)/2+2rem))]">
           {galleryProducts.map((product) => {
             const cover = product.images[0];
-            if (!cover) return null;
             return (
               <Link key={product.id} href={`/boutique/${product.slug}`}>
-                <Image
-                  src={cover.url}
-                  alt={cover.alt || product.title}
+                <ProductImageFallback
+                  src={cover?.url}
+                  alt={cover?.alt || product.title}
                   width={700}
                   height={450}
                   className="aspect-square rounded-2xl max-w-sm shrink-0 object-cover w-50"

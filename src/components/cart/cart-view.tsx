@@ -1,11 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { trackAddToCart, trackRemoveFromCart, trackViewItemList } from "@/lib/analytics/ecommerce";
+import { ProductImageFallback } from "@/components/product/product-image-fallback";
 import { formatPriceCents } from "@/features/product/format";
 import { readCart, writeCart } from "@/features/cart/storage";
+import { resolveShippingCostCents } from "@/features/shipping/rates";
 import type { CartQuote } from "@/features/cart/types";
 
 type ShippingMethod = "pickup" | "colissimo_home" | "colissimo_pickup";
@@ -75,6 +76,57 @@ function updateQuantity(productId: string, quantity: number) {
     setCartVersion((value) => value + 1);
   }
 
+  const shippingOptions = useMemo(() => {
+    const shippableItems = (quote?.lines ?? []).map((line) => ({
+      shippingClass: line.shippingClass,
+      pickupOnly: line.pickupOnly,
+    }));
+
+    const pickupOption = {
+      value: "pickup" as const,
+      label: "Retrait boutique gratuit",
+      disabled: false,
+    };
+
+    const hasPickupOnlyItem = shippableItems.some((item) => item.pickupOnly || item.shippingClass === "PICKUP_ONLY");
+
+    if (hasPickupOnlyItem) {
+      return [
+        pickupOption,
+        {
+          value: "colissimo_home" as const,
+          label: "Colissimo domicile indisponible",
+          disabled: true,
+        },
+        {
+          value: "colissimo_pickup" as const,
+          label: "Colissimo point retrait indisponible",
+          disabled: true,
+        },
+      ];
+    }
+
+    const colissimoPriceCents = resolveShippingCostCents({
+      shippingMethod: "colissimo_home",
+      items: shippableItems,
+    });
+    const formattedColissimoPrice = formatPriceCents(colissimoPriceCents);
+
+    return [
+      pickupOption,
+      {
+        value: "colissimo_home" as const,
+        label: `Colissimo domicile — ${formattedColissimoPrice}`,
+        disabled: false,
+      },
+      {
+        value: "colissimo_pickup" as const,
+        label: `Colissimo point retrait — ${formattedColissimoPrice}`,
+        disabled: false,
+      },
+    ];
+  }, [quote?.lines]);
+
   if (loading) {
     return <p className="text-muted">Calcul du panier...</p>;
   }
@@ -116,9 +168,7 @@ function updateQuantity(productId: string, quantity: number) {
         {quote.lines.map((line) => (
           <article key={line.productId} className="grid grid-cols-[6rem_1fr] gap-4 border-b border-line pb-5">
             <div className="relative aspect-square bg-surface">
-              {line.imageUrl ? (
-                <Image src={line.imageUrl} alt="" fill sizes="96px" className="object-cover" />
-              ) : null}
+              <ProductImageFallback src={line.imageUrl} alt={line.title} fill sizes="96px" className="object-cover" />
             </div>
             <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
               <div>
@@ -159,11 +209,16 @@ function updateQuantity(productId: string, quantity: number) {
             onChange={(event) => setShippingMethod(event.target.value as ShippingMethod)}
             className="mt-2 w-full border border-line bg-background px-3 py-2"
           >
-            <option value="pickup">Retrait boutique gratuit</option>
-            <option value="colissimo_home">Colissimo domicile</option>
-            <option value="colissimo_pickup">Colissimo point retrait</option>
+            {shippingOptions.map((option) => (
+              <option key={option.value} value={option.value} disabled={option.disabled}>
+                {option.label}
+              </option>
+            ))}
           </select>
         </label>
+        <p className="mt-3 text-xs text-muted">
+          Les tarifs Colissimo s&apos;adaptent automatiquement a la classe logistique la plus elevee du panier.
+        </p>
         <div className="mt-6 grid gap-3 text-sm">
           <div className="flex justify-between">
             <span>Sous-total</span>

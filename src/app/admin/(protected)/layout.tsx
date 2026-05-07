@@ -12,13 +12,10 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row bg-white">
-      {/* NAVIGATION LATERALE */}
       <AdminNav />
 
-      {/* ZONE DE CONTENU PRINCIPALE */}
       <main className="flex-1 overflow-y-auto bg-white">
-        <div className="mx-auto max-w-6xl p-6 md:p-10">
-          {/* HEADER DE PAGE OPTIONNEL */}
+        <div className="w-full px-4 py-6 sm:px-6 md:px-8 md:py-10 xl:px-10">
           <header className="mb-10">
             <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
               Panneau de gestion

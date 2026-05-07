@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/server/security/auth";
 import { db } from "@/server/db/client";
 import { deleteProductImage } from "@/server/services/product-image/delete-product-image";
+import { importProductImageFromUrl } from "@/server/services/product-image/import-product-image-from-url";
 import { reorderProductImages } from "@/server/services/product-image/reorder-product-images";
 import { uploadProductImages } from "@/server/services/product-image/upload-product-images";
 
@@ -25,6 +26,16 @@ export async function uploadProductImagesAction(formData: FormData) {
 
   if (!productId) {
     throw new Error("Produit introuvable.");
+  }
+
+  if (files.length === 0) {
+    const product = await db.product.findUnique({
+      where: { id: productId },
+      select: { slug: true },
+    });
+
+    redirectPaths(productId, product?.slug);
+    return;
   }
 
   await uploadProductImages({ productId, files });
@@ -117,5 +128,79 @@ export async function updateProductImageAltAction(formData: FormData) {
     include: { product: { select: { id: true, slug: true } } },
   });
 
+  const firstImage = await db.productImage.findFirst({
+    where: { productId: image.product.id },
+    orderBy: { position: "asc" },
+    select: { id: true },
+  });
+
+  if (firstImage?.id === image.id) {
+    await db.product.update({
+      where: { id: image.product.id },
+      data: {
+        imageAlt: alt || null,
+        imageUpdatedAt: new Date(),
+      },
+    });
+  }
+
   redirectPaths(image.product.id, image.product.slug);
+}
+
+export async function importProductImageFromUrlAction(formData: FormData) {
+  await requireAdmin();
+
+  const productId = String(formData.get("productId") ?? "");
+  const imageUrl = String(formData.get("imageUrl") ?? "").trim();
+  const alt = String(formData.get("alt") ?? "").trim();
+
+  if (!productId || !imageUrl) {
+    if (!productId) {
+      throw new Error("Produit ou URL image manquant.");
+    }
+
+    const product = await db.product.findUnique({
+      where: { id: productId },
+      select: { slug: true },
+    });
+
+    redirectPaths(productId, product?.slug);
+    return;
+  }
+
+  await importProductImageFromUrl({
+    productId,
+    imageUrl,
+    alt: alt || undefined,
+    source: "manual_url",
+  });
+
+  const product = await db.product.findUnique({
+    where: { id: productId },
+    select: { slug: true },
+  });
+
+  redirectPaths(productId, product?.slug);
+}
+
+export async function ignoreProductImageAction(formData: FormData) {
+  await requireAdmin();
+
+  const productId = String(formData.get("productId") ?? "");
+
+  if (!productId) {
+    throw new Error("Produit introuvable.");
+  }
+
+  const product = await db.product.update({
+    where: { id: productId },
+    data: {
+      imageStatus: "ignored",
+      imageSource: "none",
+      imageUpdatedAt: new Date(),
+    },
+    select: { slug: true },
+  });
+
+  redirectPaths(productId, product.slug);
 }

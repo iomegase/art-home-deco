@@ -1,24 +1,33 @@
-import { db } from "@/server/db/client";
+import { db, isDatabaseUnavailableError } from "@/server/db/client";
 
 export async function listRecentIntegrationEvents(
   provider?: string,
   eventType?: string,
   filters?: { status?: string; actorEmail?: string; batchLabel?: string },
 ) {
-  return db.integrationEvent.findMany({
-    where:
-      provider || eventType || filters?.status || filters?.actorEmail || filters?.batchLabel
-        ? {
-            ...(provider ? { provider } : {}),
-            ...(eventType ? { eventType } : {}),
-            ...(filters?.status ? { status: filters.status } : {}),
-            ...(filters?.actorEmail ? { actorEmail: { contains: filters.actorEmail } } : {}),
-            ...(filters?.batchLabel ? { batchLabel: { contains: filters.batchLabel } } : {}),
-          }
-        : undefined,
-    orderBy: { createdAt: "desc" },
-    take: 20,
-  });
+  try {
+    return await db.integrationEvent.findMany({
+      where:
+        provider || eventType || filters?.status || filters?.actorEmail || filters?.batchLabel
+          ? {
+              ...(provider ? { provider } : {}),
+              ...(eventType ? { eventType } : {}),
+              ...(filters?.status ? { status: filters.status } : {}),
+              ...(filters?.actorEmail ? { actorEmail: { contains: filters.actorEmail } } : {}),
+              ...(filters?.batchLabel ? { batchLabel: { contains: filters.batchLabel } } : {}),
+            }
+          : undefined,
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    });
+  } catch (error) {
+    if (isDatabaseUnavailableError(error)) {
+      console.warn("Integration events unavailable because the database is unreachable.");
+      return [];
+    }
+
+    throw error;
+  }
 }
 
 export async function createIntegrationEvent(input: {

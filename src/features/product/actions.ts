@@ -6,6 +6,7 @@ import { productAiDraftSchema, productEditorSchema } from "@/schemas/forms/produ
 import { productImportSchema } from "@/schemas/forms/product-import.schema";
 import { createIntegrationEvent } from "@/server/repositories/integration.repository";
 import {
+  archiveProductForAdmin,
   findProductForAdmin,
   updateProductAiDraft,
   updateProductForAdmin,
@@ -78,7 +79,6 @@ export async function updateProductForAdminAction(formData: FormData) {
     description: getTrimmedString(formData, "description") || undefined,
     seoTitle: getTrimmedString(formData, "seoTitle") || undefined,
     seoDescription: getTrimmedString(formData, "seoDescription") || undefined,
-    imageUrl: getTrimmedString(formData, "imageUrl") || undefined,
     imageAlt: getTrimmedString(formData, "imageAlt") || undefined,
     pickupOnly: formData.get("pickupOnly") === "on",
     estimatedWeightGrams: Number.parseInt(getTrimmedString(formData, "estimatedWeightGrams"), 10),
@@ -95,7 +95,23 @@ export async function updateProductForAdminAction(formData: FormData) {
   revalidatePath(`/admin/products/${parsed.id}/edit`);
   revalidatePath(`/boutique/${parsed.slug}`);
 
-  redirect(`/admin/products/${parsed.id}/edit?saved=1`);
+  redirect(`/admin/products/${parsed.id}/edit?saved=1&refresh=${Date.now()}`);
+}
+
+export async function archiveProductForAdminAction(formData: FormData) {
+  await requireAdmin();
+
+  const productId = getTrimmedString(formData, "id");
+
+  if (!productId) {
+    throw new Error("Produit introuvable.");
+  }
+
+  const product = await archiveProductForAdmin(productId);
+
+  revalidatePath("/admin/products");
+  revalidatePath(`/admin/products/${product.id}/edit`);
+  revalidatePath(`/boutique/${product.slug}`);
 }
 
 export async function generateAiProductDraftAction(formData: FormData) {

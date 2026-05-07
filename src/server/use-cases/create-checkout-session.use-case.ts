@@ -3,6 +3,10 @@ import type { CheckoutRequest } from "@/schemas/api/checkout.schema";
 import { db } from "@/server/db/client";
 import { getEnv } from "@/server/env";
 import { createTrackingToken } from "@/server/services/customer/tracking-token";
+import {
+  ShopcaisseCheckoutStockError,
+  verifyShopcaisseStockBeforeCheckout,
+} from "@/server/services/shopcaisse/stock-verification";
 import { recalculateCartUseCase } from "./recalculate-cart.use-case";
 
 function createOrderNumber(): string {
@@ -15,6 +19,21 @@ export async function createCheckoutSessionUseCase(input: CheckoutRequest) {
     items: input.items,
     shippingMethod: input.shippingMethod,
   });
+
+  const stockVerification = await verifyShopcaisseStockBeforeCheckout(
+    quote.lines.map((line) => ({
+      productId: line.productId,
+      shopcaisseProductId: line.externalStockId ?? undefined,
+      quantity: line.quantity,
+    })),
+  );
+
+  if (!stockVerification.success) {
+    throw new ShopcaisseCheckoutStockError(
+      "Certains articles ne sont plus disponibles dans les quantites demandees. Merci d'actualiser votre panier.",
+      stockVerification,
+    );
+  }
 
   const stripe = getStripeClient(env.STRIPE_SECRET_KEY);
 

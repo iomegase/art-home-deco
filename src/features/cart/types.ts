@@ -5,6 +5,7 @@ export type StoredCartItem = {
 
 export type CartQuoteLine = {
   productId: string;
+  externalStockId?: string;
   slug: string;
   title: string;
   sku: string;
@@ -13,6 +14,7 @@ export type CartQuoteLine = {
   unitPriceCents: number;
   lineTotalCents: number;
   stock: number;
+  shippingClass: string;
   pickupOnly: boolean;
 };
 

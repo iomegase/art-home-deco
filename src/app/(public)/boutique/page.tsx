@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TrackViewItemList } from "@/components/analytics/TrackViewItemList";
-import { CategoryNav } from "@/components/product/category-nav";
+import { BoutiqueFilters } from "@/components/product/boutique-filters";
+import { BoutiquePagination } from "@/components/product/boutique-pagination";
 import { ProductCard } from "@/components/product/product-card";
+import { buildBoutiqueHref } from "@/features/product/boutique-query";
 import { findLatestPublishedBlogPost } from "@/server/repositories/blog.repository";
-import { listActiveProducts, listCategories } from "@/server/repositories/catalog.repository";
+import { listActiveProductsPage, listCategories } from "@/server/repositories/catalog.repository";
 
 export const dynamic = "force-dynamic";
 
@@ -13,18 +15,37 @@ export const metadata: Metadata = {
   description: "Parcourez les collections Art Home Déco.",
 };
 
-export default async function BoutiquePage() {
-  const [products, categories, latestBlogPost] = await Promise.all([
-    listActiveProducts(),
+type BoutiquePageProps = {
+  searchParams?: Promise<{
+    q?: string;
+    categorie?: string;
+    page?: string;
+  }>;
+};
+
+export default async function BoutiquePage({ searchParams }: BoutiquePageProps) {
+  const params = searchParams ? await searchParams : undefined;
+  const query = params?.q?.trim() ?? "";
+  const categorySlug = params?.categorie?.trim() ?? "";
+  const page = Math.max(Number.parseInt(params?.page ?? "1", 10) || 1, 1);
+
+  const [catalog, categories, latestBlogPost] = await Promise.all([
+    listActiveProductsPage({
+      query: query || undefined,
+      categorySlug: categorySlug || undefined,
+      page,
+      pageSize: 12,
+    }),
     listCategories(),
     findLatestPublishedBlogPost(),
   ]);
+  const activeCategory = categories.find((entry) => entry.slug === categorySlug);
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
       <TrackViewItemList
         listName="boutique"
-        products={products.map((product) => ({
+        products={catalog.products.map((product) => ({
           item_id: product.id,
           item_name: product.title,
           item_category: product.categories[0]?.category.title,
@@ -44,42 +65,89 @@ export default async function BoutiquePage() {
         </p>
       </header>
 
-      <div className="mt-8">
-        <CategoryNav categories={categories} />
-      </div>
+      <BoutiqueFilters
+        key={`${query}::${categorySlug}`}
+        categories={categories}
+        initialQuery={query}
+        initialCategory={categorySlug}
+        total={catalog.total}
+      />
 
-      {products.length > 0 ? (
-        <section className="mt-10 grid gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </section>
+      {catalog.products.length > 0 ? (
+        <>
+          <section className="mt-10 grid gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            {catalog.products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </section>
+
+          <BoutiquePagination
+            page={catalog.page}
+            totalPages={catalog.totalPages}
+            q={query}
+            categorie={categorySlug}
+          />
+        </>
       ) : (
         <section className="mt-10 border border-line bg-surface p-8">
-          <h2 className="font-serif text-3xl">Aucun produit actif</h2>
-          <p className="mt-2 text-muted">Lancez le seed catalogue ou creez un produit depuis l&apos;admin.</p>
+          <h2 className="font-serif text-3xl">
+            {query || categorySlug ? "Aucun produit ne correspond a votre recherche" : "Aucun produit actif"}
+          </h2>
+          <p className="mt-2 max-w-2xl text-muted">
+            {query || categorySlug
+              ? `Aucun resultat pour ${
+                  query ? `la recherche "${query}"` : "les filtres actifs"
+                }${activeCategory ? ` dans ${activeCategory.title}` : ""}.`
+              : "Lancez le seed catalogue ou creez un produit depuis l&apos;admin."}
+          </p>
+          {(query || categorySlug) && (
+            <div className="mt-5">
+              <Link href={buildBoutiqueHref({ page: 1 })} className="inline-flex border border-line px-5 py-3 text-sm font-bold hover:border-foreground">
+                Reinitialiser les filtres
+              </Link>
+            </div>
+          )}
         </section>
       )}
 
-      <section className="mt-14 rounded-3xl bg-foreground px-6 py-8 text-background md:px-8">
-        <p className="text-xs uppercase tracking-[0.2em] text-background/70">Inspiration</p>
-        <h2 className="mt-3 font-serif text-3xl">
-          {latestBlogPost ? "Conseils deco et idees pour votre interieur" : "Decouvrez notre journal deco"}
-        </h2>
-        <p className="mt-4 max-w-3xl text-sm leading-7 text-background/80">
-          {latestBlogPost
-            ? `Lire l'article: ${latestBlogPost.title}`
-            : "Retrouvez nos articles pour composer un interieur chaleureux et harmonieux."}
-        </p>
-        <div className="mt-6">
-          <Link
-            href={latestBlogPost ? `/blog/${latestBlogPost.slug}` : "/blog"}
-            className="inline-flex rounded-full border border-background/40 px-5 py-3 text-sm font-semibold text-background hover:bg-background hover:text-foreground"
-          >
-            {latestBlogPost ? "Lire l'article" : "Voir le blog"}
-          </Link>
-        </div>
-      </section>
+      {catalog.products.length > 0 ? (
+        <section className="mt-14 rounded-3xl bg-foreground px-6 py-8 text-background md:px-8">
+          <p className="text-xs uppercase tracking-[0.2em] text-background/70">Inspiration</p>
+          <h2 className="mt-3 font-serif text-3xl">
+            {latestBlogPost ? "Conseils deco et idees pour votre interieur" : "Decouvrez notre journal deco"}
+          </h2>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-background/80">
+            {latestBlogPost
+              ? `Lire l'article: ${latestBlogPost.title}`
+              : "Retrouvez nos articles pour composer un interieur chaleureux et harmonieux."}
+          </p>
+          <div className="mt-6">
+            <Link
+              href={latestBlogPost ? `/blog/${latestBlogPost.slug}` : "/blog"}
+              className="inline-flex rounded-full border border-background/40 px-5 py-3 text-sm font-semibold text-background hover:bg-background hover:text-foreground"
+            >
+              {latestBlogPost ? "Lire l'article" : "Voir le blog"}
+            </Link>
+          </div>
+        </section>
+      ) : (
+        <section className="mt-14 rounded-3xl bg-foreground px-6 py-8 text-background md:px-8">
+          <p className="text-xs uppercase tracking-[0.2em] text-background/70">Besoin d&apos;aide</p>
+          <h2 className="mt-3 font-serif text-3xl">Affinez votre selection ou contactez la boutique</h2>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-background/80">
+            Si vous ne trouvez pas encore la bonne piece, nous pouvons vous orienter vers une famille de
+            produits, un style ou un usage precis.
+          </p>
+          <div className="mt-6">
+            <Link
+              href="/contact"
+              className="inline-flex rounded-full border border-background/40 px-5 py-3 text-sm font-semibold text-background hover:bg-background hover:text-foreground"
+            >
+              Contacter la boutique
+            </Link>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -33,6 +33,11 @@ export type Product = {
   estimatedWeightGrams: number;
   isFragile: boolean;
   pickupOnly: boolean;
+  imageStatus?: string;
+  imageSource?: string;
+  imageAlt?: string;
+  imageUpdatedAt?: Date;
+  imageValidatedAt?: Date;
   seoTitle?: string;
   seoDescription?: string;
 };

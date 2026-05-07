@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { db } from "@/server/db/client";
 
 const productInclude = {
@@ -13,26 +14,72 @@ const productInclude = {
 
 export type CatalogProduct = Awaited<ReturnType<typeof listActiveProducts>>[number];
 export type CatalogCategory = Awaited<ReturnType<typeof listCategories>>[number];
+export type CatalogProductPage = Awaited<ReturnType<typeof listActiveProductsPage>>;
+
+function buildActiveProductWhere(params?: { categorySlug?: string; query?: string }): Prisma.ProductWhereInput {
+  return {
+    status: "active",
+    ...(params?.query
+      ? {
+          title: {
+            contains: params.query,
+            mode: "insensitive",
+          },
+        }
+      : {}),
+    ...(params?.categorySlug
+      ? {
+          categories: {
+            some: {
+              category: {
+                slug: params.categorySlug,
+              },
+            },
+          },
+        }
+      : {}),
+  };
+}
 
 export async function listActiveProducts(params?: { categorySlug?: string }) {
   return db.product.findMany({
-    where: {
-      status: "active",
-      ...(params?.categorySlug
-        ? {
-            categories: {
-              some: {
-                category: {
-                  slug: params.categorySlug,
-                },
-              },
-            },
-          }
-        : {}),
-    },
+    where: buildActiveProductWhere(params),
     include: productInclude,
     orderBy: [{ createdAt: "desc" }, { title: "asc" }],
   });
+}
+
+export async function listActiveProductsPage(params?: {
+  categorySlug?: string;
+  query?: string;
+  page?: number;
+  pageSize?: number;
+}) {
+  const pageSize = Math.min(Math.max(params?.pageSize ?? 12, 1), 32);
+  const requestedPage = Math.max(params?.page ?? 1, 1);
+  const where = buildActiveProductWhere({
+    categorySlug: params?.categorySlug,
+    query: params?.query,
+  });
+
+  const total = await db.product.count({ where });
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const page = Math.min(requestedPage, totalPages);
+  const products = await db.product.findMany({
+    where,
+    include: productInclude,
+    orderBy: [{ createdAt: "desc" }, { title: "asc" }],
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+
+  return {
+    products,
+    total,
+    page,
+    pageSize,
+    totalPages,
+  };
 }
 
 export async function findActiveProductBySlug(slug: string) {
@@ -47,6 +94,15 @@ export async function findActiveProductBySlug(slug: string) {
 
 export async function listCategories() {
   return db.category.findMany({
+    where: {
+      products: {
+        some: {
+          product: {
+            status: "active",
+          },
+        },
+      },
+    },
     include: {
       _count: {
         select: {
