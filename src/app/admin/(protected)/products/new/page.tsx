@@ -84,6 +84,12 @@ export default async function AdminNewProductPage({ searchParams }: AdminNewProd
               `category` ou `categories`, `shippingClass`, `pickupOnly`, `estimatedWeightGrams`, `isFragile`,
               `imageUrl`, `imageAlt`, `seoTitle`, `seoDescription`.
             </p>
+            <p className="mt-3 text-sm leading-6 text-muted">
+              `shippingClass` reste stocke sous forme technique `XS/TUBE_POSTER/S/SMALL_FRAGILE_BOX/M/L/XL/PICKUP_ONLY`,
+              mais represente des formats d&apos;emballage. Exemple MVP: `XS` = enveloppe cartonnee,
+              `TUBE_POSTER` = tube affiche, `S` = petit colis, `SMALL_FRAGILE_BOX` = petit colis fragile,
+              `M` = colis moyen, `L` = colis moyen fragile, `XL` = grand colis.
+            </p>
             <div className="mt-4">
               <Link href="/api/admin/products/import-template" className="border border-line px-4 py-2 text-sm font-bold">
                 Telecharger le modele CSV

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { NewsletterSignupForm } from "@/components/analytics/NewsletterSignupForm";
 import { BlogImage } from "@/components/blog/blog-image";
+import { HomeJournalSpotlight } from "@/components/home/home-journal-spotlight";
 import { ProductImageFallback } from "@/components/product/product-image-fallback";
 import { getSiteSettings } from "@/server/repositories/site-settings.repository";
 import { listPublishedBlogPosts } from "@/server/repositories/blog.repository";
@@ -9,177 +10,147 @@ import { listActiveProducts } from "@/server/repositories/catalog.repository";
 
 export default async function Home() {
   const { homeContent } = await getSiteSettings();
-  const [blogPosts, products] = await Promise.all([listPublishedBlogPosts(), listActiveProducts()]);
-  const galleryProducts = products.filter((product) => product.images[0]).slice(0, 4);
+  const [blogPosts, products] = await Promise.all([
+    listPublishedBlogPosts(),
+    listActiveProducts(),
+  ]);
+  const galleryProducts = products
+    .filter((product) => product.images[0])
+    .slice(0, 4);
   const journalPosts = blogPosts.slice(0, 3);
 
   return (
-    <div className="overflow-hidden">
-      <section className="mx-auto grid max-w-7xl gap-8 px-5 pb-14 pt-10 md:grid-cols-[0.95fr_1fr] md:items-center md:px-8 md:pb-20 md:pt-12">
-        <div className="overflow-hidden rounded-[42%_58%_48%_52%/48%_45%_55%_52%]">
-          <Image
+    <>
+      <style>{`
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 32px;
+        width: 1px;
+        height: 92px;
+        transform: translateX(-50%);
+        background-image: linear-gradient(to bottom, #d8d8d8 35%, transparent 0%);
+        background-size: 1px 12px;
+      }
+
+      .timeline-dot {
+        box-shadow: inset 0 0 0 2px #bfbfbf;
+      }
+
+      .timeline-dot::after {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border-radius: 999px;
+        background: #171717;
+      }
+
+      .arrow-line::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 1px;
+        height: 30px;
+        background: #dedede;
+        transform: translate(-50%, -50%);
+      }
+
+      .flowerpot-img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        mix-blend-mode: multiply;
+      }
+    `}</style>
+      <div className="overflow-hidden" style={{ backgroundColor: homeContent.homeBackgroundColor }}>
+        <header className="relative mx-auto mt-[76px] grid min-h-[780px] max-w-[1240px] grid-cols-1 px-6 pt-24 md:px-16 lg:grid-cols-[430px_1fr] lg:px-0 lg:pt-32">
+      <div className="relative z-10 pl-0 md:pl-20 lg:pl-24">
+        <h1 className="mt-16 max-w-[390px] text-[48px] font-light leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-7xl">
+          Art Home
+          <br />
+          Déco
+        </h1>
+
+        <p className="mt-12 max-w-[310px] text-[14px] leading-relaxed text-[#8d8d8d]">
+          {homeContent.heroParagraph}
+        </p>
+      </div>
+
+      <div className="relative mt-16 min-h-[460px] lg:mt-0">
+        <div className="absolute left-[8%] top-[150px] h-[390px] w-[390px] rounded-full bg-[#f1f1f0] md:left-[14%]" />
+        <div className="absolute right-[3%] top-[260px] h-[265px] w-[265px] rounded-full bg-[#f1f1f0]" />
+        <div className="absolute left-[54%] top-0 h-[420px] w-[255px] rounded-[48%] bg-[#f1f1f0]" />
+        <div className="absolute left-[18%] top-[110px] z-10 h-[430px] w-[430px] rounded-full bg-white/45 backdrop-blur-[1px] md:left-[24%]" />
+
+        <figure className="absolute left-[30%] top-[48px] z-20 h-[520px] w-[360px] overflow-hidden rounded-[48%] bg-white/10 shadow-[0_45px_90px_rgba(0,0,0,0.08)] md:left-[38%]">
+          <img
             src={homeContent.heroImageUrl}
             alt={homeContent.heroImageAlt}
-            width={1000}
-            height={820}
-            className="aspect-[1.05/0.85] h-full w-full object-cover"
+            className="flowerpot-img scale-[1.18] opacity-[0.82] saturate-[0.85] contrast-[1.08]"
           />
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/45 via-white/10 to-white/55 mix-blend-screen" />
+          <div className="absolute inset-y-0 left-0 w-1/3 bg-white/35 blur-2xl" />
+        </figure>
+      </div>
+    </header>
 
-        <div className="max-w-2xl">
-          <h1 className="mt-4 max-w-xl text-5xl leading-none text-foreground md:text-7xl">{homeContent.heroTitle}</h1>
-          <p className="mt-6 max-w-md text-base leading-7 text-muted">{homeContent.heroParagraph}</p>
-          <Link href="/boutique" className="mt-8 inline-flex rounded-full bg-terracotta px-7 py-3 text-sm font-bold text-white transition hover:bg-brand">
-            {homeContent.heroCtaLabel}
-          </Link>
-        </div>
-      </section>
-
-      <section className="relative mx-auto max-w-7xl px-5 pb-20 md:px-8">
-        <div className="absolute left-0 right-0 top-1/2 -z-10 h-28 -translate-y-1/2 " />
-        <div className="grid gap-5 md:grid-cols-3">
-          <Link
-            href="/boutique"
-            className="group relative min-h-[420px] overflow-hidden rounded-br-[5rem] rounded-tl-[5rem] bg-terracotta text-brand-contrast"
-          >
-            <Image src={homeContent.collectionCardImageUrl} alt={homeContent.collectionCardImageAlt} fill className="object-cover opacity-35 transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-gradient-to-br from-terracotta/75 via-terracotta/70 to-[#6f3622]/75 transition-opacity duration-500 group-hover:opacity-85" />
-
-            <div className="relative z-10 flex h-full flex-col justify-between p-8 md:p-12">
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/80">Collection</span>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="font-serif text-4xl leading-tight md:text-5xl text-white">{homeContent.collectionTitle}</h3>
-                {/* <div className="inline-flex h-12 w-12 translate-y-2 items-center justify-center rounded-full bg-white/90 text-terracotta shadow-sm transition-all duration-500 group-hover:translate-y-0 group-hover:rotate-[-45deg]">
-                  →
-                </div> */}
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/contact"
-            className="group relative min-h-[420px] overflow-hidden rounded-br-[5rem] rounded-tl-[5rem] bg-[#ece7d8] transition-all hover:bg-[#e5dfce]"
-          >
-            <Image src={homeContent.adviceCardImageUrl} alt={homeContent.adviceCardImageAlt} fill className="object-cover opacity-25 transition-transform duration-700 group-hover:scale-105" />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#f6f1e7]/90 via-[#ece7d8]/85 to-[#d7d0bf]/80 transition-opacity duration-500 group-hover:opacity-90" />
-
-            <div className="relative z-10 flex h-full flex-col justify-between p-8 md:p-12">
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-foreground/80" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/70">Conseil déco</span>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="font-serif text-4xl leading-tight md:text-5xl text-foreground">{homeContent.adviceTitle}</h3>
-                <p className="max-w-[240px] text-sm text-foreground/70 opacity-0 translate-y-2 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                  {homeContent.adviceParagraph}
-                </p>
-                {/* <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-foreground shadow-sm transition-transform duration-500 group-hover:rotate-[-45deg]">
-                  →
-                </div> */}
-              </div>
-            </div>
-          </Link>
-
-          <Link href="/blog" className="group relative min-h-[420px] overflow-hidden rounded-br-[5rem] rounded-tl-[5rem] bg-accent">
-            <Image src={homeContent.blogCardImageUrl} alt={homeContent.blogCardImageAlt} fill className="object-cover mix-blend-multiply opacity-60 " />
-
-            <div className="relative z-10 flex h-full flex-col justify-between p-8 md:p-12">
-              <div className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/80">Inspirations</span>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="font-serif text-4xl leading-tight md:text-5xl text-white">{homeContent.blogCardTitle}</h3>
-                <p className="text-sm text-white/70 opacity-0 transition-all duration-500 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0">
-                  {homeContent.blogCardParagraph}
-                </p>
-              </div>
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      <section className="mx-auto grid max-w-7xl gap-10 px-5 pb-20 md:grid-cols-[0.9fr_1fr] md:items-center md:px-8">
-        <div>
-          <p className="text-accent">{homeContent.approachLabel}</p>
-          <h2 className="mt-4 max-w-lg text-4xl leading-tight md:text-6xl">{homeContent.approachTitle}</h2>
-          <p className="mt-5 max-w-lg text-base leading-7 text-muted">{homeContent.approachParagraph}</p>
-          <Link href="/contact" className="mt-7 inline-flex rounded-full bg-accent px-7 py-3 text-sm font-bold text-brand-contrast transition hover:bg-brand">
-            {homeContent.approachCtaLabel}
-          </Link>
-        </div>
-        <div className="overflow-hidden rounded-[42%_58%_48%_52%/48%_45%_55%_52%]">
-          <Image
-            src={homeContent.approachImageUrl}
-            alt={homeContent.approachImageAlt}
-            width={1000}
-            height={820}
-            className="aspect-[1.05/0.85] h-full w-full object-cover"
-          />
-        </div>
-      </section>
-
-      <section className="pb-20">
-        <div className="mx-auto max-w-7xl px-5 md:px-8">
-          <h2 className="text-4xl md:text-5xl">Galerie produits</h2>
-        </div>
-        <div className="mt-6 flex gap-5 overflow-x-auto px-5 pb-2 md:px-[max(2rem,calc((100vw-80rem)/2+2rem))]">
-          {galleryProducts.map((product) => {
-            const cover = product.images[0];
-            return (
-              <Link key={product.id} href={`/boutique/${product.slug}`}>
-                <ProductImageFallback
-                  src={cover?.url}
-                  alt={cover?.alt || product.title}
-                  width={700}
-                  height={450}
-                  className="aspect-square rounded-2xl max-w-sm shrink-0 object-cover w-50"
-                />
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-5 py-24 md:px-8 grid gap-20 lg:grid-cols-[1fr_0.4fr]">
-        <div>
-          <h2 className="font-serif text-5xl mb-12">Le Journal</h2>
-          <div className="grid gap-8 sm:grid-cols-3">
-            {journalPosts.map((post) => (
-              <article key={post.id} className="group cursor-pointer">
-                <div className="overflow-hidden rounded-xl bg-surface">
-                  <BlogImage
-                    src={post.imageUrl || homeContent.blogCardImageUrl}
-                    alt={post.imageAlt || post.title}
-                    width={600}
-                    height={350}
-                    className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                </div>
-                <h3 className="mt-4 font-serif text-xl group-hover:text-terracotta transition-colors">{post.title}</h3>
-                <Link href={`/blog/${post.slug}`} className="mt-2 block text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">
-                  Lire l&apos;article
-                </Link>
-              </article>
-            ))}
+        {/* <section className="mx-auto grid max-w-7xl gap-10 px-5 pb-20 md:grid-cols-[0.9fr_1fr] md:items-center md:px-8">
+          <div>
+            <p className="text-accent">{homeContent.approachLabel}</p>
+            <h2 className="mt-4 max-w-lg text-4xl leading-tight md:text-6xl">
+              {homeContent.approachTitle}
+            </h2>
+            <p className="mt-5 max-w-lg text-base leading-7 text-muted">
+              {homeContent.approachParagraph}
+            </p>
+            <Link
+              href="/contact"
+              className="mt-7 inline-flex rounded-full bg-accent px-7 py-3 text-sm font-bold text-brand-contrast transition hover:bg-brand"
+            >
+              {homeContent.approachCtaLabel}
+            </Link>
           </div>
-        </div>
+          <div className="overflow-hidden rounded-[42%_58%_48%_52%/48%_45%_55%_52%]">
+            <Image
+              src={homeContent.approachImageUrl}
+              alt={homeContent.approachImageAlt}
+              width={1000}
+              height={820}
+              className="aspect-[1.05/0.85] h-full w-full object-cover"
+            />
+          </div>
+        </section> */}
 
-        <aside className="sticky top-24 self-start rounded-[3rem] bg-terracotta p-10 text-white shadow-xl">
-          <h2 className="font-serif text-3xl">{homeContent.newsletterTitle}</h2>
-          <p className="mt-4 text-sm leading-relaxed text-white/80">{homeContent.newsletterParagraph}</p>
-          <NewsletterSignupForm
-            placeholder={homeContent.newsletterPlaceholder}
-            buttonLabel={homeContent.newsletterButtonLabel}
-          />
-        </aside>
-      </section>
-    </div>
+        <section className="pb-20">
+          <div className="mx-auto max-w-7xl px-5 md:px-8">
+            <h2 className="text-4xl md:text-5xl">Galerie produits</h2>
+          </div>
+          <div className="mt-6 flex gap-5 overflow-x-auto px-5 pb-2 md:px-[max(2rem,calc((100vw-80rem)/2+2rem))]">
+            {galleryProducts.map((product) => {
+              const cover = product.images[0];
+              return (
+                <Link key={product.id} href={`/boutique/${product.slug}`}>
+                  <ProductImageFallback
+                    src={cover?.url}
+                    alt={cover?.alt || product.title}
+                    width={700}
+                    height={450}
+                    className="aspect-square rounded-2xl max-w-sm shrink-0 object-cover w-50"
+                  />
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+        <HomeJournalSpotlight
+          posts={journalPosts}
+          fallbackImageUrl={homeContent.blogCardImageUrl}
+        />
+      </div>
+    </>
   );
 }

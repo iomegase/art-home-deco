@@ -4,6 +4,7 @@ import { updateOrderFulfillmentAction } from "@/features/order/actions";
 import { formatOrderStatus, formatShippingMethod } from "@/features/order/format";
 import { formatPriceCents } from "@/features/product/format";
 import { findOrderForAdmin } from "@/server/repositories/order.repository";
+import { calculateOrderShippingEstimate } from "@/server/services/shipping/order-shipping";
 
 type AdminOrderPageProps = {
   params: Promise<{ id: string }>;
@@ -26,6 +27,8 @@ export default async function AdminOrderPage({ params }: AdminOrderPageProps) {
   if (!order) {
     notFound();
   }
+
+  const shippingEstimate = calculateOrderShippingEstimate(order);
 
   return (
     <section className="grid gap-8 lg:grid-cols-[1fr_24rem]">
@@ -57,6 +60,17 @@ export default async function AdminOrderPage({ params }: AdminOrderPageProps) {
           <div className="flex justify-between gap-4">
             <span className="text-muted">Tracking</span>
             <span className="font-bold">{order.trackingNumber ?? "Non renseigne"}</span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-muted">Poids total estime</span>
+            <span className="font-bold">
+              {shippingEstimate.totalWeightKg} kg
+              {shippingEstimate.usedFallbackWeight ? " (fallback partiel)" : ""}
+            </span>
+          </div>
+          <div className="flex justify-between gap-4">
+            <span className="text-muted">Classe dominante</span>
+            <span className="font-bold">{shippingEstimate.dominantShippingClass}</span>
           </div>
           <div className="flex justify-between gap-4">
             <span className="text-muted">Transporteur</span>

@@ -116,7 +116,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
             ) : null}
           </dl>
 
-          <AddToCartButton productId={product.id} analyticsProduct={analyticsProduct} disabled={isUnavailable} />
+          <AddToCartButton
+            productId={product.id}
+            productStock={product.stock}
+            analyticsProduct={analyticsProduct}
+            disabled={isUnavailable}
+          />
 
           {product.description ? (
             <div className="mt-10 max-w-2xl text-base leading-8 text-muted">

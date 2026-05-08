@@ -147,7 +147,7 @@ export default async function AdminEditProductPage({ params, searchParams }: Adm
               />
             </label>
             <label className="text-sm font-bold">
-              Shipping class
+              Format d&apos;emballage / colis
               <select
                 name="shippingClass"
                 defaultValue={product.shippingClass}
@@ -159,6 +159,9 @@ export default async function AdminEditProductPage({ params, searchParams }: Adm
                   </option>
                 ))}
               </select>
+              <span className="mt-2 block text-xs font-normal leading-5 text-muted">
+                Choisir le format du colis final emballe, pas seulement la taille du produit.
+              </span>
             </label>
             <label className="text-sm font-bold">
               Statut

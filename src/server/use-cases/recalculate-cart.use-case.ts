@@ -1,10 +1,12 @@
 import { resolveShippingCostCents } from "@/features/shipping/rates";
+import { normalizeCartItems } from "@/features/cart/limits";
 import type { CartQuote } from "@/features/cart/types";
 import type { CartQuoteRequest } from "@/schemas/api/cart.schema";
 import { db } from "@/server/db/client";
 
 export async function recalculateCartUseCase(input: CartQuoteRequest): Promise<CartQuote> {
-  const productIds = input.items.map((item) => item.productId);
+  const normalizedItems = normalizeCartItems(input.items);
+  const productIds = normalizedItems.map((item) => item.productId);
   const products = await db.product.findMany({
     where: {
       id: { in: productIds },
@@ -19,7 +21,7 @@ export async function recalculateCartUseCase(input: CartQuoteRequest): Promise<C
 
   const productById = new Map(products.map((product) => [product.id, product]));
 
-  const lines = input.items.map((item) => {
+  const lines = normalizedItems.map((item) => {
     const product = productById.get(item.productId);
 
     if (!product) {

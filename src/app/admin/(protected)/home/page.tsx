@@ -59,6 +59,12 @@ export default async function AdminHomeContentPage() {
       <form action={updateHomeContentAction} className="grid gap-6 border border-line bg-surface p-6">
         <h3 className="font-serif text-2xl">Contenu de la page d&apos;accueil</h3>
 
+        <ColorInput
+          name="homeBackgroundColor"
+          label="Couleur de fond home"
+          defaultValue={homeContent.homeBackgroundColor}
+        />
+
         <div className="grid gap-4 md:grid-cols-2">
           <Input name="heroImageUrl" label="Hero image URL" defaultValue={homeContent.heroImageUrl} />
           <Input name="heroImageAlt" label="Hero image alt" defaultValue={homeContent.heroImageAlt} />
@@ -157,6 +163,7 @@ export default async function AdminHomeContentPage() {
 
         <Input name="fontDisplay" label="--font-display" defaultValue={theme.fontDisplay} />
         <Input name="fontBody" label="--font-body" defaultValue={theme.fontBody} />
+        <Input name="fontNav" label="--font-nav" defaultValue={theme.fontNav} />
 
         <button type="submit" className="w-fit bg-brand px-5 py-2 text-sm font-bold text-brand-contrast">
           Enregistrer le thème

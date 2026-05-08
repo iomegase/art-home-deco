@@ -2,7 +2,9 @@ import type { ShippingMethod } from "@/types/domain";
 
 const colissimoRatesCents: Record<string, number> = {
   XS: 490,
+  TUBE_POSTER: 690,
   S: 690,
+  SMALL_FRAGILE_BOX: 890,
   M: 890,
   L: 1290,
   XL: 1890,
@@ -10,10 +12,12 @@ const colissimoRatesCents: Record<string, number> = {
 
 const shippingRank: Record<string, number> = {
   XS: 1,
-  S: 2,
-  M: 3,
-  L: 4,
-  XL: 5,
+  TUBE_POSTER: 2,
+  S: 3,
+  SMALL_FRAGILE_BOX: 4,
+  M: 5,
+  L: 6,
+  XL: 7,
   PICKUP_ONLY: 99,
 };
 

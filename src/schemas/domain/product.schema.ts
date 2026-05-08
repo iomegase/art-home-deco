@@ -1,6 +1,15 @@
 import { z } from "zod";
 
-export const shippingClassSchema = z.enum(["XS", "S", "M", "L", "XL", "PICKUP_ONLY"]);
+export const shippingClassSchema = z.enum([
+  "XS",
+  "TUBE_POSTER",
+  "S",
+  "SMALL_FRAGILE_BOX",
+  "M",
+  "L",
+  "XL",
+  "PICKUP_ONLY",
+]);
 
 export const productStatusSchema = z.enum(["draft", "active", "archived", "out_of_stock"]);
 

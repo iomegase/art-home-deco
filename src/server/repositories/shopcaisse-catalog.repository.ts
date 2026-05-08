@@ -201,6 +201,18 @@ export async function findShopcaisseCacheEntries(items: ShopcaisseCacheLookupIte
       ],
     },
     orderBy: { updatedAt: "desc" },
+    include: {
+      linkedProduct: {
+        select: {
+          id: true,
+          stock: true,
+          stockSource: true,
+          lastStockSyncAt: true,
+          lastStockSyncStatus: true,
+          externalStockId: true,
+        },
+      },
+    },
   });
 }
 

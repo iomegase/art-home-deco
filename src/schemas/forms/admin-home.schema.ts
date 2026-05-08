@@ -18,6 +18,7 @@ const requiredText = (label: string) => z.string().trim().min(1, `${label} est r
 const urlSchema = z.string().trim().url("URL invalide");
 
 export const adminHomeContentSchema = z.object({
+  homeBackgroundColor: colorSchema,
   heroImageUrl: urlSchema,
   heroImageAlt: requiredText("Alt hero"),
   heroTitle: requiredText("Titre hero"),
@@ -60,4 +61,5 @@ export const adminThemeSchema = z.object({
   line: colorSchema,
   fontDisplay: requiredText("Police display"),
   fontBody: requiredText("Police body"),
+  fontNav: requiredText("Police navigation"),
 });

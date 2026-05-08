@@ -9,6 +9,7 @@ export type HomePostItem = {
 };
 
 export type HomeContent = {
+  homeBackgroundColor: string;
   heroImageUrl: string;
   heroImageAlt: string;
   heroTitle: string;
@@ -55,6 +56,7 @@ export type ThemeSettings = {
   line: string;
   fontDisplay: string;
   fontBody: string;
+  fontNav: string;
 };
 
 export const defaultThemeSettings: ThemeSettings = {
@@ -69,11 +71,13 @@ export const defaultThemeSettings: ThemeSettings = {
   terracotta: "#bd6745",
   clay: "#cfa77f",
   line: "#d8d0bd",
-  fontDisplay: '"Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif',
-  fontBody: '"Avenir Next", Avenir, "Trebuchet MS", sans-serif',
+  fontDisplay: '"Elms Sans", "Helvetica Neue", Helvetica, Arial, sans-serif',
+  fontBody: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+  fontNav: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
 export const defaultHomeContent: HomeContent = {
+  homeBackgroundColor: "#ffffff",
   heroImageUrl:
     "https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=1100&q=90",
   heroImageAlt: "Atelier lumineux avec objets de decoration",

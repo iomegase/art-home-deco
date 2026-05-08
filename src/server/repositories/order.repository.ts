@@ -3,6 +3,7 @@ import type { Prisma } from "@prisma/client";
 
 export type AdminOrderListItem = Awaited<ReturnType<typeof listOrdersForAdmin>>[number];
 export type AdminOrderDetails = NonNullable<Awaited<ReturnType<typeof findOrderForAdmin>>>;
+export type ColishipExportOrder = Awaited<ReturnType<typeof listOrdersReadyForColishipExport>>[number];
 type OrderWithItems = Prisma.OrderGetPayload<{ include: { items: true } }>;
 export type PurchaseAnalyticsTrackResult = { tracked: false } | { tracked: true; order: OrderWithItems };
 
@@ -20,9 +21,43 @@ export async function findOrderForAdmin(id: string) {
   return db.order.findUnique({
     where: { id },
     include: {
-      items: true,
+      items: {
+        include: {
+          product: true,
+        },
+      },
       customer: true,
     },
+  });
+}
+
+export async function listOrdersReadyForColishipExport() {
+  return db.order.findMany({
+    where: {
+      paymentStatus: "paid",
+      orderStatus: {
+        notIn: ["cancelled", "shipped", "delivered"],
+      },
+      shippingMethod: {
+        in: ["colissimo_home", "colissimo_pickup"],
+      },
+      shippingAddressLine1: { not: null },
+      shippingPostalCode: { not: null },
+      shippingCity: { not: null },
+      shippingCountry: { not: null },
+      items: {
+        some: {},
+      },
+    },
+    include: {
+      items: {
+        include: {
+          product: true,
+        },
+      },
+      customer: true,
+    },
+    orderBy: { createdAt: "desc" },
   });
 }
 

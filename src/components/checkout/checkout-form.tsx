@@ -101,59 +101,77 @@ export function CheckoutForm() {
   }
 
   return (
-    <form action={submitCheckout} className="max-w-2xl space-y-5">
-      <div className="grid gap-5 sm:grid-cols-2">
+    <>
+      {submitting ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/75 px-5 backdrop-blur-sm">
+          <div className="w-full max-w-md border border-line bg-surface p-8 text-center shadow-lg">
+            <p className="section-title text-terracotta">Paiement en cours</p>
+            <h2 className="mt-3 font-serif text-4xl">Redirection vers Stripe</h2>
+            <p className="mt-4 text-sm text-muted">
+              Nous preparons votre paiement securise. Cette etape peut prendre quelques secondes.
+            </p>
+          </div>
+        </div>
+      ) : null}
+      <form action={submitCheckout} className="max-w-2xl space-y-5">
+        <div className="grid gap-5 sm:grid-cols-2">
         <label className="block text-sm font-bold">
           Prenom
-          <input name="firstName" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
+          <input name="firstName" required disabled={submitting} className="mt-2 w-full border border-line bg-background px-3 py-3 disabled:opacity-60" />
         </label>
         <label className="block text-sm font-bold">
           Nom
-          <input name="lastName" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
+          <input name="lastName" required disabled={submitting} className="mt-2 w-full border border-line bg-background px-3 py-3 disabled:opacity-60" />
         </label>
-      </div>
-      <label className="block text-sm font-bold">
+        </div>
+        <label className="block text-sm font-bold">
         Email
-        <input name="email" type="email" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
-      </label>
-      <label className="block text-sm font-bold">
+        <input name="email" type="email" required disabled={submitting} className="mt-2 w-full border border-line bg-background px-3 py-3 disabled:opacity-60" />
+        </label>
+        <label className="block text-sm font-bold">
         Telephone
-        <input name="phone" className="mt-2 w-full border border-line bg-background px-3 py-3" />
-      </label>
-      {shippingMethod !== "pickup" ? (
-        <>
-          <label className="block text-sm font-bold">
-            Adresse
-            <input name="addressLine1" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
-          </label>
-          <label className="block text-sm font-bold">
-            Complement d&apos;adresse
-            <input name="addressLine2" className="mt-2 w-full border border-line bg-background px-3 py-3" />
-          </label>
-          <div className="grid gap-5 sm:grid-cols-2">
+        <input name="phone" disabled={submitting} className="mt-2 w-full border border-line bg-background px-3 py-3 disabled:opacity-60" />
+        </label>
+        {shippingMethod !== "pickup" ? (
+          <>
             <label className="block text-sm font-bold">
-              Code postal
-              <input name="postalCode" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
+              Adresse
+              <input name="addressLine1" required disabled={submitting} className="mt-2 w-full border border-line bg-background px-3 py-3 disabled:opacity-60" />
             </label>
             <label className="block text-sm font-bold">
-              Ville
-              <input name="city" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
+              Complement d&apos;adresse
+              <input name="addressLine2" disabled={submitting} className="mt-2 w-full border border-line bg-background px-3 py-3 disabled:opacity-60" />
             </label>
-          </div>
-          <label className="block text-sm font-bold">
-            Pays
-            <input name="country" defaultValue="France" required className="mt-2 w-full border border-line bg-background px-3 py-3" />
-          </label>
-        </>
-      ) : null}
-      {error ? <p className="border border-line bg-surface p-4 text-sm font-bold">{error}</p> : null}
-      <button
-        type="submit"
-        disabled={submitting}
-        className="bg-brand px-6 py-4 text-sm font-bold text-brand-contrast disabled:bg-muted"
-      >
-        {submitting ? "Preparation du paiement..." : "Continuer vers Stripe"}
-      </button>
-    </form>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <label className="block text-sm font-bold">
+                Code postal
+                <input name="postalCode" required disabled={submitting} className="mt-2 w-full border border-line bg-background px-3 py-3 disabled:opacity-60" />
+              </label>
+              <label className="block text-sm font-bold">
+                Ville
+                <input name="city" required disabled={submitting} className="mt-2 w-full border border-line bg-background px-3 py-3 disabled:opacity-60" />
+              </label>
+            </div>
+            <label className="block text-sm font-bold">
+              Pays
+              <input name="country" defaultValue="France" required disabled={submitting} className="mt-2 w-full border border-line bg-background px-3 py-3 disabled:opacity-60" />
+            </label>
+          </>
+        ) : null}
+        {submitting ? (
+          <p className="border border-line bg-surface p-4 text-sm font-bold">
+            Paiement en cours. Redirection vers Stripe...
+          </p>
+        ) : null}
+        {error ? <p className="border border-line bg-surface p-4 text-sm font-bold">{error}</p> : null}
+        <button
+          type="submit"
+          disabled={submitting}
+          className="bg-brand px-6 py-4 text-sm font-bold text-brand-contrast disabled:cursor-not-allowed disabled:bg-muted"
+        >
+          {submitting ? "Preparation du paiement..." : "Continuer vers Stripe"}
+        </button>
+      </form>
+    </>
   );
 }

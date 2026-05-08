@@ -8,17 +8,31 @@ export default async function AdminOrdersPage() {
 
   return (
     <section>
-      <div className="flex items-end justify-between gap-4">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="section-title text-terracotta">Commandes</p>
           <h2 className="mt-2 font-serif text-4xl">Suivi commandes</h2>
         </div>
-        <a
-          href="/api/admin/orders/export"
-          className="bg-brand px-4 py-2 text-sm font-bold text-brand-contrast"
-        >
-          Export CSV
-        </a>
+        <div className="flex flex-wrap gap-3">
+          <a
+            href="/api/admin/orders/coliship-export?format=expeditions-pro"
+            className="bg-brand px-4 py-2 text-sm font-bold text-brand-contrast"
+          >
+            Exporter Expéditions Pro
+          </a>
+          <a
+            href="/api/admin/orders/coliship-export?format=coliship-classic"
+            className="border border-line px-4 py-2 text-sm font-bold"
+          >
+            Exporter ColiShip classique
+          </a>
+          <a
+            href="/api/admin/orders/export"
+            className="border border-line px-4 py-2 text-sm font-bold"
+          >
+            Export CSV
+          </a>
+        </div>
       </div>
 
       <div className="mt-8 overflow-x-auto border border-line">

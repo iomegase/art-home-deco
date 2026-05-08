@@ -1,31 +1,26 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { getConsent, setConsent } from "@/lib/analytics/consent";
 
 type ConsentMode = "hidden" | "simple" | "custom";
 
 export function CookieConsentBanner() {
-  const [mode, setMode] = useState<ConsentMode>(() => {
-    if (typeof window === "undefined") {
-      return "hidden";
-    }
-    return window.localStorage.getItem("art-home-deco-consent") ? "hidden" : "simple";
-  });
-  const [analytics, setAnalytics] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-    return getConsent().analytics;
-  });
-  const [marketing, setMarketing] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-    return getConsent().marketing;
-  });
+  const [mode, setMode] = useState<ConsentMode>("hidden");
+  const [analytics, setAnalytics] = useState(false);
+  const [marketing, setMarketing] = useState(false);
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const hasStoredConsent = isClient
+    ? Boolean(window.localStorage.getItem("art-home-deco-consent"))
+    : true;
+  const effectiveMode: ConsentMode =
+    mode === "hidden" && !hasStoredConsent ? "simple" : mode;
 
-  const isOpen = useMemo(() => mode !== "hidden", [mode]);
+  const isOpen = useMemo(() => effectiveMode !== "hidden", [effectiveMode]);
 
   if (!isOpen) {
     return null;
@@ -38,7 +33,7 @@ export function CookieConsentBanner() {
         Nous utilisons des cookies nécessaires et, avec votre accord, des cookies analytics et marketing.
       </p>
 
-      {mode === "custom" ? (
+      {effectiveMode === "custom" ? (
         <div className="mt-4 space-y-2 text-sm">
           <label className="flex items-center justify-between gap-3">
             <span>Necessaires</span>
@@ -76,7 +71,7 @@ export function CookieConsentBanner() {
         >
           Refuser
         </button>
-        {mode === "custom" ? (
+        {effectiveMode === "custom" ? (
           <button
             type="button"
             onClick={() => {

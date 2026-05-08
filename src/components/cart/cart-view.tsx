@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { trackAddToCart, trackRemoveFromCart, trackViewItemList } from "@/lib/analytics/ecommerce";
 import { ProductImageFallback } from "@/components/product/product-image-fallback";
 import { formatPriceCents } from "@/features/product/format";
-import { readCart, writeCart } from "@/features/cart/storage";
+import { readCart, updateCartItemQuantity, writeCart } from "@/features/cart/storage";
 import { resolveShippingCostCents } from "@/features/shipping/rates";
 import type { CartQuote } from "@/features/cart/types";
 
@@ -52,6 +52,22 @@ export function CartView() {
 
 function updateQuantity(productId: string, quantity: number) {
     const current = quote?.lines.find((line) => line.productId === productId);
+    if (!current) {
+      return;
+    }
+
+    if (quantity > current.stock) {
+      setError("Quantite maximale atteinte pour ce produit.");
+      return;
+    }
+
+    const result = updateCartItemQuantity(productId, quantity, current.stock);
+
+    if (!result.ok) {
+      setError("Quantite maximale atteinte pour ce produit.");
+      return;
+    }
+
     if (current) {
       const delta = quantity - current.quantity;
       const analyticsProduct = {
@@ -69,10 +85,7 @@ function updateQuantity(productId: string, quantity: number) {
       }
     }
 
-    const nextItems = readCart()
-      .map((item) => (item.productId === productId ? { ...item, quantity } : item))
-      .filter((item) => item.quantity > 0);
-    writeCart(nextItems);
+    setError(null);
     setCartVersion((value) => value + 1);
   }
 
@@ -190,7 +203,8 @@ function updateQuantity(productId: string, quantity: number) {
                 <button
                   type="button"
                   onClick={() => updateQuantity(line.productId, line.quantity + 1)}
-                  className="h-9 w-9 border border-line"
+                  disabled={line.quantity >= line.stock}
+                  className="h-9 w-9 border border-line disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   +
                 </button>

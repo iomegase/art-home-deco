@@ -2,7 +2,15 @@ export type StockSource = "local" | "shopcaisse";
 
 export type ProductStatus = "draft" | "active" | "archived" | "out_of_stock";
 
-export type ShippingClass = "XS" | "S" | "M" | "L" | "XL" | "PICKUP_ONLY";
+export type ShippingClass =
+  | "XS"
+  | "TUBE_POSTER"
+  | "S"
+  | "SMALL_FRAGILE_BOX"
+  | "M"
+  | "L"
+  | "XL"
+  | "PICKUP_ONLY";
 
 export type ProductImage = {
   url: string;

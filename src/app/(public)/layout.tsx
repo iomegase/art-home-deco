@@ -30,6 +30,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
             "--line": theme.line,
             "--font-display": theme.fontDisplay,
             "--font-body": theme.fontBody,
+            "--font-nav": theme.fontNav,
           } as CSSProperties
         }
       >

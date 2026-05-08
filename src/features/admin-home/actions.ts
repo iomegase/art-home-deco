@@ -23,6 +23,7 @@ export async function updateHomeContentAction(formData: FormData) {
   await requireAdmin();
 
   const parsed = adminHomeContentSchema.parse({
+    homeBackgroundColor: value(formData, "homeBackgroundColor"),
     heroImageUrl: value(formData, "heroImageUrl"),
     heroImageAlt: value(formData, "heroImageAlt"),
     heroTitle: value(formData, "heroTitle"),
@@ -55,6 +56,7 @@ export async function updateHomeContentAction(formData: FormData) {
 
   await upsertSiteSettings({
     homeContent: {
+      homeBackgroundColor: parsed.homeBackgroundColor,
       heroImageUrl: parsed.heroImageUrl,
       heroImageAlt: parsed.heroImageAlt,
       heroTitle: parsed.heroTitle,
@@ -111,6 +113,7 @@ export async function updateThemeSettingsAction(formData: FormData) {
     line: value(formData, "line"),
     fontDisplay: value(formData, "fontDisplay"),
     fontBody: value(formData, "fontBody"),
+    fontNav: value(formData, "fontNav"),
   });
 
   const current = await getSiteSettings();

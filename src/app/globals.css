@@ -12,8 +12,9 @@
   --terracotta: #bd6745;
   --clay: #cfa77f;
   --line: #d8d0bd;
-  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
-  --font-body: "Avenir Next", Avenir, "Trebuchet MS", sans-serif;
+  --font-display: "Elms Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-nav: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 
@@ -41,8 +42,24 @@ body {
 
 h1,
 h2,
-h3 {
+h3,
+h4 {
   font-family: var(--font-display), serif;
+  font-weight: 300;
+}
+
+p {
+  font-family: var(--font-body), sans-serif;
+  font-weight: 400;
+}
+
+a,
+nav,
+nav a {
+  font-family: var(--font-nav), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
 
 .section-title {
