@@ -1,0 +1,82 @@
+{
+  "id": "0a4079e7",
+  "phase": "generate_requested",
+  "pageUrl": "/",
+  "sourceFile": null,
+  "expectedVariants": 3,
+  "arrivedVariants": 0,
+  "visibleVariant": 0,
+  "paramValues": {},
+  "pendingEventSeq": 2,
+  "pendingEvent": {
+    "type": "generate",
+    "id": "0a4079e7",
+    "action": "impeccable",
+    "freeformPrompt": "price on the picture",
+    "count": 3,
+    "pageUrl": "/",
+    "element": {
+      "tagName": "a",
+      "id": null,
+      "classes": [
+        "group",
+        "relative",
+        "flex",
+        "w-[280px]",
+        "shrink-0",
+        "flex-col",
+        "gap-4",
+        "md:w-[320px]"
+      ],
+      "textContent": "VoirAffiche Madame Hubert35,90 €",
+      "outerHTML": "<a class=\"group relative flex w-[280px] shrink-0 flex-col gap-4 md:w-[320px]\" href=\"/boutique/affiche-madame-hubert\"><div class=\"relative aspect-[4/5] w-full overflow-hidden rounded-2xl shadow-sm\"><img alt=\"Affiche d'art Madame Hubert avec illustration détaillée en noir et blanc pour décoration d'intérieur.\" loading=\"eager\" decoding=\"async\" data-nimg=\"fill\" class=\"object-contain transition-transform duration-700 ease-out group-hover:scale-105 bg-white\" style=\"position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent\" sizes=\"(max-width: 768px) 280px, 320px\" srcset=\"/_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=32&amp;q=75 32w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=48&amp;q=75 48w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=64&amp;q=75 64w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=96&amp;q=75 96w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=128&amp;q=75 128w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=256&amp;q=75 256w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=384&amp;q=75 384w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=640&amp;q=75 640w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=750&amp;q=75 750w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=828&amp;q=75 828w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=1080&amp;q=75 1080w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=1200&amp;q=75 1200w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=1920&amp;q=75 1920w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=2048&amp;q=75 2048w, /_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=3840&amp;q=75 3840w\" src=\"http://localhost:3000/_next/image?url=https%3A%2F%2Fpub-e708986b9821442f81492d49815e461a.r2.dev%2Fproducts%2Fcmovd4l1s0073vr4hb5yp37b4%2F1778152619033-carte-postale-paris-moulin-rouge-c2-ae.png&amp;w=3840&amp;q=75\"><div class=\"absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 backdrop-blur-sm transition-opacity duration-500 group-hover:opacity-100\"><span class=\"rounded-full bg-white px-6 py-3 text-xs font-bold uppercase tracking-widest text-black shadow-lg\">Voir</span></div></div><div class=\"flex items-start justify-between gap-3 px-1\"><h3 class=\"line-clamp-1 font-serif text-xl text-foreground transition-colors group-hover:text-terracotta\">Affiche Madame Hubert</h3><p class=\"shrink-0 font-bold text-brand\">35,90&nbsp;€</p></div></a>",
+      "computedStyles": {
+        "font-family": "\"Helvetica Neue\", Helvetica, Arial, sans-serif, sans-serif",
+        "font-size": "16px",
+        "font-weight": "700",
+        "line-height": "24px",
+        "color": "rgb(23, 23, 20)",
+        "background": "rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box",
+        "background-color": "rgba(0, 0, 0, 0)",
+        "padding": "0px",
+        "margin": "0px",
+        "display": "flex",
+        "position": "relative",
+        "gap": "16px",
+        "border-radius": "0px",
+        "box-shadow": "none"
+      },
+      "cssCustomProperties": {
+        "--font-geist": "\"Geist\", \"Geist Fallback\"",
+        "--font-elms-sans": "\"Manrope\", \"Manrope Fallback\"",
+        "--background": "#fff",
+        "--foreground": "#171714",
+        "--surface": "#e8e2d2",
+        "--surface-strong": "#d2c2a9",
+        "--brand": "#181713",
+        "--brand-contrast": "#fbf7ec",
+        "--muted": "#6f6a5d",
+        "--accent": "#747b4f",
+        "--terracotta": "#bd6745",
+        "--clay": "#cfa77f",
+        "--line": "#d8d0bd",
+        "--font-display": "\"Iowan Old Style\", \"Palatino Linotype\", Palatino, Georgia, serif",
+        "--font-body": "\"Avenir Next\", Avenir, \"Trebuchet MS\", sans-serif",
+        "--font-nav": "\"Helvetica Neue\", Helvetica, Arial, sans-serif"
+      },
+      "parentContext": "<div class=\"mt-6 flex gap-5 overflow-x-auto px-5 pb-2 md:px-[max(2rem,calc((100vw-80rem)/2+2rem))]\">",
+      "boundingRect": {
+        "width": 320,
+        "height": 444
+      }
+    }
+  },
+  "deliveryLease": null,
+  "checkpointRevision": 1,
+  "activeOwner": "bb7d2010",
+  "sourceMarkers": {},
+  "fallbackMode": null,
+  "annotationArtifacts": [],
+  "diagnostics": [],
+  "updatedAt": "2026-05-09T12:40:24.896Z"
+}

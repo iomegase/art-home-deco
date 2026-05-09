@@ -60,18 +60,18 @@ export type ThemeSettings = {
 };
 
 export const defaultThemeSettings: ThemeSettings = {
-  background: "#f4f1e8",
+  background: "#ffffff",
   foreground: "#171714",
-  surface: "#e8e2d2",
-  surfaceStrong: "#d2c2a9",
+  surface: "#ffffff",
+  surfaceStrong: "#ffffff",
   brand: "#181713",
-  brandContrast: "#fbf7ec",
+  brandContrast: "#ffffff",
   muted: "#6f6a5d",
   accent: "#747b4f",
   terracotta: "#bd6745",
   clay: "#cfa77f",
-  line: "#d8d0bd",
-  fontDisplay: '"Elms Sans", "Helvetica Neue", Helvetica, Arial, sans-serif',
+  line: "#e5e7eb",
+  fontDisplay: 'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
   fontBody: '"Helvetica Neue", Helvetica, Arial, sans-serif',
   fontNav: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };

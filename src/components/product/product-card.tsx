@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { trackSelectItem } from "@/lib/analytics/ecommerce";
-import { formatPriceCents, formatStockLabel } from "@/features/product/format";
+import { formatPriceCents } from "@/features/product/format";
 import { ProductImageFallback } from "@/components/product/product-image-fallback";
 import type { CatalogProduct } from "@/server/repositories/catalog.repository";
 
@@ -30,30 +30,31 @@ export function ProductCard({ product }: ProductCardProps) {
         })
       }
     >
-      <article className="grid gap-4">
-        <div className="relative aspect-[4/5] overflow-hidden bg-surface">
+      <article className="flex flex-col gap-5 transition-opacity hover:opacity-90">
+        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm bg-[#fcfcfc]">
           <ProductImageFallback
             src={primaryImage?.url}
             alt={primaryImage?.alt ?? product.title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover transition duration-500 group-hover:scale-[1.035]"
+            className="object-contain p-4 transition-transform duration-700 ease-out group-hover:scale-105"
           />
+          {/* Overlay subtil */}
+          <div className="absolute inset-0 bg-black/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           {isUnavailable ? (
-            <span className="absolute left-3 top-3 bg-brand px-3 py-1 text-xs font-bold text-brand-contrast">
+            <span className="absolute left-4 top-4 bg-white px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-slate-900 shadow-sm">
               Rupture
             </span>
           ) : null}
         </div>
 
-        <div>
-          <p className="text-xs font-bold uppercase text-muted">{category}</p>
-          <h3 className="mt-1 font-serif text-2xl leading-tight group-hover:text-terracotta">
+        <div className="flex flex-col items-center px-2 text-center">
+          <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">{category}</p>
+          <h3 className="mt-2 font-serif text-lg text-slate-800 transition-colors group-hover:text-terracotta">
             {product.title}
           </h3>
-          <div className="mt-3 flex items-center justify-between gap-4 text-sm">
-            <p className="font-bold text-brand">{formatPriceCents(product.priceCents)}</p>
-            <p className="text-muted">{formatStockLabel(product.stock, product.pickupOnly)}</p>
+          <div className="mt-2 text-sm">
+            <p className="font-light text-slate-600">{formatPriceCents(product.priceCents)}</p>
           </div>
         </div>
       </article>

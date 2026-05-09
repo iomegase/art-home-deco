@@ -35,7 +35,7 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
   };
 
   return (
-    <section className="relative mx-auto grid min-h-[820px] max-w-[1240px] grid-cols-1 items-center gap-16 px-6 pb-28 pt-20 md:px-16 lg:grid-cols-[430px_1fr_230px] lg:px-0">
+    <section className="relative mx-auto grid min-h-[820px] max-w-[1240px] grid-cols-1 items-center gap-16 overflow-x-clip px-6 pb-28 pt-20 md:px-16 lg:grid-cols-[430px_1fr_230px] lg:px-0">
       <style>{`
         .journal-panel-next {
           animation: journal-slide-next 320ms ease;
@@ -67,7 +67,7 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
         </p>
 
         <h2
-          className="relative z-10 max-w-[300px] text-[48px] font-[300] leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-[68px]"
+          className="relative z-10 max-w-[350px] text-[48px] font-[300] leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-[68px]"
           style={{
             fontFamily:
               'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
@@ -85,7 +85,7 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
           href={`/blog/${post.slug}`}
           className="relative z-10 mt-12 inline-flex h-[48px] w-[146px] items-center justify-center border border-[#dedede] bg-white/85 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717] hover:text-[#171717]"
         >
-          Voir l article
+          Lire l&apos;article
         </a>
     
         <div className="arrow-line relative z-10 mt-24 flex w-[105px] items-center justify-between text-[38px] font-extralight text-[#171717]/70">

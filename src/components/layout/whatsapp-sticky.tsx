@@ -278,7 +278,7 @@ export function WhatsAppSticky() {
               aria-label="Ouvrir le chat WhatsApp"
             >
               <MessageCircle size={18} aria-hidden="true" />
-              <span>WhatsApp Pro</span>
+              <span>La Boutique</span>
             </button>
           </div>
         )}

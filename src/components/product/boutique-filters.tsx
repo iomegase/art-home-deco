@@ -73,24 +73,24 @@ export function BoutiqueFilters({ categories, initialQuery, initialCategory, tot
   }
 
   return (
-    <section className="mt-8 border border-line bg-surface p-5 md:p-6">
-      <div className="grid gap-5 lg:grid-cols-[1.35fr_0.75fr_auto] lg:items-end">
-        <label className="grid gap-2 text-sm font-bold text-foreground">
+    <section className="mb-12 border-y border-slate-100 bg-white py-8">
+      <div className="grid gap-6 lg:grid-cols-[1.35fr_0.75fr_auto] lg:items-end">
+        <label className="grid gap-2 text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
           <span>Recherche</span>
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Rechercher un produit…"
-            className="w-full border border-line bg-background px-4 py-3 text-base outline-none transition placeholder:text-muted focus:border-foreground"
+            className="w-full border-b border-slate-200 bg-transparent px-0 py-3 text-sm outline-none transition placeholder:text-slate-300 focus:border-slate-800"
           />
         </label>
 
-        <label className="grid gap-2 text-sm font-bold text-foreground">
+        <label className="grid gap-2 text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
           <span>Categorie</span>
           <select
             value={category}
             onChange={(event) => handleCategoryChange(event.target.value)}
-            className="w-full border border-line bg-background px-4 py-3 text-base outline-none transition focus:border-foreground"
+            className="w-full border-b border-slate-200 bg-transparent px-0 py-3 text-sm outline-none transition focus:border-slate-800"
           >
             <option value="">Toutes les categories</option>
             {categories.map((entry) => (
@@ -105,23 +105,23 @@ export function BoutiqueFilters({ categories, initialQuery, initialCategory, tot
           type="button"
           onClick={handleReset}
           disabled={!hasActiveFilters}
-          className="border border-line px-5 py-3 text-sm font-bold text-foreground transition hover:border-foreground disabled:cursor-not-allowed disabled:opacity-45"
+          className="border border-slate-200 px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
         >
           Reinitialiser
         </button>
       </div>
 
-      <div className="mt-5 flex flex-col gap-3 border-t border-line pt-4 text-sm text-muted md:flex-row md:items-center md:justify-between">
+      <div className="mt-8 flex flex-col gap-3 text-sm font-light text-slate-500 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-wrap gap-2">
           <span className="font-bold text-foreground">{total}</span>
           <span>{total > 1 ? "produits visibles" : "produit visible"}</span>
           {query.trim() ? (
-            <span className="border border-line bg-background px-3 py-1 text-xs font-bold text-foreground">
+            <span className="bg-slate-50 px-3 py-1 text-xs text-slate-600 rounded-sm">
               Recherche: {query.trim()}
             </span>
           ) : null}
           {category ? (
-            <span className="border border-line bg-background px-3 py-1 text-xs font-bold text-foreground">
+            <span className="bg-slate-50 px-3 py-1 text-xs text-slate-600 rounded-sm">
               Categorie: {categories.find((entry) => entry.slug === category)?.title ?? category}
             </span>
           ) : null}

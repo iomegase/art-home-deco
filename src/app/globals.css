@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f1e8;
+  --background: #ffffff;
   --foreground: #171714;
-  --surface: #e8e2d2;
-  --surface-strong: #d2c2a9;
+  --surface: #ffffff;
+  --surface-strong: #ffffff;
   --brand: #181713;
-  --brand-contrast: #fbf7ec;
+  --brand-contrast: #ffffff;
   --muted: #6f6a5d;
   --accent: #747b4f;
   --terracotta: #bd6745;
   --clay: #cfa77f;
-  --line: #d8d0bd;
-  --font-display: "Elms Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --line: #e5e7eb;
+  --font-display: var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-nav: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -38,13 +38,14 @@ body {
   color: var(--foreground);
   font-family: var(--font-body), sans-serif;
   letter-spacing: 0;
+  overflow-x: hidden;
 }
 
 h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-display), serif;
+  font-family: var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif !important;
   font-weight: 300;
 }
 
@@ -68,3 +69,4 @@ nav a {
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
+

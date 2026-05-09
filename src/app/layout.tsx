@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { Manrope } from "next/font/google";
 import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-geist",
+});
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-elms-sans",
 });
 
 export const metadata: Metadata = {
@@ -39,18 +44,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${geist.variable} h-full antialiased`}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Elms+Sans:ital,wght@0,100..900;1,100..900&display=swap"
-        />
-      </head>
+    <html lang="fr" className={`${geist.variable} ${manrope.variable} h-full antialiased`}>
       <body suppressHydrationWarning className="min-h-full bg-background text-foreground">
         {children}
-      </body>
+      {/* impeccable-live-start */}
+<script src="http://localhost:8400/live.js"></script>
+{/* impeccable-live-end */}
+</body>
     </html>
   );
 }
