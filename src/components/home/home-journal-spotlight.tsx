@@ -52,33 +52,43 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
           100% { opacity: 1; transform: translateX(0); }
         }
       `}</style>
-
+      {/* hey codex je suis front end je dois se retrouver au dessus de background  */}
+      <div className="absolute left-0 top-0 " />
       <aside className="timeline absolute left-6 top-24 hidden h-[150px] w-8 md:left-16 md:block lg:left-0">
         <span className="timeline-dot relative mx-auto block h-5 w-5 rounded-full" />
       </aside>
 
-      <div key={`content-${post.id}`} className={`relative z-10 pl-0 md:pl-20 lg:pl-24 ${direction === "next" ? "journal-panel-next" : "journal-panel-prev"}`}>
-        <p className="mb-16 text-[12px] font-extrabold uppercase leading-relaxed tracking-[0.14em]">
+      <div
+        key={`content-${post.id}`}
+        className={`relative z-10 pl-0 md:pl-20 lg:pl-24 ${direction === "next" ? "journal-panel-next" : "journal-panel-prev"}`}
+      >
+        <p className="relative z-10 mb-16 text-[12px] font-extrabold uppercase leading-relaxed tracking-[0.14em]">
           {post.category || "Aticles"}
         </p>
 
-        <h2 className="max-w-[300px] text-[48px] font-[300] leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-[68px]">
+        <h2
+          className="relative z-10 max-w-[300px] text-[48px] font-[300] leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-[68px]"
+          style={{
+            fontFamily:
+              'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
+          }}
+        >
           {postTitleClamped}
           <br />
         </h2>
 
-        <p className="mt-12 max-w-[260px] text-[14px] leading-relaxed text-[#8d8d8d]">
+        <p className="relative z-10 mt-12 max-w-[300px] text-[12px] font-bold uppercase leading-5 tracking-[0.14em] text-slate-800">
           {post.excerpt}
         </p>
 
         <a
           href={`/blog/${post.slug}`}
-          className="mt-12 inline-flex h-[48px] w-[146px] items-center justify-center border border-[#dedede] bg-white text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717] hover:text-[#171717]"
+          className="relative z-10 mt-12 inline-flex h-[48px] w-[146px] items-center justify-center border border-[#dedede] bg-white/85 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717] hover:text-[#171717]"
         >
           Voir l article
         </a>
-
-        <div className="arrow-line relative mt-24 flex w-[105px] items-center justify-between text-[38px] font-extralight text-[#171717]/70">
+    
+        <div className="arrow-line relative z-10 mt-24 flex w-[105px] items-center justify-between text-[38px] font-extralight text-[#171717]/70">
           <button type="button" aria-label="Article précédent" onClick={goPrev}>
             <span>←</span>
           </button>
@@ -88,29 +98,32 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
         </div>
       </div>
 
-      <div key={`main-image-${post.id}`} className={`relative min-h-[600px] ${direction === "next" ? "journal-panel-next" : "journal-panel-prev"}`}>
-        <div className="absolute left-1/2 top-0 h-[560px] w-[560px] -translate-x-1/2 rounded-full bg-[#f1f1f0]" />
+      {/* hey codex cette partie doit se retrouver sous le contenu principal */}
+      <div className="absolute inset-x-0 top-[300px] space-y-7 z-0 lg:relative lg:col-span-2 lg:top-0 lg:grid lg:grid-cols-[1fr_230px]">
+        <div
+          key={`main-image-${post.id}`}
+          className={`group relative min-h-[600px] ${direction === "next" ? "journal-panel-next" : "journal-panel-prev"}`}
+        >
+          {/* 1. Pétale de fond (Nuage de base) */}
+          <div className="absolute left-[-10%] top-[120px] h-[350px] w-[400px] rotate-[-15deg] rounded-[60%_40%_70%_30%/50%] bg-slate-400/10 mix-blend-multiply blur-[2px] transition-all duration-[3000ms] ease-in-out group-hover:rotate-[-5deg] group-hover:scale-105 group-hover:rounded-[40%_60%_30%_70%/60%_40%_60%_40%] md:left-[8%] md:top-[130px] md:h-[500px] md:w-[550px]" />
 
-        <figure className="relative absolute left-1/2 top-[110px] z-10 h-[390px] w-[300px] -translate-x-1/2 overflow-hidden">
-          <Image
-            src={post.imageUrl || fallbackImageUrl}
-            alt={post.imageAlt || post.title}
-            fill
-            sizes="300px"
-            className="h-full w-full object-cover object-center opacity-90 mix-blend-multiply saturate-[0.9] contrast-[1.02]"
-          />
-        </figure>
-      </div>
+          {/* 2. Pétale de structure (Élancé) */}
+          <div className="absolute left-[45%] top-[-20px] h-[400px] w-[280px] rotate-[15deg] rounded-[40%_60%_30%_70%/60%_40%_60%_40%] bg-slate-200/40 mix-blend-multiply transition-all duration-[4000ms] ease-in-out group-hover:-translate-x-4 group-hover:rotate-[25deg] group-hover:rounded-[70%_30%_50%_50%/30%_70%_40%_60%] md:left-[50%] md:h-[550px] md:w-[350px]" />
 
-      <div key={`side-image-${post.id}`} className={`relative hidden min-h-[560px] lg:block ${direction === "next" ? "journal-panel-next" : "journal-panel-prev"}`}>
-        <div className="absolute left-2 top-0 h-[150px] w-[150px] overflow-hidden rounded-full bg-[#f1f1f0]">
-          <figure className="relative absolute left-[18px] top-[16px] h-[150px] w-[115px] overflow-hidden">
+          {/* 3. Pétale d'accent (Lumière chaude) */}
+          <div className="absolute right-[0%] top-[240px] h-[220px] w-[220px] rotate-[35deg] rounded-[50%_50%_30%_70%/50%_50%_70%_30%] bg-amber-100/20 mix-blend-multiply transition-all duration-[3500ms] ease-in-out group-hover:translate-y-4 group-hover:rotate-[20deg] group-hover:rounded-[30%_70%_60%_40%/50%_40%_60%_50%] md:right-[10%] md:top-[340px] md:h-[320px] md:w-[320px]" />
+
+          {/* 4. Le voile de verre (Celui qui unifie tout) */}
+          <div className="absolute left-[12%] top-[80px] z-10 h-[320px] w-[320px] rotate-[-8deg] rounded-[45%_55%_50%_50%/50%_50%_45%_55%] border border-white/40 bg-white/30 shadow-sm backdrop-blur-[6px] transition-all duration-[5000ms] ease-in-out group-hover:rotate-[5deg] group-hover:rounded-[55%_45%_60%_40%/45%_55%_40%_60%] md:left-[24%] md:top-[120px] md:h-[480px] md:w-[480px]" />
+
+          {/* L'image principale (en forme de pétale) */}
+          <figure className="absolute left-[60%] top-[110px] z-10 h-[400px] w-[400px] -translate-x-1/2 overflow-hidden bg-transparent">
             <Image
               src={post.imageUrl || fallbackImageUrl}
               alt={post.imageAlt || post.title}
               fill
-              sizes="115px"
-              className="h-full w-full object-cover object-center opacity-90 mix-blend-multiply saturate-[0.9] contrast-[1.02]"
+              sizes="300px"
+              className="h-[400px] drop-shadow-sm  object-cover rounded-[40%_60%_30%_70%/60%_40%_60%_40%] object-center mix-blend-multiply contrast-[1.05] saturate-[1.1] transition-all duration-[3000ms] ease-in-out group-hover:rounded-[55%_45%_60%_40%/45%_55%_40%_60%] md:left-[24%] md:top-[120px] md:h-[480px] md:w-[480px] "
             />
           </figure>
         </div>

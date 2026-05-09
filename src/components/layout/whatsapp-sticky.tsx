@@ -267,18 +267,20 @@ export function WhatsAppSticky() {
             {error ? <p className="px-4 pb-3 text-xs text-red-600">{error}</p> : null}
           </section>
         ) : (
-          <button
-            type="button"
-            onClick={() => {
-              trackWhatsappClick();
-              setIsOpen(true);
-            }}
-            className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-[1.02] hover:bg-[#1ebe5d]"
-            aria-label="Ouvrir le chat WhatsApp"
-          >
-            <MessageCircle size={18} aria-hidden="true" />
-            <span>WhatsApp Pro</span>
-          </button>
+          <div className="rounded-full bg-white/95 p-1 shadow-sm">
+            <button
+              type="button"
+              onClick={() => {
+                trackWhatsappClick();
+                setIsOpen(true);
+              }}
+              className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-[1.02] hover:bg-[#1ebe5d]"
+              aria-label="Ouvrir le chat WhatsApp"
+            >
+              <MessageCircle size={18} aria-hidden="true" />
+              <span>WhatsApp Pro</span>
+            </button>
+          </div>
         )}
       </div>
     </div>
