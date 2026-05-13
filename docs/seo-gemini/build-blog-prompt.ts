@@ -7,8 +7,25 @@ type BuildBlogPromptParams = {
 };
 
 async function readAiFile(relativePath: string) {
-  const filePath = path.join(process.cwd(), relativePath);
-  return fs.readFile(filePath, "utf8");
+  const candidates = [
+    path.join(process.cwd(), relativePath),
+    path.join(process.cwd(), "art-home-deco", relativePath),
+    path.join(process.cwd(), "..", relativePath),
+    path.join(process.cwd(), "..", "art-home-deco", relativePath),
+    path.join(process.cwd(), "..", "..", relativePath),
+  ];
+
+  for (const filePath of candidates) {
+    try {
+      return await fs.readFile(filePath, "utf8");
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException)?.code !== "ENOENT") {
+        throw error;
+      }
+    }
+  }
+
+  throw new Error(`AI file not found: ${relativePath}. Tried: ${candidates.join(", ")}`);
 }
 
 export async function buildBlogArticlePrompt({

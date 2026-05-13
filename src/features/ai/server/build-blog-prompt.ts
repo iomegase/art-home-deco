@@ -12,8 +12,25 @@ const AI_FILES = {
 } as const;
 
 async function readAiFile(relativePath: string) {
-  const filePath = path.join(process.cwd(), relativePath);
-  return readFile(filePath, "utf8");
+  const candidates = [
+    path.join(process.cwd(), relativePath),
+    path.join(process.cwd(), "art-home-deco", relativePath),
+    path.join(process.cwd(), "..", relativePath),
+    path.join(process.cwd(), "..", "art-home-deco", relativePath),
+    path.join(process.cwd(), "..", "..", relativePath),
+  ];
+
+  for (const filePath of candidates) {
+    try {
+      return await readFile(filePath, "utf8");
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException)?.code !== "ENOENT") {
+        throw error;
+      }
+    }
+  }
+
+  throw new Error(`AI file not found: ${relativePath}. Tried: ${candidates.join(", ")}`);
 }
 
 function formatIntentAsAngle(intent: AiBlogDraftInput["intent"]) {
