@@ -1,4 +1,5 @@
-import type { CSSProperties, Metadata } from "next";
+import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { Geist } from "next/font/google";
 import { Manrope } from "next/font/google";
 import { defaultThemeSettings } from "@/features/admin-home/types";

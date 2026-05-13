@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import NextLink from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { ShoppingCart } from "lucide-react";
 import { getCartItemCount } from "@/features/cart/count";
 import { readCart } from "@/features/cart/storage";
 
@@ -11,7 +12,7 @@ const primaryLinks = [
   { href: "/", label: "Accueil" },
   { href: "/boutique", label: "Boutique" },
   { href: "/blog", label: "Journal" },
-  { href: "/livraison-retours", label: "Livraison & Retours" },
+
   { href: "/contact", label: "Contact" },
 ];
 
@@ -67,7 +68,7 @@ export function SiteNav() {
               priority
             />
           </span>
-          <span className="text-[14px] font-semibold tracking-[0.01em] text-[#171717] sm:hidden">Art Home Déco</span>
+          {/* <span className="text-[14px] font-semibold tracking-[0.01em] text-[#171717] sm:hidden">Art Home Déco</span> */}
         </NextLink>
 
         <nav className="hidden items-center gap-7 lg:flex xl:gap-9" aria-label="Navigation principale">
@@ -75,8 +76,8 @@ export function SiteNav() {
             <NextLink
               key={link.href}
               href={link.href}
-              className={`text-[11px] font-bold uppercase tracking-[0.16em] transition-colors ${
-                isActiveLink(link.href) ? "text-[#171717]" : "text-[#171717]/70 hover:text-[#171717]"
+              className={`text-[11px]! font-bold uppercase! tracking-[0.16em]! transition-colors! ${
+                isActiveLink(link.href) ? "text-[#171717]!" : "text-[#171717]/70! hover:text-[#171717]!"
               }`}
             >
               {link.label}
@@ -85,17 +86,15 @@ export function SiteNav() {
         </nav>
 
         <div className="ml-auto hidden items-center gap-5 text-[#171717] lg:flex">
-          <span className="relative block h-[18px] w-[18px] rounded-full border-2 border-current opacity-70 after:absolute after:-bottom-[5px] after:-right-[5px] after:h-0.5 after:w-2 after:rotate-45 after:bg-current after:content-['']" />
+        
 
-          <span className="relative block h-[20px] w-[16px] rounded-t-full border-2 border-current border-b-0 opacity-70 after:absolute after:left-1/2 after:top-[9px] after:h-[12px] after:w-[22px] after:-translate-x-1/2 after:rounded-b-[7px] after:border-2 after:border-current after:content-['']" />
+   
 
           <NextLink href="/panier" className="flex items-center gap-3 border-l border-black/10 pl-5">
-            <span className="relative block h-[18px] w-[22px] rounded-sm border-2 border-current">
-              <span className="absolute -right-2 -top-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#171717] px-1 text-[9px] font-bold text-white">
-                {cartItemCount}
-              </span>
-            </span>
-            <span className="text-[13px] font-bold tracking-[0.08em]">PANIER ({cartItemCount})</span>
+           
+              <ShoppingCart className=" h-7 w-7 bg-white text-[#171717]"  />
+          
+          
           </NextLink>
         </div>
 

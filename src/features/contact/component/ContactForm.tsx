@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronRight } from "lucide-react";
 import {
   contactProfileOptions,
   contactRequestSchema,
@@ -181,7 +182,7 @@ export function ContactForm() {
 
   /* ── Formulaire ── */
   return (
-    <div className="grid border-t border-[#e5e7eb] pt-12 lg:grid-cols-[360px_1fr] lg:gap-24">
+    <div className="grid pt-12 lg:grid-cols-[360px_1fr] lg:gap-24">
 
       {/* ── Colonne gauche : sélecteur de profil ── */}
       <div>
@@ -206,7 +207,7 @@ export function ContactForm() {
                     {option.title}
                   </span>
                   {active && (
-                    <span className="text-[22px] font-extralight">→</span>
+                    <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
                   )}
                 </div>
                 {active && (
@@ -390,7 +391,7 @@ export function ContactForm() {
         </div>
 
         {/* Consentements */}
-        <div className="grid gap-4 border-t border-[#e5e7eb] pt-6">
+        <div className="grid gap-4 pt-6">
           <label className="flex items-start gap-3 text-[12px] leading-6 text-slate-600">
             <input
               type="checkbox"
@@ -430,10 +431,8 @@ export function ContactForm() {
         )}
 
         {/* Submit */}
-        <div className="flex flex-col gap-3 border-t border-[#e5e7eb] pt-6">
-          <p className="text-[11px] uppercase tracking-[0.1em] text-[#b0a99a]">
-            Formulaire sécurisé — aucune donnée exposée côté client.
-          </p>
+        <div className="flex flex-col gap-3  pt-6">
+         
           <button
             type="submit"
             disabled={loading}
