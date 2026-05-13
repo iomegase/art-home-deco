@@ -20,7 +20,7 @@ const navInfo = [
   { label: "Mentions légales", href: "/mentions-legales" },
   { label: "CGV", href: "/cgv" },
   { label: "CGU", href: "/cgu" },
-  { label: "Confidentialité", href: "/politique-confidentialite" },
+  { label: "Confidentialité", href: "/politique-de-confidentialite" },
 ];
 
 function NavLink({

@@ -98,11 +98,11 @@ export function createLegalPages(legal: LegalSettings = defaultLegalSettings): R
         ],
       },
       {
-        title: "Directeur de la publication",
+        title: "Directrice de la publication",
         blocks: [
           {
             type: "paragraph",
-            text: `Le directeur de la publication est ${legalCompany.publisher}.`,
+            text: `La directrice de la publication est ${legalCompany.publisher}.`,
           },
         ],
       },
