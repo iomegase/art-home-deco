@@ -128,7 +128,7 @@ export default async function AdminHomeContentPage() {
             La galerie et les cartes du journal sont alimentées automatiquement depuis les produits et les articles publiés.
           </div>
 
-          <div className="fixed inset-x-3 bottom-3 z-30 rounded-2xl bg-[#0f1115] px-4 py-3 text-white shadow-[0_18px_40px_-16px_rgba(15,17,21,0.18)] lg:sticky lg:inset-x-auto lg:bottom-4">
+          <div className="fixed bottom-3 left-3 right-3 z-30 rounded-2xl bg-[#0f1115] px-4 py-3 text-white shadow-[0_18px_40px_-16px_rgba(15,17,21,0.18)] md:left-[calc(292px+2rem)] md:right-8 xl:right-10">
             <div className="flex flex-wrap items-center gap-3">
               <div className="inline-flex items-center gap-2 text-[12px]">
                 <span className="h-2 w-2 rounded-full bg-[#10b981]" />

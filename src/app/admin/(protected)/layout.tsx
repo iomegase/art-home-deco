@@ -4,20 +4,35 @@ import { db } from "@/server/db/client";
 import { getAdminSession } from "@/server/security/auth";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { getSiteSettings } from "@/server/repositories/site-settings.repository";
+import { defaultThemeSettings } from "@/features/admin-home/types";
 
 export default async function ProtectedAdminLayout({ children }: { children: ReactNode }) {
   const session = await getAdminSession();
-  const [{ theme }, productCount, blogCount] = await Promise.all([
-    getSiteSettings(),
-    db.product.count({
-      where: {
-        status: {
-          not: "archived",
+  
+  let theme = defaultThemeSettings;
+  let productCount = 0;
+  let blogCount = 0;
+  
+  try {
+    const [settings, products, blogs] = await Promise.all([
+      getSiteSettings(),
+      db.product.count({
+        where: {
+          status: {
+            not: "archived",
+          },
         },
-      },
-    }),
-    db.blogPost.count(),
-  ]);
+      }),
+      db.blogPost.count(),
+    ]);
+    
+    theme = settings.theme;
+    productCount = products;
+    blogCount = blogs;
+  } catch (error) {
+    console.error("Failed to load admin layout data, using defaults:", error);
+    // Continue with defaults
+  }
 
   if (!session) {
     redirect("/admin/login");

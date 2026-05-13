@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import NextLink from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductImageFallback } from "@/components/product/product-image-fallback";
 import { formatPriceCents } from "@/features/product/format";
 
@@ -60,7 +61,7 @@ export function HomeProductSpotlight({ products }: Props) {
       {/* Contenu — en flux normal sur mobile (z-10), colonne droite sur lg (order-2) */}
       <div
         key={`content-${product.id}`}
-        className={`relative z-10 pl-0 md:pl-20 lg:order-2 lg:pl-0 ${animClass}`}
+        className={`ml-10 relative z-10 pl-0 md:pl-20 lg:order-2 lg:pl-0 ${animClass}`}
       >
         <p className="mb-5 hidden sm:block text-[10px] font-bold uppercase tracking-[0.22em] text-[#b0a99a] md:mb-8">
           {category}
@@ -82,21 +83,21 @@ export function HomeProductSpotlight({ products }: Props) {
 
         <NextLink
           href={`/boutique/${product.slug}`}
-          className="mt-7 inline-flex h-[46px] w-[146px] items-center justify-center border border-[#dedede] bg-white/85 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717] hover:text-[#171717]"
+          className="mt-7 inline-flex h-[46px] w-[146px] items-center uppercase! tracking-widest! justify-center border border-[#dedede] bg-white/85 text-[11px] font-bold   transition hover:border-[#171717] hover:text-[#171717]"
         >
           Voir l&apos;article
         </NextLink>
 
-        <p className="mt-4 text-[28px] font-[300] tracking-[-0.02em] text-[#b0a99a] md:text-[32px]">
+        <p className="mt-4 text-[28px] font-light tracking-[-0.02em] text-[#b0a99a] md:text-[32px]">
           {formatPriceCents(product.priceCents)}
         </p>
 
         <div className="arrow-line relative mt-8 flex w-[105px] items-center justify-between text-[38px] font-extralight text-[#171717]/70 md:mt-14">
           <button type="button" aria-label="Produit précédent" onClick={goPrev}>
-            <span>←</span>
+            <ChevronLeft className="h-8 w-8" strokeWidth={1.5} />
           </button>
           <button type="button" aria-label="Produit suivant" onClick={goNext}>
-            <span>→</span>
+            <ChevronRight className="h-8 w-8" strokeWidth={1.5} />
           </button>
         </div>
       </div>

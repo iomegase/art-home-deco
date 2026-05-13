@@ -2,13 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { adminHomeContentSchema, adminThemeSchema } from "@/schemas/forms/admin-home.schema";
+import { adminHomeContentSchema, adminLegalSchema, adminStoreStatusSchema, adminThemeSchema } from "@/schemas/forms/admin-home.schema";
 import { requireAdmin } from "@/server/security/auth";
 import { getSiteSettings, upsertSiteSettings } from "@/server/repositories/site-settings.repository";
 import { uploadHomeImage } from "@/server/services/site-settings/upload-home-image";
 
 function value(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
+}
+
+function checked(formData: FormData, key: string) {
+  return formData.get(key) === "on";
 }
 
 const homeImageTargetSchema = z.enum([
@@ -89,6 +93,8 @@ export async function updateHomeContentAction(formData: FormData) {
       newsletterButtonLabel: parsed.newsletterButtonLabel,
     },
     theme: current.theme,
+    legal: current.legal,
+    storeStatus: current.storeStatus,
   });
 
   revalidatePath("/");
@@ -121,6 +127,8 @@ export async function updateThemeSettingsAction(formData: FormData) {
   await upsertSiteSettings({
     homeContent: current.homeContent,
     theme: parsed,
+    legal: current.legal,
+    storeStatus: current.storeStatus,
   });
 
   revalidatePath("/");
@@ -157,9 +165,91 @@ export async function uploadHomeImageAction(formData: FormData) {
   await upsertSiteSettings({
     homeContent: nextHomeContent,
     theme: current.theme,
+    legal: current.legal,
+    storeStatus: current.storeStatus,
   });
 
   revalidatePath("/");
   revalidatePath("/", "layout");
   revalidatePath("/admin/home");
+}
+
+export async function updateLegalSettingsAction(formData: FormData) {
+  await requireAdmin();
+
+  const parsed = adminLegalSchema.parse({
+    commercialName: value(formData, "commercialName"),
+    legalName: value(formData, "legalName"),
+    legalForm: value(formData, "legalForm"),
+    capital: value(formData, "capital"),
+    address: value(formData, "address"),
+    siren: value(formData, "siren"),
+    rcs: value(formData, "rcs"),
+    vat: value(formData, "vat"),
+    email: value(formData, "email"),
+    phone: value(formData, "phone"),
+    publisher: value(formData, "publisher"),
+    domain: value(formData, "domain"),
+    hostName: value(formData, "hostName"),
+    hostAddress: value(formData, "hostAddress"),
+    hostPhone: value(formData, "hostPhone"),
+    mediatorName: value(formData, "mediatorName"),
+    mediatorAddress: value(formData, "mediatorAddress"),
+    mediatorWebsite: value(formData, "mediatorWebsite"),
+    returnAddress: value(formData, "returnAddress"),
+    lastUpdated: value(formData, "lastUpdated"),
+  });
+
+  const current = await getSiteSettings();
+
+  await upsertSiteSettings({
+    homeContent: current.homeContent,
+    theme: current.theme,
+    legal: parsed,
+    storeStatus: current.storeStatus,
+  });
+
+  revalidatePath("/mentions-legales");
+  revalidatePath("/politique-confidentialite");
+  revalidatePath("/cookies");
+  revalidatePath("/cgv");
+  revalidatePath("/cgu");
+  revalidatePath("/donnees-personnelles");
+  revalidatePath("/admin/settings");
+}
+
+export async function updateStoreStatusSettingsAction(formData: FormData) {
+  await requireAdmin();
+
+  const parsed = adminStoreStatusSchema.parse({
+    whatsappEnabled: checked(formData, "whatsappEnabled"),
+    physicalStoreEnabled: checked(formData, "physicalStoreEnabled"),
+    showPopupWhenClosed: checked(formData, "showPopupWhenClosed"),
+    vacationModeEnabled: checked(formData, "vacationModeEnabled"),
+    timezone: value(formData, "timezone"),
+    openDays: formData
+      .getAll("openDays")
+      .map((day) => String(day).trim())
+      .filter(Boolean),
+    morningOpenTime: value(formData, "morningOpenTime"),
+    morningCloseTime: value(formData, "morningCloseTime"),
+    afternoonOpenTime: value(formData, "afternoonOpenTime"),
+    afternoonCloseTime: value(formData, "afternoonCloseTime"),
+    closedMessage: value(formData, "closedMessage"),
+    vacationMessage: value(formData, "vacationMessage"),
+    vacationReturnDate: value(formData, "vacationReturnDate"),
+  });
+
+  const current = await getSiteSettings();
+
+  await upsertSiteSettings({
+    homeContent: current.homeContent,
+    theme: current.theme,
+    legal: current.legal,
+    storeStatus: parsed,
+  });
+
+  revalidatePath("/");
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/settings");
 }

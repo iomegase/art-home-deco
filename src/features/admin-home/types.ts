@@ -59,6 +59,47 @@ export type ThemeSettings = {
   fontNav: string;
 };
 
+export type LegalSettings = {
+  commercialName: string;
+  legalName: string;
+  legalForm: string;
+  capital: string;
+  address: string;
+  siren: string;
+  rcs: string;
+  vat: string;
+  email: string;
+  phone: string;
+  publisher: string;
+  domain: string;
+  hostName: string;
+  hostAddress: string;
+  hostPhone: string;
+  mediatorName: string;
+  mediatorAddress: string;
+  mediatorWebsite: string;
+  returnAddress: string;
+  lastUpdated: string;
+};
+
+export type StoreDay = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
+
+export type StoreStatusSettings = {
+  whatsappEnabled: boolean;
+  physicalStoreEnabled: boolean;
+  showPopupWhenClosed: boolean;
+  vacationModeEnabled: boolean;
+  timezone: string;
+  openDays: StoreDay[];
+  morningOpenTime: string;
+  morningCloseTime: string;
+  afternoonOpenTime: string;
+  afternoonCloseTime: string;
+  closedMessage: string;
+  vacationMessage: string;
+  vacationReturnDate: string;
+};
+
 export const defaultThemeSettings: ThemeSettings = {
   background: "#ffffff",
   foreground: "#171714",
@@ -74,6 +115,45 @@ export const defaultThemeSettings: ThemeSettings = {
   fontDisplay: 'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
   fontBody: '"Helvetica Neue", Helvetica, Arial, sans-serif',
   fontNav: '"Helvetica Neue", Helvetica, Arial, sans-serif',
+};
+
+export const defaultLegalSettings: LegalSettings = {
+  commercialName: "Art Home Déco",
+  legalName: "[DENOMINATION_SOCIALE]",
+  legalForm: "[FORME_JURIDIQUE]",
+  capital: "[CAPITAL_SOCIAL]",
+  address: "[ADRESSE_SIEGE]",
+  siren: "[SIREN]",
+  rcs: "[RCS_VILLE]",
+  vat: "[NUMERO_TVA]",
+  email: "[EMAIL_CONTACT]",
+  phone: "[TELEPHONE]",
+  publisher: "[DIRECTEUR_PUBLICATION]",
+  domain: "[DOMAINE]",
+  hostName: "[HEBERGEUR_NOM]",
+  hostAddress: "[HEBERGEUR_ADRESSE]",
+  hostPhone: "[HEBERGEUR_TELEPHONE]",
+  mediatorName: "[MEDIATEUR_NOM]",
+  mediatorAddress: "[MEDIATEUR_ADRESSE]",
+  mediatorWebsite: "[MEDIATEUR_SITE]",
+  returnAddress: "[ADRESSE_RETOUR]",
+  lastUpdated: "[DATE_DERNIERE_MAJ]",
+};
+
+export const defaultStoreStatusSettings: StoreStatusSettings = {
+  whatsappEnabled: true,
+  physicalStoreEnabled: true,
+  showPopupWhenClosed: true,
+  vacationModeEnabled: false,
+  timezone: "Europe/Paris",
+  openDays: ["tue", "wed", "thu", "fri", "sat"],
+  morningOpenTime: "09:00",
+  morningCloseTime: "12:00",
+  afternoonOpenTime: "15:00",
+  afternoonCloseTime: "19:00",
+  closedMessage: "La boutique physique est actuellement fermée.",
+  vacationMessage: "La boutique est en vacances, retour le",
+  vacationReturnDate: "",
 };
 
 export const defaultHomeContent: HomeContent = {

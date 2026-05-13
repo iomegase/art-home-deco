@@ -1,3 +1,25 @@
-export default function Page() {
-  return <section className="mx-auto max-w-6xl px-6 py-16">Page en construction.</section>;
+import type { Metadata } from "next";
+import { LegalPage } from "@/components/legal/LegalPage";
+import { createLegalPages } from "@/data/legal-pages";
+import { getSiteSettings } from "@/server/repositories/site-settings.repository";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { legal } = await getSiteSettings();
+  const page = createLegalPages(legal)["politique-de-confidentialite"];
+
+  return {
+    title: `${page.title} | Art Home Déco`,
+    description: page.description,
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
+
+export default async function PolitiqueDeConfidentialitePage() {
+  const { legal } = await getSiteSettings();
+  const page = createLegalPages(legal)["politique-de-confidentialite"];
+
+  return <LegalPage page={page} />;
 }

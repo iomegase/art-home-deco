@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { PublicBlogPost } from "@/server/repositories/blog.repository";
 
 type Props = {
@@ -82,17 +83,17 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
 
         <a
           href={`/blog/${post.slug}`}
-          className="relative z-10 mt-7 inline-flex h-[46px] w-[146px] items-center justify-center border border-[#dedede] bg-white/85 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717] hover:text-[#171717]"
+          className="relative z-10 mt-7 inline-flex h-[46px] w-[146px] items-center uppercase! tracking-widest! justify-center border border-[#dedede] bg-white/85 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717] hover:text-[#171717]"
         >
           Lire l&apos;article
         </a>
 
         <div className="arrow-line relative z-10 mt-8 flex w-[105px] items-center justify-between text-[38px] font-extralight text-[#171717]/70 md:mt-14">
           <button type="button" aria-label="Article précédent" onClick={goPrev}>
-            <span>←</span>
+             <ChevronLeft className="h-8 w-8" strokeWidth={1.5} />
           </button>
           <button type="button" aria-label="Article suivant" onClick={goNext}>
-            <span>→</span>
+           <ChevronRight className="h-8 w-8" strokeWidth={1.5} />
           </button>
         </div>
       </div>

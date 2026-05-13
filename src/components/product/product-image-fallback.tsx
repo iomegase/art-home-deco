@@ -18,12 +18,14 @@ export function ProductImageFallback({
   const normalizedSrc = src?.trim() || fallbackSrc;
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const currentSrc = failedSrc === normalizedSrc ? fallbackSrc : normalizedSrc;
+  const isExternalImage = /^https?:\/\//i.test(currentSrc);
 
   return (
     <Image
       {...props}
       src={currentSrc}
       alt={alt}
+      unoptimized={isExternalImage}
       onError={() => {
         if (currentSrc !== fallbackSrc) {
           setFailedSrc(normalizedSrc);

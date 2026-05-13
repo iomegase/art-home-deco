@@ -5,7 +5,7 @@ import { getSiteSettings } from "@/server/repositories/site-settings.repository"
 
 export async function generateMetadata(): Promise<Metadata> {
   const { legal } = await getSiteSettings();
-  const page = createLegalPages(legal).cgv;
+  const page = createLegalPages(legal)["donnees-personnelles"];
 
   return {
     title: `${page.title} | Art Home Déco`,
@@ -17,9 +17,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function CgvPage() {
+export default async function DonneesPersonnellesPage() {
   const { legal } = await getSiteSettings();
-  const page = createLegalPages(legal).cgv;
+  const page = createLegalPages(legal)["donnees-personnelles"];
 
   return <LegalPage page={page} />;
 }

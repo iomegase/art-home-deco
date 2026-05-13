@@ -3,18 +3,23 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import type { StoreStatusSettings } from "@/features/admin-home/types";
+import { formatOpenDays, formatOpenHours, isStoreOpenNow } from "@/lib/store-status";
 import { trackEmailClick, trackPhoneClick } from "@/lib/analytics/events";
 
 const navBoutique = [
+  { label: "Accueil", href: "/" },
   { label: "Boutique", href: "/boutique" },
   { label: "Journal", href: "/blog" },
-  { label: "Livraison & Retours", href: "/livraison-et-retours" },
+
   { label: "Contact", href: "/contact" },
 ];
 
 const navInfo = [
+  { label: "Données personnelles", href: "/donnees-personnelles" },
   { label: "Mentions légales", href: "/mentions-legales" },
-  { label: "CGV & Livraison", href: "/cgv" },
+  { label: "CGV", href: "/cgv" },
+  { label: "CGU", href: "/cgu" },
   { label: "Confidentialité", href: "/politique-confidentialite" },
 ];
 
@@ -59,10 +64,22 @@ function ContactLink({
   );
 }
 
-export function SiteFooter() {
+export function SiteFooter({ storeStatus }: { storeStatus: StoreStatusSettings }) {
   const currentYear = new Date().getFullYear();
-  const siret = process.env.NEXT_PUBLIC_COMPANY_SIRET;
-  const vatNumber = process.env.NEXT_PUBLIC_COMPANY_VAT;
+  const commercialName = process.env.NEXT_PUBLIC_LEGAL_COMMERCIAL_NAME || "Art Home Déco";
+  const legalAddress =
+    process.env.NEXT_PUBLIC_LEGAL_ADDRESS ||
+    "96 rue du Mont Blanc, 74170 Saint-Gervais-les-Bains, France";
+  const legalEmail = process.env.NEXT_PUBLIC_LEGAL_EMAIL || "arthome74@gmail.com";
+  const legalPhone = process.env.NEXT_PUBLIC_LEGAL_PHONE || "06 64 75 35 35";
+  const siret = process.env.NEXT_PUBLIC_LEGAL_SIREN || process.env.NEXT_PUBLIC_COMPANY_SIRET;
+  const vatNumber = process.env.NEXT_PUBLIC_LEGAL_VAT || process.env.NEXT_PUBLIC_COMPANY_VAT;
+
+  const telHref = `tel:${legalPhone.replace(/\s+/g, "")}`;
+  const mailHref = `mailto:${legalEmail}`;
+  const [isStoreOpen, setIsStoreOpen] = useState(false);
+  const openDaysText = formatOpenDays(storeStatus.openDays);
+  const openHoursText = formatOpenHours(storeStatus);
 
   const footerRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -71,12 +88,24 @@ export function SiteFooter() {
     const el = footerRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
       { threshold: 0.08 },
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    const updateStoreOpenState = () => {
+      setIsStoreOpen(isStoreOpenNow(storeStatus));
+    };
+
+    updateStoreOpenState();
+    const timer = setInterval(updateStoreOpenState, 60_000);
+    return () => clearInterval(timer);
+  }, [storeStatus]);
 
   const col = (delay: string) =>
     `transition-all duration-700 ease-out ${delay} ${
@@ -87,49 +116,61 @@ export function SiteFooter() {
     <footer className="bg-white">
       <div
         ref={footerRef}
-        className="mx-auto max-w-[1240px] px-6 py-20 md:px-16 md:py-28 lg:px-0"
+        className="mx-auto max-w-310 px-6 py-20 md:px-16 md:py-28 lg:px-0"
       >
         {/* ── Brand ── */}
-        <div className={`flex flex-col gap-12 ${col("delay-[0ms]")}`}>
-          <div className="flex flex-col gap-4">
+        <div className={`flex flex-col gap-4 ${col("delay-[0ms]")}`}>
+          <div className="flex flex-row items-center gap-3">
             <Link
               href="/"
-              className="relative block h-9 w-[120px] opacity-80 transition-opacity duration-300 hover:opacity-100"
+              className="relative block h-10 w-10 opacity-80 transition-opacity duration-300 hover:opacity-100"
             >
               <Image
                 src="/logo.png"
                 alt="Art Home Déco"
-                fill
-                sizes="120px"
-                className="object-contain object-left"
+                width={40}  
+                height={40}
+                className="object-contain "
               />
             </Link>
-
-            <h2 className="text-[52px] font-[300] leading-[0.9] tracking-[-0.04em] text-[#171717] md:text-[72px]">
-              Art Home
-              <br />
-              <span className="text-[#b0a99a]">Déco.</span>
-            </h2>
+            <div className="relative flex items-center">
+              <h2 className="text-2xl font-light leading-[0.9] tracking-[-0.04em] text-[#171717] ">
+                {commercialName}
+              </h2>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-3 text-[12px] font-bold uppercase tracking-[0.1em] text-[#b0a99a]">
-            <address className="not-italic leading-6">
-              96 rue du Mont Blanc
-              <br />
-              74170 Saint-Gervais-les-Bains
+          <div className="flex flex-col gap-1 text-[12px] font-black uppercase tracking-wider "> 
+            <address className="not-italic ">
+              {legalAddress}
             </address>
-            <ContactLink href="tel:+33607859058" onClick={() => trackPhoneClick()}>
-              06 07 85 90 58
+            <ContactLink
+              href={telHref}
+              onClick={() => trackPhoneClick()}
+            
+            >
+              {legalPhone}
             </ContactLink>
-            <ContactLink href="mailto:contact@arthome.com" onClick={() => trackEmailClick()}>
-              contact@arthome.com
+            <ContactLink
+              href={mailHref}
+              onClick={() => trackEmailClick()}
+            >
+              {legalEmail}
             </ContactLink>
+            <div className="mt-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#171717]">
+              <span className={`h-2.5 w-2.5 rounded-full ${isStoreOpen ? "bg-green-500" : "bg-red-500"}`} />
+              Boutique Saint Gervais {isStoreOpen ? "ouverte" : "fermée"}
+            </div>
+            <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-[#6b7280]">
+              Ouvert {openDaysText} - {openHoursText}
+            </p>
           </div>
         </div>
 
         {/* ── Bas du footer : nav + copyright ── */}
-        <div className={`mt-20 border-t border-[#e5e7eb] pt-8 ${col("delay-[150ms]")}`}>
-
+        <div
+          className={`mt-10 border-t border-[#e5e7eb] pt-8 ${col("delay-150")}`}
+        >
           {/* Nav horizontale */}
           <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
             <div className="flex flex-col gap-3">
@@ -138,7 +179,11 @@ export function SiteFooter() {
               </p>
               <nav className="flex flex-wrap gap-x-6 gap-y-2">
                 {navBoutique.map((item) => (
-                  <NavLink key={item.href} href={item.href} className="text-[10px] tracking-[0.12em]">
+                  <NavLink
+                    key={item.href}
+                    href={item.href}
+                    className="text-[10px] tracking-[0.12em]"
+                  >
                     {item.label}
                   </NavLink>
                 ))}
@@ -151,7 +196,11 @@ export function SiteFooter() {
               </p>
               <nav className="flex flex-wrap gap-x-6 gap-y-2">
                 {navInfo.map((item) => (
-                  <NavLink key={item.href} href={item.href} className="text-[10px] tracking-[0.12em]">
+                  <NavLink
+                    key={item.href}
+                    href={item.href}
+                    className="text-[10px] tracking-[0.12em]"
+                  >
                     {item.label}
                   </NavLink>
                 ))}
@@ -160,11 +209,13 @@ export function SiteFooter() {
           </div>
 
           {/* Copyright */}
-          <div className={`mt-10 flex flex-col gap-4 border-t border-[#e5e7eb] pt-6 sm:flex-row sm:items-center sm:justify-between ${col("delay-[300ms]")}`}>
+          <div
+            className={`mt-10 flex flex-col gap-4 border-t border-[#e5e7eb] pt-6 sm:flex-row sm:items-center sm:justify-between ${col("delay-[300ms]")}`}
+          >
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#b0a99a]">
               © {currentYear} Art Home Déco
             </p>
-            <div className="flex flex-wrap gap-6 text-[10px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">
+            <div className="flex flex-wrap gap-6 text-[10px] font-light uppercase tracking-[0.12em] text-[#bd9254]">
               {siret && <span>SIRET {siret}</span>}
               {vatNumber && <span>TVA {vatNumber}</span>}
             </div>

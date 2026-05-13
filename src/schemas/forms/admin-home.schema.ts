@@ -16,6 +16,10 @@ const colorSchema = z.preprocess(
 );
 const requiredText = (label: string) => z.string().trim().min(1, `${label} est requis`);
 const urlSchema = z.string().trim().url("URL invalide");
+const timeSchema = z
+  .string()
+  .trim()
+  .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Horaire invalide (format HH:mm)");
 
 export const adminHomeContentSchema = z.object({
   homeBackgroundColor: colorSchema,
@@ -62,4 +66,43 @@ export const adminThemeSchema = z.object({
   fontDisplay: requiredText("Police display"),
   fontBody: requiredText("Police body"),
   fontNav: requiredText("Police navigation"),
+});
+
+export const adminLegalSchema = z.object({
+  commercialName: requiredText("Nom commercial"),
+  legalName: requiredText("Dénomination sociale"),
+  legalForm: requiredText("Forme juridique"),
+  capital: requiredText("Capital social"),
+  address: requiredText("Adresse du siège"),
+  siren: requiredText("SIREN"),
+  rcs: requiredText("RCS"),
+  vat: requiredText("TVA"),
+  email: requiredText("Email"),
+  phone: requiredText("Téléphone"),
+  publisher: requiredText("Directeur de publication"),
+  domain: requiredText("Domaine"),
+  hostName: requiredText("Nom hébergeur"),
+  hostAddress: requiredText("Adresse hébergeur"),
+  hostPhone: requiredText("Téléphone hébergeur"),
+  mediatorName: requiredText("Nom médiateur"),
+  mediatorAddress: requiredText("Adresse médiateur"),
+  mediatorWebsite: requiredText("Site médiateur"),
+  returnAddress: requiredText("Adresse retour"),
+  lastUpdated: requiredText("Dernière mise à jour"),
+});
+
+export const adminStoreStatusSchema = z.object({
+  whatsappEnabled: z.boolean(),
+  physicalStoreEnabled: z.boolean(),
+  showPopupWhenClosed: z.boolean(),
+  vacationModeEnabled: z.boolean(),
+  timezone: requiredText("Fuseau horaire"),
+  openDays: z.array(z.enum(["mon", "tue", "wed", "thu", "fri", "sat", "sun"])).min(1, "Sélectionnez au moins un jour"),
+  morningOpenTime: timeSchema,
+  morningCloseTime: timeSchema,
+  afternoonOpenTime: timeSchema,
+  afternoonCloseTime: timeSchema,
+  closedMessage: requiredText("Message fermeture"),
+  vacationMessage: requiredText("Message vacances"),
+  vacationReturnDate: z.string().trim().optional().default(""),
 });
