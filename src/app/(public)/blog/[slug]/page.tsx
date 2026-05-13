@@ -22,11 +22,7 @@ type BlogPostPageProps = {
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = await findPublishedBlogPostBySlug(slug);
-
-  if (!post) {
-    return {};
-  }
-
+  if (!post) return {};
   return buildBlogMetadata(post);
 }
 
@@ -34,164 +30,193 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   const post = await findPublishedBlogPostBySlug(slug);
 
-  if (!post) {
-    notFound();
-  }
+  if (!post) notFound();
 
   const jsonLd = buildBlogArticleJsonLd(post);
   const breadcrumbJsonLd = buildBlogBreadcrumbJsonLd(post);
   const imageAlt = buildBlogImageAlt(post);
   const authorLabel = post.authorLabel ?? getDefaultBlogAuthorLabel();
   const defaultCta = getDefaultBlogCta();
-  
-  const hasCustomBoutiqueLink = Boolean(post.ctaPrimaryLink?.trim());
-  const ctaPrimaryLink = hasCustomBoutiqueLink ? post.ctaPrimaryLink!.trim() : "/boutique";
-  const ctaPrimaryLabel = hasCustomBoutiqueLink
-    ? (post.ctaPrimaryLabel?.trim() || "Voir ce produit")
-    : "Explorez notre boutique";
-    
+
+  const hasCustomPrimaryLink = Boolean(post.ctaPrimaryLink?.trim());
   const cta = {
     title: post.ctaTitle ?? defaultCta.title,
     body: post.ctaBody ?? defaultCta.body,
-    primaryLabel: ctaPrimaryLabel,
-    primaryLink: ctaPrimaryLink,
+    primaryLabel: hasCustomPrimaryLink
+      ? (post.ctaPrimaryLabel?.trim() || "Voir ce produit")
+      : "Explorer la boutique",
+    primaryLink: hasCustomPrimaryLink ? post.ctaPrimaryLink!.trim() : "/boutique",
     secondaryLabel: post.ctaSecondaryLabel ?? defaultCta.secondaryLabel,
     secondaryLink: post.ctaSecondaryLink ?? defaultCta.secondaryLink,
   };
 
   return (
-    <main className="bg-white min-h-screen">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: stringifyJsonLd(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: stringifyJsonLd(breadcrumbJsonLd) }} />
-      
-      <article className="max-w-7xl mx-auto px-8 pt-12 md:pt-24 pb-32">
-        
-        {/* HEADER DE L'ARTICLE */}
-        <header className="flex flex-col max-w-7xl ">
+    <main className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: stringifyJsonLd(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: stringifyJsonLd(breadcrumbJsonLd) }}
+      />
+
+      {/* ── Header ── */}
+      <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-10 md:px-16 lg:px-0">
+        {/* Breadcrumb */}
+        <div className="flex items-center justify-between">
+          <Link
+            href="/blog"
+            className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a] transition hover:text-[#171717]"
+          >
+            ← Journal
+          </Link>
           {post.category && (
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-1.5 h-1.5 bg-terracotta rotate-45"></div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-terracotta">
-                {post.category}
-              </p>
-            </div>
+            <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a]">
+              {post.category}
+            </span>
           )}
-          
-          <h1 className="text-5xl text-slate-600 max-w-3xl leading-12">
-            {post.title}
-          </h1>
+        </div>
 
-        
+        {/* Title */}
+        <h1 className="mt-10 max-w-[860px] text-[48px] font-[300] leading-[0.94] tracking-[-0.04em] text-[#171717] md:text-[72px]">
+          {post.title}
+        </h1>
 
-         
-        </header>
+        {/* Meta */}
+        <div className="mt-8 flex items-center gap-6 border-t border-[#e5e7eb] pt-6">
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a]">
+            {authorLabel}
+          </span>
+          {post.publishedAt && (
+            <>
+              <span className="h-px w-6 bg-[#e5e7eb]" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a]">
+                {post.publishedAt.toLocaleDateString("fr-FR", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
+            </>
+          )}
+        </div>
+      </div>
 
-        {/* IMAGE HERO - Format cinéma */}
-        <div className="relative mt-20 md:mt-32 aspect-[21/9] w-full overflow-hidden bg-slate-50 rounded-md">
-          <BlogImage 
-            src={post.imageUrl} 
-            alt={imageAlt} 
-            fill 
-            sizes="100vw" 
-            priority 
-            className="object-cover grayscale-[0.1]" 
+      {/* ── Hero image ── */}
+      <div className="mx-auto max-w-[1240px] px-6 md:px-16 lg:px-0">
+        <div className="relative aspect-[21/9] w-full overflow-hidden bg-[#f6f5f3]">
+          <BlogImage
+            src={post.imageUrl}
+            alt={imageAlt}
+            fill
+            sizes="100vw"
+            priority
+            className="object-cover"
           />
         </div>
-         {/* EXCERPT CENTRÉ */}
-          {post.excerpt && (
-            <div className="mt-16 max-w-3xl mx-auto">
-              <p className="text-center text-xl font-light leading-relaxed text-slate-400 italic font-serif">
-                &ldquo;{post.excerpt}&rdquo;
-              </p>
+      </div>
+
+      {/* ── Excerpt ── */}
+      {post.excerpt && (
+        <div className="mx-auto mt-16 max-w-[680px] px-6 md:px-0">
+          <p className="text-center text-[18px] font-[300] italic leading-relaxed tracking-[-0.01em] text-[#b0a99a]">
+            &ldquo;{post.excerpt}&rdquo;
+          </p>
+        </div>
+      )}
+
+      {/* ── Corps de l'article ── */}
+      <div className="mx-auto mt-16 max-w-[680px] px-6 pb-16 md:px-0">
+        <BlogMarkdown content={post.content} />
+
+        {/* Brand perspective */}
+        {post.brandPerspectiveMarkdown && (
+          <section className="mt-16 bg-[#f6f5f3] px-10 py-12 md:px-16 md:py-16">
+            <div className="text-center text-[16px] font-[300] italic leading-loose text-[#171717]">
+              <BlogMarkdown content={post.brandPerspectiveMarkdown} />
             </div>
-          )}
+            <p className="mt-8 text-center text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+              L&apos;œil de la maison
+            </p>
+          </section>
+        )}
 
-        {/* CORPS DE L'ARTICLE */}
-        <div className="mt-20 grid grid-cols-1 lg:grid-cols-12 ">
-          
-          <div className="lg:col-span-10 lg:col-start-2">
-            <div className="prose prose-slate prose-md max-w-none 
-              prose-headings:font-serif prose-headings:tracking-tight 
-              prose-p:leading-relaxed prose-p:text-slate-600
-              prose-a:text-terracotta prose-a:no-underline hover:prose-a:underline">
-              <BlogMarkdown content={post.content} />
-            </div>
-
-            
-
-            {/* Brand Perspective */}
-            {post.brandPerspectiveMarkdown && (
-              <section className="mt-24 p-12 md:p-20 bg-[#fcfcfc] border border-slate-50 relative">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-px bg-terracotta"></div>
-                <div className="italic text-slate-700 leading-loose font-serif text-xl text-center">
-                  <BlogMarkdown content={post.brandPerspectiveMarkdown} />
-                </div>
-                <p className="mt-10 text-center text-[10px] font-bold uppercase tracking-[0.4em] text-terracotta">
-                  L&apos;œil de la maison
-                </p>
-              </section>
-            )}
-
-           
-              {/* Infos Auteur / Date centrées */}
-          <div className="mt-12 flex items-center justify-center gap-8 border-y border-slate-50 py-6 w-full max-w-lg mx-auto">
-            <div className="text-center">
-              <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Auteur</span>
-              <p className="text-xs font-medium text-slate-900">{authorLabel}</p>
-            </div>
-            <div className="w-px h-8 bg-slate-100"></div>
-            {post.publishedAt && (
+        {/* Author / Date footer */}
+        <div className="mt-16 flex items-center justify-center gap-8 border-t border-[#e5e7eb] pt-8">
+          <div className="text-center">
+            <span className="block text-[9px] font-bold uppercase tracking-[0.2em] text-[#b0a99a]">
+              Auteur
+            </span>
+            <p className="mt-1 text-[12px] font-bold uppercase tracking-[0.1em] text-[#171717]">
+              {authorLabel}
+            </p>
+          </div>
+          {post.publishedAt && (
+            <>
+              <span className="h-8 w-px bg-[#e5e7eb]" />
               <div className="text-center">
-                <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Date</span>
-                <p className="text-xs font-medium text-slate-900">
-                  {post.publishedAt.toLocaleDateString("fr-FR", { day: 'numeric', month: 'long', year: 'numeric' })}
+                <span className="block text-[9px] font-bold uppercase tracking-[0.2em] text-[#b0a99a]">
+                  Publié le
+                </span>
+                <p className="mt-1 text-[12px] font-bold uppercase tracking-[0.1em] text-[#171717]">
+                  {post.publishedAt.toLocaleDateString("fr-FR", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </p>
               </div>
-            )}
-          </div>
-           
-          </div>
+            </>
+          )}
         </div>
+      </div>
 
-      </article>
-       {/* CTA SECTION */}
-       <section className="p-12 md:p-24 bg-slate-900 text-white rounded-sm text-center relative overflow-hidden max-w-7xl mx-auto">
-              <h2 className="relative z-10 font-serif text-4xl md:text-6xl tracking-tight mb-8 italic">
+      {/* ── CTA strip ── */}
+      <section className="border-t border-[#e5e7eb] py-24">
+        <div className="mx-auto max-w-[1240px] px-6 md:px-16 lg:px-0">
+          <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="mb-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+                Boutique
+              </p>
+              <h2 className="max-w-[560px] text-[40px] font-[300] leading-[0.94] tracking-[-0.03em] text-[#171717] md:text-[52px]">
                 {cta.title}
               </h2>
-              <p className="relative z-10 text-white/60 max-w-xl mx-auto leading-relaxed mb-12 font-light">
-                {cta.body}
-              </p>
-              
-              <div className="relative z-10 flex flex-col sm:flex-row justify-center gap-4">
-                <Link 
-                  href={cta.primaryLink} 
-                  className="px-12 py-5 bg-white text-slate-900 text-[11px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-terracotta hover:text-white"
-                >
-                  {cta.primaryLabel}
-                </Link>
-                <Link 
-                  href={cta.secondaryLink} 
-                  className="px-12 py-5 border border-white/20 text-white text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-white/5"
-                >
-                  {cta.secondaryLabel}
-                </Link>
-              </div>
-              <div className="absolute -bottom-12 -right-12 text-[15rem] font-serif italic text-white/5 select-none pointer-events-none">
-                Art
-              </div>
-            </section>
+              {cta.body && (
+                <p className="mt-5 max-w-md text-[12px] font-bold uppercase leading-6 tracking-[0.1em] text-slate-500">
+                  {cta.body}
+                </p>
+              )}
+            </div>
 
-            
+            <div className="flex shrink-0 flex-col gap-3">
+              <Link
+                href={cta.primaryLink}
+                className="inline-flex h-[48px] items-center justify-center bg-[#171717] px-10 text-[11px] font-bold uppercase tracking-[0.16em] text-white transition hover:bg-[#747b4f]"
+              >
+                {cta.primaryLabel}
+              </Link>
+              <Link
+                href={cta.secondaryLink}
+                className="inline-flex h-[48px] items-center justify-center border border-[#dedede] px-10 text-[11px] font-bold uppercase tracking-[0.16em] text-[#171717] transition hover:border-[#171717]"
+              >
+                {cta.secondaryLabel}
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <footer className="py-24 flex flex-col items-center gap-8 border-t border-slate-50 ">
-        <div className="w-px h-20 bg-slate-200"></div>
-        <Link href="/blog" className="group flex items-center gap-4">
-           <span className="text-[10px] tracking-[0.5em] text-slate-400 uppercase group-hover:text-terracotta transition-colors">
-            Retour au journal
-           </span>
+      {/* ── Footer ── */}
+      <div className="border-t border-[#e5e7eb] py-12 text-center">
+        <Link
+          href="/blog"
+          className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a] transition hover:text-[#171717]"
+        >
+          ← Retour au journal
         </Link>
-      </footer>
+      </div>
     </main>
   );
 }

@@ -46,11 +46,12 @@ export function ShopcaisseConnectionTester() {
   }
 
   return (
-    <section className="border border-line bg-surface p-6">
+    <section className="bg-white p-6 shadow-[0_4px_16px_rgba(0,0,0,0.10)]">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="font-serif text-3xl">Tester la connexion</h3>
-          <p className="mt-2 text-sm text-muted">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">Connexion</p>
+          <h3 className="mt-2 text-[36px] font-[200] leading-none tracking-[-0.04em] text-[#111]">Tester la connexion</h3>
+          <p className="mt-2 text-[12px] text-slate-500">
             Verifie le token Shopcaisse via <code>/v1/authentication</code>.
           </p>
         </div>
@@ -58,7 +59,7 @@ export function ShopcaisseConnectionTester() {
           type="button"
           onClick={handleValidateConnection}
           disabled={loading}
-          className="bg-brand px-4 py-2 text-sm font-bold text-brand-contrast disabled:cursor-not-allowed disabled:opacity-60"
+          className="bg-[#111] px-4 py-2 text-[12px] font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? "Verification..." : "Tester la connexion"}
         </button>
@@ -66,18 +67,18 @@ export function ShopcaisseConnectionTester() {
 
       {result ? (
         <div className="mt-6 grid gap-4 text-sm">
-          <article className="border border-line p-4">
+          <article className="bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
             <div className="flex items-center justify-between gap-4">
               <strong className={result.success ? "text-accent" : "text-terracotta"}>
                 {result.success ? "Connexion valide" : "Echec de validation"}
               </strong>
               <span>HTTP {result.status}</span>
             </div>
-            <p className="mt-2 text-muted">{result.message}</p>
-            <p className="mt-2 text-xs text-muted">Verifie le {new Date(result.checkedAt).toLocaleString("fr-FR")}</p>
+            <p className="mt-2 text-[12px] text-slate-500">{result.message}</p>
+            <p className="mt-2 text-[10px] text-slate-400">Verifie le {new Date(result.checkedAt).toLocaleString("fr-FR")}</p>
           </article>
 
-          <article className="grid gap-2 border border-line p-4">
+          <article className="grid gap-2 bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
             <div className="flex items-center justify-between gap-4">
               <span>Company ID</span>
               <code>{result.companyId ?? "-"}</code>
@@ -92,32 +93,32 @@ export function ShopcaisseConnectionTester() {
             </div>
           </article>
 
-          <article className="border border-line p-4">
+          <article className="bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
             <strong>Resources detectees</strong>
             <div className="mt-3 flex flex-wrap gap-2">
               {result.detectedResources.length > 0 ? (
                 result.detectedResources.map((resource) => (
-                  <code key={resource} className="border border-line px-2 py-1">
+                  <code key={resource} className="bg-[#f7f7f8] px-2 py-1 text-[11px]">
                     {resource}
                   </code>
                 ))
               ) : (
-                <span className="text-muted">Aucune ressource detectee.</span>
+                <span className="text-[12px] text-slate-500">Aucune ressource detectee.</span>
               )}
             </div>
           </article>
 
-          <article className="border border-line p-4">
+          <article className="bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
             <strong>Permissions utiles</strong>
             <div className="mt-3 flex flex-wrap gap-2">
               {result.usefulPermissions.length > 0 ? (
                 result.usefulPermissions.map((permission) => (
-                  <code key={permission} className="border border-line px-2 py-1">
+                  <code key={permission} className="bg-[#f7f7f8] px-2 py-1 text-[11px]">
                     {permission}
                   </code>
                 ))
               ) : (
-                <span className="text-muted">Aucune permission utile detectee.</span>
+                <span className="text-[12px] text-slate-500">Aucune permission utile detectee.</span>
               )}
             </div>
           </article>

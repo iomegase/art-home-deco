@@ -1,12 +1,23 @@
 import type { CSSProperties, ReactNode } from "react";
 import { redirect } from "next/navigation";
+import { db } from "@/server/db/client";
 import { getAdminSession } from "@/server/security/auth";
 import { AdminNav } from "@/components/admin/admin-nav";
 import { getSiteSettings } from "@/server/repositories/site-settings.repository";
 
 export default async function ProtectedAdminLayout({ children }: { children: ReactNode }) {
   const session = await getAdminSession();
-  const { theme } = await getSiteSettings();
+  const [{ theme }, productCount, blogCount] = await Promise.all([
+    getSiteSettings(),
+    db.product.count({
+      where: {
+        status: {
+          not: "archived",
+        },
+      },
+    }),
+    db.blogPost.count(),
+  ]);
 
   if (!session) {
     redirect("/admin/login");
@@ -34,7 +45,11 @@ export default async function ProtectedAdminLayout({ children }: { children: Rea
         } as CSSProperties
       }
     >
-      <AdminNav />
+      <AdminNav
+        productCount={productCount}
+        blogCount={blogCount}
+        userName={session.userId.split("@")[0] ?? session.userId}
+      />
 
       <main className="flex-1 overflow-y-auto bg-white">
         <div className="w-full px-4 py-6 sm:px-6 md:px-8 md:py-10 xl:px-10">

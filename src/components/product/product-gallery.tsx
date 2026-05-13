@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { ProductImageFallback } from "@/components/product/product-image-fallback";
 
 type ProductGalleryImage = {
@@ -18,44 +17,25 @@ type ProductGalleryProps = {
 
 export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
   const galleryImages = useMemo(() => {
-    if (images.length > 0) {
-      return images;
-    }
-
-    return [
-      {
-        id: "fallback-logo",
-        url: "/logo.png",
-        alt: productTitle,
-        position: 0,
-      },
-    ];
+    if (images.length > 0) return images;
+    return [{ id: "fallback-logo", url: "/logo.png", alt: productTitle, position: 0 }];
   }, [images, productTitle]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const hasMultipleImages = galleryImages.length > 1;
-  const safeSelectedIndex = Math.min(selectedIndex, galleryImages.length - 1);
-  const selectedImage = galleryImages[safeSelectedIndex] ?? galleryImages[0];
+  const safeIndex = Math.min(selectedIndex, galleryImages.length - 1);
+  const selectedImage = galleryImages[safeIndex] ?? galleryImages[0];
 
   useEffect(() => {
-    if (!isModalOpen) {
-      return;
-    }
+    if (!isModalOpen) return;
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsModalOpen(false);
-        return;
-      }
-
-      if (event.key === "ArrowLeft" && hasMultipleImages) {
-        setSelectedIndex((current) => (current - 1 + galleryImages.length) % galleryImages.length);
-      }
-
-      if (event.key === "ArrowRight" && hasMultipleImages) {
-        setSelectedIndex((current) => (current + 1) % galleryImages.length);
-      }
+      if (event.key === "Escape") { setIsModalOpen(false); return; }
+      if (event.key === "ArrowLeft" && hasMultipleImages)
+        setSelectedIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length);
+      if (event.key === "ArrowRight" && hasMultipleImages)
+        setSelectedIndex((i) => (i + 1) % galleryImages.length);
     }
 
     window.addEventListener("keydown", handleKeyDown);
@@ -63,172 +43,180 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
   }, [galleryImages.length, hasMultipleImages, isModalOpen]);
 
   function goToPrevious() {
-    setSelectedIndex((current) => (current - 1 + galleryImages.length) % galleryImages.length);
+    setSelectedIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length);
   }
-
   function goToNext() {
-    setSelectedIndex((current) => (current + 1) % galleryImages.length);
+    setSelectedIndex((i) => (i + 1) % galleryImages.length);
   }
 
   return (
     <>
-      <div className="grid gap-4">
-        <div className="relative overflow-hidden rounded-[2rem] border border-line bg-white shadow-[0_18px_50px_rgba(0,0,0,0.04)]">
-          <div className="relative aspect-[4/5] min-h-[24rem] bg-[radial-gradient(circle_at_top,var(--surface),white_62%)] p-6 md:min-h-[34rem] md:p-8">
-            {hasMultipleImages ? (
-              <>
+      <div className="flex flex-col gap-4">
+        {/* Main image */}
+        <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#f6f5f3]">
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="absolute inset-0 z-10 cursor-zoom-in"
+            aria-label="Agrandir l'image"
+          >
+            <ProductImageFallback
+              src={selectedImage?.url}
+              alt={selectedImage?.alt ?? productTitle}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 55vw"
+              className="object-contain p-8 transition-transform duration-700 ease-out hover:scale-[1.02]"
+            />
+          </button>
+
+          {/* Nav arrows — bottom right */}
+          {hasMultipleImages && (
+            <div className="absolute bottom-5 right-5 z-20 flex items-center gap-5">
+              <button
+                type="button"
+                onClick={goToPrevious}
+                aria-label="Image précédente"
+                className="text-[22px] font-extralight text-[#171717]/40 transition hover:text-[#171717]"
+              >
+                ←
+              </button>
+              <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">
+                {safeIndex + 1} / {galleryImages.length}
+              </span>
+              <button
+                type="button"
+                onClick={goToNext}
+                aria-label="Image suivante"
+                className="text-[22px] font-extralight text-[#171717]/40 transition hover:text-[#171717]"
+              >
+                →
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Thumbnails */}
+        {hasMultipleImages && (
+          <div className="flex gap-2 overflow-x-auto">
+            {galleryImages.map((image, index) => {
+              const active = index === safeIndex;
+              return (
+                <button
+                  key={image.id}
+                  type="button"
+                  onClick={() => setSelectedIndex(index)}
+                  aria-label={`Afficher l'image ${index + 1}`}
+                  className={`relative h-20 w-20 shrink-0 overflow-hidden bg-[#f6f5f3] transition ${
+                    active
+                      ? "ring-1 ring-[#171717]"
+                      : "opacity-50 hover:opacity-100"
+                  }`}
+                >
+                  <ProductImageFallback
+                    src={image.url}
+                    alt={image.alt ?? productTitle}
+                    fill
+                    sizes="80px"
+                    className="object-contain p-2"
+                  />
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* ── Modal zoom ── */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-[140] flex flex-col bg-white"
+          role="dialog"
+          aria-modal="true"
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-[#e5e7eb] px-6 py-5 md:px-12">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+                Visualisation
+              </p>
+              <h2 className="mt-1 text-[20px] font-[300] leading-tight tracking-[-0.02em] text-[#171717]">
+                {productTitle}
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              aria-label="Fermer"
+              className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a] transition hover:text-[#171717]"
+            >
+              Fermer ×
+            </button>
+          </div>
+
+          {/* Image */}
+          <div className="relative min-h-0 flex-1 bg-[#f6f5f3]">
+            <ProductImageFallback
+              src={selectedImage?.url}
+              alt={selectedImage?.alt ?? productTitle}
+              fill
+              sizes="100vw"
+              className="object-contain p-10"
+            />
+
+            {hasMultipleImages && (
+              <div className="absolute bottom-6 right-6 flex items-center gap-6">
                 <button
                   type="button"
                   onClick={goToPrevious}
-                  className="absolute left-4 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-foreground shadow-sm backdrop-blur hover:border-black"
-                  aria-label="Image precedente"
+                  aria-label="Image précédente"
+                  className="text-[26px] font-extralight text-[#171717]/40 transition hover:text-[#171717]"
                 >
-                  <ChevronLeft className="h-5 w-5" />
+                  ←
                 </button>
+                <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">
+                  {safeIndex + 1} / {galleryImages.length}
+                </span>
                 <button
                   type="button"
                   onClick={goToNext}
-                  className="absolute right-4 top-1/2 z-20 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/90 text-foreground shadow-sm backdrop-blur hover:border-black"
                   aria-label="Image suivante"
+                  className="text-[26px] font-extralight text-[#171717]/40 transition hover:text-[#171717]"
                 >
-                  <ChevronRight className="h-5 w-5" />
+                  →
                 </button>
-              </>
-            ) : null}
-
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(true)}
-              className="absolute inset-0 z-10 cursor-zoom-in"
-              aria-label="Ouvrir l'image en grand"
-            >
-              <ProductImageFallback
-                src={selectedImage?.url}
-                alt={selectedImage?.alt ?? productTitle}
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-contain p-4"
-              />
-            </button>
+              </div>
+            )}
           </div>
-        </div>
 
-        {hasMultipleImages ? (
-          <div className="relative">
-            <div className="flex gap-3 overflow-x-auto pb-2">
+          {/* Thumbnail strip */}
+          {hasMultipleImages && (
+            <div className="flex gap-2 overflow-x-auto border-t border-[#e5e7eb] px-6 py-4 md:px-12">
               {galleryImages.map((image, index) => {
-                const active = index === safeSelectedIndex;
-
+                const active = index === safeIndex;
                 return (
                   <button
                     key={image.id}
                     type="button"
                     onClick={() => setSelectedIndex(index)}
-                    className={
-                      active
-                        ? "relative h-24 w-24 shrink-0 overflow-hidden rounded-[1.25rem] border border-foreground bg-white shadow-sm"
-                        : "relative h-24 w-24 shrink-0 overflow-hidden rounded-[1.25rem] border border-line bg-white opacity-80 hover:border-foreground hover:opacity-100"
-                    }
-                    aria-label={`Afficher l'image ${index + 1}`}
+                    className={`relative h-16 w-16 shrink-0 overflow-hidden bg-[#f6f5f3] transition ${
+                      active ? "ring-1 ring-[#171717]" : "opacity-50 hover:opacity-100"
+                    }`}
                   >
                     <ProductImageFallback
                       src={image.url}
                       alt={image.alt ?? productTitle}
                       fill
-                      sizes="96px"
-                      className="object-contain p-2"
+                      sizes="64px"
+                      className="object-contain p-1"
                     />
                   </button>
                 );
               })}
             </div>
-          </div>
-        ) : null}
-      </div>
-
-      {isModalOpen ? (
-        <div className="fixed inset-0 z-[140] bg-white/70 px-4 py-6 backdrop-blur-2xl" role="dialog" aria-modal="true">
-          <div className="mx-auto grid h-full max-w-7xl gap-4">
-            <div className="flex items-center justify-between gap-4 text-foreground">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.24em] text-foreground/55">Visualisation</p>
-                <h2 className="mt-2 font-serif text-3xl">{productTitle}</h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-black/10 bg-white/70 shadow-sm backdrop-blur hover:border-black hover:bg-white"
-                aria-label="Fermer la galerie"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="relative min-h-0 flex-1 overflow-hidden rounded-[2rem] border border-black/8 bg-white/55 shadow-[0_18px_60px_rgba(0,0,0,0.08)] backdrop-blur-xl">
-              {hasMultipleImages ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={goToPrevious}
-                    className="absolute left-4 top-1/2 z-20 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/75 text-foreground shadow-sm backdrop-blur hover:border-black hover:bg-white"
-                    aria-label="Image precedente"
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={goToNext}
-                    className="absolute right-4 top-1/2 z-20 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/75 text-foreground shadow-sm backdrop-blur hover:border-black hover:bg-white"
-                    aria-label="Image suivante"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </>
-              ) : null}
-
-              <div className="relative h-full min-h-[60vh]">
-                <ProductImageFallback
-                  src={selectedImage?.url}
-                  alt={selectedImage?.alt ?? productTitle}
-                  fill
-                  sizes="100vw"
-                  className="object-contain p-6"
-                />
-              </div>
-            </div>
-
-            {hasMultipleImages ? (
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                {galleryImages.map((image, index) => {
-                  const active = index === safeSelectedIndex;
-
-                  return (
-                    <button
-                      key={image.id}
-                      type="button"
-                      onClick={() => setSelectedIndex(index)}
-                      className={
-                        active
-                          ? "relative h-20 w-20 shrink-0 overflow-hidden rounded-[1rem] border border-black bg-white shadow-sm"
-                          : "relative h-20 w-20 shrink-0 overflow-hidden rounded-[1rem] border border-black/10 bg-white/55 opacity-80 backdrop-blur hover:border-black hover:opacity-100"
-                      }
-                    >
-                      <ProductImageFallback
-                        src={image.url}
-                        alt={image.alt ?? productTitle}
-                        fill
-                        sizes="80px"
-                        className="object-contain p-2"
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            ) : null}
-          </div>
+          )}
         </div>
-      ) : null}
+      )}
     </>
   );
 }

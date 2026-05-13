@@ -30,32 +30,34 @@ export function ProductCard({ product }: ProductCardProps) {
         })
       }
     >
-      <article className="flex flex-col gap-5 transition-opacity hover:opacity-90">
-        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-sm bg-[#fcfcfc]">
+      <article className="flex flex-col gap-5">
+        {/* Image */}
+        <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#f6f5f3]">
           <ProductImageFallback
             src={primaryImage?.url}
             alt={primaryImage?.alt ?? product.title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-contain p-4 transition-transform duration-700 ease-out group-hover:scale-105"
+            className="object-contain p-6 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
           />
-          {/* Overlay subtil */}
-          <div className="absolute inset-0 bg-black/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           {isUnavailable ? (
-            <span className="absolute left-4 top-4 bg-white px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-slate-900 shadow-sm">
+            <span className="absolute left-0 top-4 bg-white px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-[#171717]">
               Rupture
             </span>
           ) : null}
         </div>
 
-        <div className="flex flex-col items-center px-2 text-center">
-          <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">{category}</p>
-          <h3 className="mt-2 font-serif text-lg text-slate-800 transition-colors group-hover:text-terracotta">
+        {/* Text */}
+        <div className="flex flex-col gap-1">
+          <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+            {category}
+          </p>
+          <h3 className="text-[20px] font-[300] leading-tight tracking-[-0.02em] text-[#171717] transition-colors group-hover:text-[#747b4f]">
             {product.title}
           </h3>
-          <div className="mt-2 text-sm">
-            <p className="font-light text-slate-600">{formatPriceCents(product.priceCents)}</p>
-          </div>
+          <p className="mt-1 text-[12px] font-bold tracking-[0.06em] text-[#171717]">
+            {formatPriceCents(product.priceCents)}
+          </p>
         </div>
       </article>
     </Link>

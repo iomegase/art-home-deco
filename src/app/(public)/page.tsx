@@ -1,16 +1,34 @@
 import Image from "next/image";
 import { HomeJournalSpotlight } from "@/components/home/home-journal-spotlight";
 import { HomeProductSpotlight } from "@/components/home/home-product-spotlight";
+import { defaultHomeContent } from "@/features/admin-home/types";
 import { getSiteSettings } from "@/server/repositories/site-settings.repository";
 import { listPublishedBlogPosts } from "@/server/repositories/blog.repository";
 import { listActiveProducts } from "@/server/repositories/catalog.repository";
+import { isDatabaseUnavailableError } from "@/server/db/client";
 
 export default async function Home() {
-  const { homeContent } = await getSiteSettings();
-  const [blogPosts, products] = await Promise.all([
-    listPublishedBlogPosts(),
-    listActiveProducts(),
-  ]);
+  let homeContent = defaultHomeContent;
+  let blogPosts: Awaited<ReturnType<typeof listPublishedBlogPosts>> = [];
+  let products: Awaited<ReturnType<typeof listActiveProducts>> = [];
+
+  try {
+    const result = await Promise.all([
+      getSiteSettings(),
+      listPublishedBlogPosts(),
+      listActiveProducts(),
+    ]);
+    homeContent = result[0].homeContent;
+    blogPosts = result[1];
+    products = result[2];
+  } catch (error) {
+    if (!isDatabaseUnavailableError(error)) {
+      throw error;
+    }
+
+    console.error("Home page fallback: database unavailable", error);
+  }
+
   const galleryProducts = products
     .filter((product) => product.images[0])
     .slice(0, 6);
@@ -18,51 +36,6 @@ export default async function Home() {
 
   return (
     <>
-      <style>{`
-      .timeline::before {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 32px;
-        width: 1px;
-        height: 92px;
-        transform: translateX(-50%);
-        background-image: linear-gradient(to bottom, #d8d8d8 35%, transparent 0%);
-        background-size: 1px 12px;
-      }
-
-      .timeline-dot {
-        box-shadow: inset 0 0 0 2px #bfbfbf;
-      }
-
-      .timeline-dot::after {
-        content: "";
-        position: absolute;
-        inset: 6px;
-        border-radius: 999px;
-        background: #171717;
-      }
-
-      .arrow-line::before {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 1px;
-        height: 30px;
-        background: #dedede;
-        transform: translate(-50%, -50%);
-      }
-
-      .flowerpot-img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        mix-blend-mode: multiply;
-      }
-    `}</style>
       <div
         className="overflow-hidden"
         style={{ backgroundColor: homeContent.homeBackgroundColor }}
@@ -100,28 +73,60 @@ export default async function Home() {
             </figure>
           </div>
         </header>
-        <div className="mx-auto max-w-7xl px-5 pt-20 md:px-8 md:pt-28">
-          <p className="max-w-2xl text-[15px] leading-8 text-[#171717]/65 md:text-[16px]">
-            Côté journal, retrouvez nos inspirations, tendances et conseils
-            pratiques pour faire dialoguer couleurs, volumes et textures dans un
-            esprit calme, élégant et durable.
+        {/* ── Section intro — Galerie produits ── */}
+        <div className="mx-auto max-w-[1240px] px-6 pt-14 md:px-16 md:pt-20 lg:px-0">
+          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#b0a99a]">
+            01 — Galerie produits
           </p>
+          <div className="mt-5 flex flex-row items-center justify-between gap-6">
+            <h2
+              className="shrink-0 text-[32px] font-[300] leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[56px]"
+              style={{
+                fontFamily:
+                  'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
+              }}
+            >
+              Côté
+              <br />
+              <span className="text-[#b0a99a]">Produit.</span>
+            </h2>
+            <p className="text-[10px] font-bold uppercase leading-[1.8] tracking-[0.1em] text-slate-400 md:max-w-[400px] md:text-[12px]">
+              Retrouvez nos pièces sélectionnées pour faire dialoguer
+              couleurs, volumes et textures dans un esprit calme, élégant et durable.
+            </p>
+          </div>
         </div>
 
         <HomeProductSpotlight products={galleryProducts} />
-        <div className="mx-auto max-w-7xl px-5 pt-20 md:px-8 md:pt-28">
-          <p className="max-w-2xl text-[15px] leading-8 text-[#171717]/65 md:text-[16px]">
-            Côté produit, retrouvez nos inspirations, tendances et conseils
-            pratiques pour faire dialoguer couleurs, volumes et textures dans un
-            esprit calme, élégant et durable.
+
+        {/* ── Section intro — Journal ── */}
+        <div className="mx-auto max-w-[1240px] px-6 pt-16 md:px-16 md:pt-10 lg:px-0">
+          <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#b0a99a]">
+            02 — Journal éditorial
           </p>
+          <div className="mt-5 flex flex-row items-center justify-between gap-6">
+            <h2
+              className="shrink-0 text-[32px] font-[300] leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[56px]"
+              style={{
+                fontFamily:
+                  'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
+              }}
+            >
+              Côté
+              <br />
+              <span className="text-[#b0a99a]">Journal.</span>
+            </h2>
+            <p className="text-[10px] font-bold uppercase leading-[1.8] tracking-[0.1em] text-slate-400 md:max-w-[400px] md:text-[12px]">
+              Inspirations, tendances et conseils pratiques pour faire
+              dialoguer couleurs, volumes et textures dans un esprit élégant et durable.
+            </p>
+          </div>
         </div>
-        <div className="pt-10 md:pt-14">
-          <HomeJournalSpotlight
-            posts={journalPosts}
-            fallbackImageUrl={homeContent.blogCardImageUrl}
-          />
-        </div>
+
+        <HomeJournalSpotlight
+          posts={journalPosts}
+          fallbackImageUrl={homeContent.blogCardImageUrl}
+        />
       </div>
     </>
   );

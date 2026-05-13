@@ -21,9 +21,11 @@ const homeImageTargetSchema = z.enum([
 
 export async function updateHomeContentAction(formData: FormData) {
   await requireAdmin();
+  const current = await getSiteSettings();
+  const homeBackgroundColorValue = value(formData, "homeBackgroundColor") || current.homeContent.homeBackgroundColor;
 
   const parsed = adminHomeContentSchema.parse({
-    homeBackgroundColor: value(formData, "homeBackgroundColor"),
+    homeBackgroundColor: homeBackgroundColorValue,
     heroImageUrl: value(formData, "heroImageUrl"),
     heroImageAlt: value(formData, "heroImageAlt"),
     heroTitle: value(formData, "heroTitle"),
@@ -51,8 +53,6 @@ export async function updateHomeContentAction(formData: FormData) {
     newsletterPlaceholder: value(formData, "newsletterPlaceholder"),
     newsletterButtonLabel: value(formData, "newsletterButtonLabel"),
   });
-
-  const current = await getSiteSettings();
 
   await upsertSiteSettings({
     homeContent: {
@@ -126,6 +126,7 @@ export async function updateThemeSettingsAction(formData: FormData) {
   revalidatePath("/");
   revalidatePath("/", "layout");
   revalidatePath("/admin/home");
+  revalidatePath("/admin/settings");
 }
 
 export async function uploadHomeImageAction(formData: FormData) {

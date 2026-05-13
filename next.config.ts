@@ -22,7 +22,17 @@ function buildR2RemotePattern() {
 
 const r2RemotePattern = buildR2RemotePattern();
 
+const allowedDevOrigins: string[] =
+  process.env.NODE_ENV === "development"
+    ? [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        ...(process.env.ALLOWED_DEV_ORIGINS?.split(",").map((origin) => origin.trim()) ?? []),
+      ]
+    : [];
+
 const nextConfig: NextConfig = {
+  allowedDevOrigins,
   experimental: {
     serverActions: {
       bodySizeLimit: "6mb",

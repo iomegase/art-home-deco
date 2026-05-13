@@ -10,10 +10,17 @@ type BoutiquePaginationProps = {
 
 function getPageWindow(page: number, totalPages: number) {
   const pages = new Set<number>([1, totalPages, page - 1, page, page + 1]);
-  return Array.from(pages).filter((value) => value >= 1 && value <= totalPages).sort((a, b) => a - b);
+  return Array.from(pages)
+    .filter((value) => value >= 1 && value <= totalPages)
+    .sort((a, b) => a - b);
 }
 
-export function BoutiquePagination({ page, totalPages, q, categorie }: BoutiquePaginationProps) {
+export function BoutiquePagination({
+  page,
+  totalPages,
+  q,
+  categorie,
+}: BoutiquePaginationProps) {
   if (totalPages <= 1) {
     return null;
   }
@@ -23,16 +30,16 @@ export function BoutiquePagination({ page, totalPages, q, categorie }: BoutiqueP
   return (
     <nav
       aria-label="Pagination produits"
-      className="mt-12 flex flex-wrap items-center justify-center gap-2 border-t border-line pt-8"
+      className="mt-20 flex flex-wrap items-center justify-center gap-3 border-t border-[#e5e7eb] pt-10"
     >
       <Link
         href={buildBoutiqueHref({ q, categorie, page: Math.max(page - 1, 1) })}
         aria-disabled={page <= 1}
-        className={`px-4 py-2 text-sm font-bold ${
-          page <= 1 ? "pointer-events-none border border-line text-muted opacity-45" : "border border-line hover:border-foreground"
+        className={`px-3 py-2 text-[26px] font-extralight text-[#171717]/50 transition hover:text-[#171717] ${
+          page <= 1 ? "pointer-events-none opacity-20" : ""
         }`}
       >
-        Precedent
+        ←
       </Link>
 
       {pages.map((entry, index) => {
@@ -40,12 +47,16 @@ export function BoutiquePagination({ page, totalPages, q, categorie }: BoutiqueP
         const showGap = previous && entry - previous > 1;
 
         return (
-          <div key={entry} className="flex items-center gap-2">
-            {showGap ? <span className="px-1 text-sm text-muted">…</span> : null}
+          <div key={entry} className="flex items-center gap-3">
+            {showGap ? (
+              <span className="text-[11px] font-bold text-[#b0a99a]">…</span>
+            ) : null}
             <Link
               href={buildBoutiqueHref({ q, categorie, page: entry })}
-              className={`px-4 py-2 text-sm font-bold ${
-                entry === page ? "bg-brand text-brand-contrast" : "border border-line hover:border-foreground"
+              className={`flex h-10 w-10 items-center justify-center text-[12px] font-bold uppercase tracking-[0.1em] transition ${
+                entry === page
+                  ? "bg-[#171717] text-white"
+                  : "text-[#b0a99a] hover:text-[#171717]"
               }`}
             >
               {entry}
@@ -55,13 +66,17 @@ export function BoutiquePagination({ page, totalPages, q, categorie }: BoutiqueP
       })}
 
       <Link
-        href={buildBoutiqueHref({ q, categorie, page: Math.min(page + 1, totalPages) })}
+        href={buildBoutiqueHref({
+          q,
+          categorie,
+          page: Math.min(page + 1, totalPages),
+        })}
         aria-disabled={page >= totalPages}
-        className={`px-4 py-2 text-sm font-bold ${
-          page >= totalPages ? "pointer-events-none border border-line text-muted opacity-45" : "border border-line hover:border-foreground"
+        className={`px-3 py-2 text-[26px] font-extralight text-[#171717]/50 transition hover:text-[#171717] ${
+          page >= totalPages ? "pointer-events-none opacity-20" : ""
         }`}
       >
-        Suivant
+        →
       </Link>
     </nav>
   );

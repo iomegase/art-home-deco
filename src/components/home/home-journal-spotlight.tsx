@@ -35,7 +35,7 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
   };
 
   return (
-    <section className="relative mx-auto grid min-h-[820px] max-w-[1240px] grid-cols-1 items-center gap-16 overflow-x-clip px-6 pb-28 pt-20 md:px-16 lg:grid-cols-[430px_1fr_230px] lg:px-0">
+    <section className="relative mx-auto grid min-h-[820px] max-w-[1240px] grid-cols-1 items-start overflow-x-clip px-6 pb-16 pt-6 md:px-16 md:pb-24 md:pt-12 lg:grid-cols-[430px_1fr_230px] lg:items-center lg:gap-16 lg:px-0">
       <style>{`
         .journal-panel-next {
           animation: journal-slide-next 320ms ease;
@@ -62,33 +62,32 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
         key={`content-${post.id}`}
         className={`relative z-10 pl-0 md:pl-20 lg:pl-24 ${direction === "next" ? "journal-panel-next" : "journal-panel-prev"}`}
       >
-        <p className="relative z-10 mb-16 text-[12px] font-extrabold uppercase leading-relaxed tracking-[0.14em]">
-          {post.category || "Aticles"}
+        <p className="relative hidden sm:block z-10 mb-5 text-[10px] font-bold uppercase tracking-[0.22em] text-[#b0a99a] md:mb-8">
+          {post.category || "Articles"}
         </p>
 
         <h2
-          className="relative z-10 max-w-[350px] text-[48px] font-[300] leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-[68px]"
+          className="relative z-10 max-w-[350px] text-[44px] font-[300] leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-[68px]"
           style={{
             fontFamily:
               'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
           }}
         >
           {postTitleClamped}
-          <br />
         </h2>
 
-        <p className="relative z-10 mt-12 max-w-[300px] text-[12px] font-bold uppercase leading-5 tracking-[0.14em] text-slate-800">
+        <p className="relative z-10 mt-5 max-w-[300px] text-[12px] font-bold uppercase leading-5 tracking-[0.12em] text-slate-500">
           {post.excerpt}
         </p>
 
         <a
           href={`/blog/${post.slug}`}
-          className="relative z-10 mt-12 inline-flex h-[48px] w-[146px] items-center justify-center border border-[#dedede] bg-white/85 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717] hover:text-[#171717]"
+          className="relative z-10 mt-7 inline-flex h-[46px] w-[146px] items-center justify-center border border-[#dedede] bg-white/85 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717] hover:text-[#171717]"
         >
           Lire l&apos;article
         </a>
-    
-        <div className="arrow-line relative z-10 mt-24 flex w-[105px] items-center justify-between text-[38px] font-extralight text-[#171717]/70">
+
+        <div className="arrow-line relative z-10 mt-8 flex w-[105px] items-center justify-between text-[38px] font-extralight text-[#171717]/70 md:mt-14">
           <button type="button" aria-label="Article précédent" onClick={goPrev}>
             <span>←</span>
           </button>

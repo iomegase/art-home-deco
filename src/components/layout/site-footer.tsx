@@ -2,127 +2,175 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Container } from "@/components/ui/container";
+import { useEffect, useRef, useState } from "react";
 import { trackEmailClick, trackPhoneClick } from "@/lib/analytics/events";
+
+const navBoutique = [
+  { label: "Boutique", href: "/boutique" },
+  { label: "Journal", href: "/blog" },
+  { label: "Livraison & Retours", href: "/livraison-et-retours" },
+  { label: "Contact", href: "/contact" },
+];
+
+const navInfo = [
+  { label: "Mentions légales", href: "/mentions-legales" },
+  { label: "CGV & Livraison", href: "/cgv" },
+  { label: "Confidentialité", href: "/politique-confidentialite" },
+];
+
+function NavLink({
+  href,
+  children,
+  className,
+}: {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`group relative w-fit font-bold uppercase text-[#171717]/50 transition-colors duration-300 hover:text-[#171717] ${className ?? "text-[13px] tracking-[0.12em]"}`}
+    >
+      {children}
+      <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-[#171717] transition-[width] duration-300 ease-out group-hover:w-full" />
+    </Link>
+  );
+}
+
+function ContactLink({
+  href,
+  onClick,
+  children,
+}: {
+  href: string;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      onClick={onClick}
+      className="group relative w-fit transition-colors duration-300 hover:text-[#171717]"
+    >
+      {children}
+      <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-[#b0a99a] transition-[width] duration-300 ease-out group-hover:w-full" />
+    </a>
+  );
+}
 
 export function SiteFooter() {
   const currentYear = new Date().getFullYear();
   const siret = process.env.NEXT_PUBLIC_COMPANY_SIRET;
   const vatNumber = process.env.NEXT_PUBLIC_COMPANY_VAT;
 
+  const footerRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = footerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.08 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const col = (delay: string) =>
+    `transition-all duration-700 ease-out ${delay} ${
+      visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+    }`;
+
   return (
-    <footer className="relative flex min-h-[100svh] flex-col overflow-hidden border-t border-white/40 bg-white/40 text-[#171717] shadow-[0_-20px_50px_rgba(0,0,0,0.02)] backdrop-blur-3xl">
-      {/* Décors d'arrière-plan pour révéler l'effet verre dépoli */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white/10 to-white/70" />
-      <div className="pointer-events-none absolute -left-[10%] top-[10%] -z-10 h-[400px] w-[400px] rounded-full bg-slate-200/40 blur-[100px]" />
-      <div className="pointer-events-none absolute -right-[10%] bottom-[10%] -z-10 h-[500px] w-[500px] rounded-full bg-[#e6c78f]/20 blur-[120px]" />
+    <footer className="bg-white">
+      <div
+        ref={footerRef}
+        className="mx-auto max-w-[1240px] px-6 py-20 md:px-16 md:py-28 lg:px-0"
+      >
+        {/* ── Brand ── */}
+        <div className={`flex flex-col gap-12 ${col("delay-[0ms]")}`}>
+          <div className="flex flex-col gap-4">
+            <Link
+              href="/"
+              className="relative block h-9 w-[120px] opacity-80 transition-opacity duration-300 hover:opacity-100"
+            >
+              <Image
+                src="/logo.png"
+                alt="Art Home Déco"
+                fill
+                sizes="120px"
+                className="object-contain object-left"
+              />
+            </Link>
 
-      <Container>
-        <div className="flex min-h-[100svh] flex-col justify-between py-16 md:py-24">
-          <div className="grid grid-cols-1 gap-16 md:grid-cols-12 md:gap-8">
-          
-            {/* BRAND & CONTACT */}
-            <div className="flex flex-col gap-10 md:col-span-6 lg:col-span-5">
-              <Link href="/" className="group relative block h-10 w-[140px] transition-transform duration-500 hover:scale-105">
-                <Image
-                  src="/logo.png"
-                  alt="Art Home Déco"
-                  fill
-                  sizes="140px"
-                  className="object-contain object-left opacity-90 transition-opacity duration-500 group-hover:opacity-100"
-                />
-              </Link>
-            
-              <div className="flex flex-col gap-8 text-[13px] leading-relaxed text-[#171717]/70">
-                <address className="not-italic transition-colors duration-300 hover:text-[#171717]">
-                96 rue du Mont Blanc<br />
-                74170 Saint-Gervais-les-Bains
-              </address>
-
-                <div className="flex flex-col gap-4">
-                <a 
-                  href="tel:+33607859058" 
-                  onClick={() => trackPhoneClick()}
-                  className="group flex w-fit items-center transition-all duration-300 hover:text-[#171717]"
-                >
-                    <span className="mr-3 font-bold tracking-[0.08em] text-[#171717] transition-transform duration-300 group-hover:-translate-y-1">T.</span> 
-                    <span className="relative overflow-hidden">
-                      06 07 85 90 58
-                      <span className="absolute bottom-0 left-0 h-px w-full origin-left scale-x-0 bg-[#171717] transition-transform duration-300 group-hover:scale-x-100" />
-                    </span>
-                </a>
-
-                <a 
-                  href="mailto:contact@arthome.com" 
-                  onClick={() => trackEmailClick()}
-                  className="group flex w-fit items-center transition-all duration-300 hover:text-[#171717]"
-                >
-                    <span className="mr-3 font-bold tracking-[0.08em] text-[#171717] transition-transform duration-300 group-hover:-translate-y-1">M.</span> 
-                    <span className="relative overflow-hidden">
-                      contact@arthome.com
-                      <span className="absolute bottom-0 left-0 h-px w-full origin-left scale-x-0 bg-[#171717] transition-transform duration-300 group-hover:scale-x-100" />
-                    </span>
-                </a>
-              </div>
-            </div>
+            <h2 className="text-[52px] font-[300] leading-[0.9] tracking-[-0.04em] text-[#171717] md:text-[72px]">
+              Art Home
+              <br />
+              <span className="text-[#b0a99a]">Déco.</span>
+            </h2>
           </div>
 
-            {/* NAVIGATION */}
-            <div className="flex flex-col gap-8 md:col-span-3 lg:col-span-3 lg:col-start-7">
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#171717]">Boutique</h3>
-              <nav className="flex flex-col gap-5 text-[13px] text-[#171717]/70">
-                {[
-                  { label: 'Shop', href: '/boutique' },
-                  { label: 'Journal', href: '/blog' },
-                  { label: 'Contact', href: '/contact' }
-                ].map((item) => (
-                  <Link 
-                    key={item.label} 
-                    href={item.href} 
-                    className="group flex w-fit items-center transition-colors hover:text-[#171717]"
-                  >
-                    <span className="h-px w-0 bg-[#171717] transition-all duration-300 group-hover:mr-3 group-hover:w-3" />
-                    <span className="transition-transform duration-300 group-hover:translate-x-1">{item.label}</span>
-                  </Link>
-                ))}
-            </nav>
-          </div>
-
-            {/* INFORMATIONS */}
-            <div className="flex flex-col gap-8 md:col-span-3 lg:col-span-3">
-            <h3 className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#171717]">Informations</h3>
-              <nav className="flex flex-col gap-5 text-[13px] text-[#171717]/70">
-                {[
-                  { label: 'Mentions Légales', href: '/mentions-legales' },
-                  { label: 'CGV & Livraison', href: '/cgv' },
-                  { label: 'Confidentialité', href: '/politique-confidentialite' }
-                ].map((item) => (
-                  <Link 
-                    key={item.label} 
-                    href={item.href} 
-                    className="group flex w-fit items-center transition-colors hover:text-[#171717]"
-                  >
-                    <span className="h-px w-0 bg-[#171717] transition-all duration-300 group-hover:mr-3 group-hover:w-3" />
-                    <span className="transition-transform duration-300 group-hover:translate-x-1">{item.label}</span>
-                  </Link>
-                ))}
-            </nav>
+          <div className="flex flex-col gap-3 text-[12px] font-bold uppercase tracking-[0.1em] text-[#b0a99a]">
+            <address className="not-italic leading-6">
+              96 rue du Mont Blanc
+              <br />
+              74170 Saint-Gervais-les-Bains
+            </address>
+            <ContactLink href="tel:+33607859058" onClick={() => trackPhoneClick()}>
+              06 07 85 90 58
+            </ContactLink>
+            <ContactLink href="mailto:contact@arthome.com" onClick={() => trackEmailClick()}>
+              contact@arthome.com
+            </ContactLink>
           </div>
         </div>
 
-            {/* BOTTOM BAR */}
-            <div className="mt-24 flex flex-col items-center justify-between gap-6 border-t border-black/5 pt-8 md:mt-auto md:flex-row">
-              <p className="text-[11px] uppercase tracking-[0.16em] text-[#171717]/50 transition-opacity duration-300 hover:text-[#171717]/80">
-            © {currentYear} Art Home Déco.
-          </p>
-          
-              <div className="flex flex-wrap items-center justify-center gap-6 text-[11px] uppercase tracking-[0.16em] text-[#171717]/50">
-                {siret ? <p className="transition-opacity duration-300 hover:text-[#171717]/80">SIRET : {siret}</p> : null}
-                {vatNumber ? <p className="transition-opacity duration-300 hover:text-[#171717]/80">TVA : {vatNumber}</p> : null}
-              </div>
+        {/* ── Bas du footer : nav + copyright ── */}
+        <div className={`mt-20 border-t border-[#e5e7eb] pt-8 ${col("delay-[150ms]")}`}>
+
+          {/* Nav horizontale */}
+          <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
+            <div className="flex flex-col gap-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+                Navigation
+              </p>
+              <nav className="flex flex-wrap gap-x-6 gap-y-2">
+                {navBoutique.map((item) => (
+                  <NavLink key={item.href} href={item.href} className="text-[10px] tracking-[0.12em]">
+                    {item.label}
+                  </NavLink>
+                ))}
+              </nav>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+                Informations
+              </p>
+              <nav className="flex flex-wrap gap-x-6 gap-y-2">
+                {navInfo.map((item) => (
+                  <NavLink key={item.href} href={item.href} className="text-[10px] tracking-[0.12em]">
+                    {item.label}
+                  </NavLink>
+                ))}
+              </nav>
             </div>
           </div>
-      </Container>
+
+          {/* Copyright */}
+          <div className={`mt-10 flex flex-col gap-4 border-t border-[#e5e7eb] pt-6 sm:flex-row sm:items-center sm:justify-between ${col("delay-[300ms]")}`}>
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#b0a99a]">
+              © {currentYear} Art Home Déco
+            </p>
+            <div className="flex flex-wrap gap-6 text-[10px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">
+              {siret && <span>SIRET {siret}</span>}
+              {vatNumber && <span>TVA {vatNumber}</span>}
+            </div>
+          </div>
+        </div>
+      </div>
     </footer>
   );
 }

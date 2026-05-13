@@ -93,11 +93,12 @@ export function ShopcaisseCatalogPanel({ lastSuccessAt, lastErrorMessage }: Prop
   }
 
   return (
-    <section className="border border-line bg-surface p-6">
+    <section className="bg-white p-6 shadow-[0_4px_16px_rgba(0,0,0,0.10)]">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h3 className="font-serif text-3xl">Catalogue Shopcaisse</h3>
-          <p className="mt-2 text-sm text-muted">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">Catalogue</p>
+          <h3 className="mt-2 text-[36px] font-[200] leading-none tracking-[-0.04em] text-[#111]">Catalogue Shopcaisse</h3>
+          <p className="mt-2 text-[12px] text-slate-500">
             Lecture seule depuis Shopcaisse, puis sync du cache Prisma par upsert.
           </p>
         </div>
@@ -106,7 +107,7 @@ export function ShopcaisseCatalogPanel({ lastSuccessAt, lastErrorMessage }: Prop
             type="button"
             onClick={handlePreview}
             disabled={previewLoading}
-            className="border border-line px-4 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-60"
+            className="border border-[#ececef] px-4 py-2 text-[12px] font-semibold disabled:cursor-not-allowed disabled:opacity-60"
           >
             {previewLoading ? "Previsualisation..." : "Previsualiser le catalogue"}
           </button>
@@ -114,7 +115,7 @@ export function ShopcaisseCatalogPanel({ lastSuccessAt, lastErrorMessage }: Prop
             type="button"
             onClick={handleSync}
             disabled={syncLoading}
-            className="bg-brand px-4 py-2 text-sm font-bold text-brand-contrast disabled:cursor-not-allowed disabled:opacity-60"
+            className="bg-[#111] px-4 py-2 text-[12px] font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
           >
             {syncLoading ? "Synchronisation..." : "Synchroniser le catalogue"}
           </button>
@@ -122,52 +123,52 @@ export function ShopcaisseCatalogPanel({ lastSuccessAt, lastErrorMessage }: Prop
       </div>
 
       <div className="mt-6 grid gap-3 text-sm md:grid-cols-2">
-        <article className="border border-line p-4">
+        <article className="bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
           <strong>Dernier succes</strong>
-          <p className="mt-2 text-muted">
+          <p className="mt-2 text-[12px] text-slate-500">
             {lastSuccessAt ? new Date(lastSuccessAt).toLocaleString("fr-FR") : "Aucun succes catalogue enregistre."}
           </p>
         </article>
-        <article className="border border-line p-4">
+        <article className="bg-white p-4 shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
           <strong>Derniere erreur</strong>
-          <p className="mt-2 text-muted">{lastErrorMessage ?? "Aucune erreur catalogue enregistree."}</p>
+          <p className="mt-2 text-[12px] text-slate-500">{lastErrorMessage ?? "Aucune erreur catalogue enregistree."}</p>
         </article>
       </div>
 
       {preview ? (
         <div className="mt-6 grid gap-4">
-          <article className="border border-line p-4 text-sm">
+          <article className="bg-white p-4 text-sm shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
             <div className="flex items-center justify-between gap-4">
               <strong className={preview.success ? "text-accent" : "text-terracotta"}>
                 {preview.success ? "Previsualisation OK" : "Previsualisation en echec"}
               </strong>
               <span>{new Date(preview.checkedAt).toLocaleString("fr-FR")}</span>
             </div>
-            {preview.message ? <p className="mt-2 text-muted">{preview.message}</p> : null}
+            {preview.message ? <p className="mt-2 text-[12px] text-slate-500">{preview.message}</p> : null}
             <div className="mt-4 grid gap-2 md:grid-cols-3">
-              <div className="border border-line p-3">Produits: {preview.productsCount}</div>
-              <div className="border border-line p-3">Prix: {preview.pricesCount}</div>
-              <div className="border border-line p-3">Stocks: {preview.stocksCount}</div>
+              <div className="bg-[#f7f7f8] p-3">Produits: {preview.productsCount}</div>
+              <div className="bg-[#f7f7f8] p-3">Prix: {preview.pricesCount}</div>
+              <div className="bg-[#f7f7f8] p-3">Stocks: {preview.stocksCount}</div>
             </div>
           </article>
 
-          <article className="border border-line p-4 text-sm">
+          <article className="bg-white p-4 text-sm shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
             <strong>Exemples detectes</strong>
             <div className="mt-4 grid gap-3">
               {preview.sampleItems.length > 0 ? (
                 preview.sampleItems.slice(0, 5).map((item) => (
-                  <div key={`${item.externalProductId}:${item.externalVariantId ?? "base"}`} className="border border-line p-3">
+                  <div key={`${item.externalProductId}:${item.externalVariantId ?? "base"}`} className="bg-[#f7f7f8] p-3">
                     <div className="flex items-center justify-between gap-4">
                       <strong>{item.name}</strong>
                       <code>{item.externalProductId}</code>
                     </div>
-                    <p className="mt-2 text-muted">
+                    <p className="mt-2 text-[12px] text-slate-500">
                       SKU {item.sku ?? "-"} | Barcode {item.barcode ?? "-"} | Prix {item.priceCents ?? "-"} | Stock {item.stockQuantity ?? "-"}
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="text-muted">Aucun produit exemple disponible.</p>
+                <p className="text-[12px] text-slate-500">Aucun produit exemple disponible.</p>
               )}
             </div>
           </article>
@@ -175,7 +176,7 @@ export function ShopcaisseCatalogPanel({ lastSuccessAt, lastErrorMessage }: Prop
       ) : null}
 
       {syncResult ? (
-        <article className="mt-6 border border-line p-4 text-sm">
+        <article className="mt-6 bg-white p-4 text-sm shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
           <div className="flex items-center justify-between gap-4">
             <strong className={syncResult.success ? "text-accent" : "text-terracotta"}>
               {syncResult.success ? "Synchronisation OK" : "Synchronisation en echec"}
@@ -183,21 +184,21 @@ export function ShopcaisseCatalogPanel({ lastSuccessAt, lastErrorMessage }: Prop
             <span>{new Date(syncResult.syncedAt).toLocaleString("fr-FR")}</span>
           </div>
           <div className="mt-4 grid gap-2 md:grid-cols-3">
-            <div className="border border-line p-3">Crees: {syncResult.createdCount}</div>
-            <div className="border border-line p-3">Mis a jour: {syncResult.updatedCount}</div>
-            <div className="border border-line p-3">Ignores: {syncResult.skippedCount}</div>
+            <div className="bg-[#f7f7f8] p-3">Crees: {syncResult.createdCount}</div>
+            <div className="bg-[#f7f7f8] p-3">Mis a jour: {syncResult.updatedCount}</div>
+            <div className="bg-[#f7f7f8] p-3">Ignores: {syncResult.skippedCount}</div>
           </div>
           <div className="mt-4">
             <strong>Erreurs</strong>
             <div className="mt-3 grid gap-2">
               {syncResult.errors.length > 0 ? (
                 syncResult.errors.slice(0, 10).map((error) => (
-                  <div key={`${error.externalProductId}:${error.message}`} className="border border-line p-3 text-muted">
+                  <div key={`${error.externalProductId}:${error.message}`} className="bg-[#f7f7f8] p-3 text-slate-500">
                     <code>{error.externalProductId}</code> {error.message}
                   </div>
                 ))
               ) : (
-                <p className="text-muted">Aucune erreur.</p>
+                <p className="text-[12px] text-slate-500">Aucune erreur.</p>
               )}
             </div>
           </div>

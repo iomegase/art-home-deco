@@ -35,10 +35,6 @@ export function HomeProductSpotlight({ products }: Props) {
   const product = products[index];
   const cover = product.images[0];
   const title = clampWords(product.title, 4);
-  const excerpt =
-    product.shortDescription ||
-    product.description ||
-    "Découvrir les détails de cette pièce.";
   const category =
     product.categories?.[0]?.category?.title || "Galerie produits";
 
@@ -56,14 +52,7 @@ export function HomeProductSpotlight({ products }: Props) {
     direction === "next" ? "product-panel-next" : "product-panel-prev";
 
   return (
-    <section className="relative mx-auto grid min-h-[820px] max-w-[1240px] grid-cols-1 items-center overflow-x-clip px-6 pb-28 pt-20 md:px-16 lg:grid-cols-[1fr_480px] lg:px-0">
-      <style>{`
-        .product-panel-next { animation: product-slide-next 320ms ease; }
-        .product-panel-prev { animation: product-slide-prev 320ms ease; }
-        @keyframes product-slide-next { 0% { opacity: 0; transform: translateX(16px); } 100% { opacity: 1; transform: translateX(0); } }
-        @keyframes product-slide-prev { 0% { opacity: 0; transform: translateX(-16px); } 100% { opacity: 1; transform: translateX(0); } }
-      `}</style>
-
+    <section className="relative mx-auto grid min-h-[820px] max-w-[1240px] grid-cols-1 items-start overflow-x-clip px-6 pb-32 pt-6 md:px-16 md:pb-24 md:pt-12 lg:grid-cols-[1fr_480px] lg:items-center lg:px-0">
       <aside className="timeline absolute left-6 top-24 hidden h-[150px] w-8 md:left-16 md:block lg:left-0">
         <span className="timeline-dot relative mx-auto block h-5 w-5 rounded-full" />
       </aside>
@@ -73,12 +62,12 @@ export function HomeProductSpotlight({ products }: Props) {
         key={`content-${product.id}`}
         className={`relative z-10 pl-0 md:pl-20 lg:order-2 lg:pl-0 ${animClass}`}
       >
-        <p className="mb-16 text-[12px] font-extrabold uppercase leading-relaxed tracking-[0.14em]">
+        <p className="mb-5 hidden sm:block text-[10px] font-bold uppercase tracking-[0.22em] text-[#b0a99a] md:mb-8">
           {category}
         </p>
 
         <h2
-          className="text-[48px] font-[300] leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-[68px]"
+          className="text-[44px] font-[300] leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-[68px]"
           style={{
             fontFamily:
               'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
@@ -87,22 +76,22 @@ export function HomeProductSpotlight({ products }: Props) {
           {title}
         </h2>
 
-        <p className="mt-12 max-w-[300px] text-[12px] font-bold uppercase leading-5 tracking-[0.14em] text-slate-800">
+        {/* <p className="mt-5 max-w-[300px] text-[12px] font-bold uppercase leading-5 tracking-[0.12em] text-slate-500">
           {excerpt}
-        </p>
+        </p> */}
 
         <NextLink
           href={`/boutique/${product.slug}`}
-          className="mt-12 inline-flex h-[48px] w-[146px] items-center justify-center border border-[#dedede] bg-white/85 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717] hover:text-[#171717]"
+          className="mt-7 inline-flex h-[46px] w-[146px] items-center justify-center border border-[#dedede] bg-white/85 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717] hover:text-[#171717]"
         >
           Voir l&apos;article
         </NextLink>
 
-        <p className="mt-8 text-xl font-bold tracking-[0.08em] text-[#171717]">
+        <p className="mt-4 text-[28px] font-[300] tracking-[-0.02em] text-[#b0a99a] md:text-[32px]">
           {formatPriceCents(product.priceCents)}
         </p>
 
-        <div className="arrow-line relative mt-24 flex w-[105px] items-center justify-between text-[38px] font-extralight text-[#171717]/70">
+        <div className="arrow-line relative mt-8 flex w-[105px] items-center justify-between text-[38px] font-extralight text-[#171717]/70 md:mt-14">
           <button type="button" aria-label="Produit précédent" onClick={goPrev}>
             <span>←</span>
           </button>
@@ -115,7 +104,7 @@ export function HomeProductSpotlight({ products }: Props) {
       {/* Image — absolute derrière le contenu sur mobile (z-0), colonne gauche sur lg (order-1) */}
       <div
         key={`image-${product.id}`}
-        className={`group absolute inset-x-0 top-[300px] z-0 min-h-[600px] lg:relative lg:order-1 lg:top-0 ${animClass}`}
+        className={`group absolute inset-x-0 top-[150px] md:top-[300px] z-0 min-h-[600px] lg:relative lg:order-1 lg:top-0 ${animClass}`}
       >
         <div className="absolute left-[-10%] top-[120px] h-[350px] w-[400px] rotate-[-15deg] rounded-[60%_40%_70%_30%/50%] bg-slate-400/10 mix-blend-multiply blur-[2px] transition-all duration-[3000ms] ease-in-out group-hover:rotate-[-5deg] group-hover:scale-105 group-hover:rounded-[40%_60%_30%_70%/60%_40%_60%_40%] md:left-[8%] md:top-[130px] md:h-[500px] md:w-[550px]" />
         <div className="absolute left-[45%] top-[-20px] h-[400px] w-[280px] rotate-[15deg] rounded-[40%_60%_30%_70%/60%_40%_60%_40%] bg-slate-200/40 mix-blend-multiply transition-all duration-[4000ms] ease-in-out group-hover:-translate-x-4 group-hover:rotate-[25deg] group-hover:rounded-[70%_30%_50%_50%/30%_70%_40%_60%] md:left-[50%] md:h-[550px] md:w-[350px]" />

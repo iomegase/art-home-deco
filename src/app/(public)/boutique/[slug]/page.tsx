@@ -37,6 +37,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const category = product.categories[0]?.category;
   const isUnavailable = product.stock <= 0 || product.status === "out_of_stock";
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -49,10 +50,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
       "@type": "Offer",
       priceCurrency: "EUR",
       price: (product.priceCents / 100).toFixed(2),
-      availability: product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      availability:
+        product.stock > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
       url: `/boutique/${product.slug}`,
     },
   };
+
   const analyticsProduct = {
     item_id: product.id,
     item_name: product.title,
@@ -63,59 +68,84 @@ export default async function ProductPage({ params }: ProductPageProps) {
   };
 
   return (
-    <article className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    <main className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <TrackViewItem product={analyticsProduct} />
-      <Link href="/boutique" className="text-sm font-bold text-muted hover:text-terracotta">
-        Retour boutique
-      </Link>
 
-      <div className="mt-8 grid gap-10 md:grid-cols-[0.95fr_1fr] md:items-start">
-        <ProductGallery productTitle={product.title} images={product.images} />
-
-        <div className="md:sticky md:top-24">
-          {category ? (
-            <Link href={`/categorie/${category.slug}`} className="section-title text-terracotta hover:text-brand">
+      {/* ── Breadcrumb ── */}
+      <div className="mx-auto max-w-[1240px] px-6 pt-10 md:px-16 lg:px-0">
+        <div className="flex items-center justify-between">
+          <Link
+            href="/boutique"
+            className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a] transition hover:text-[#171717]"
+          >
+            ← Boutique
+          </Link>
+          {category && (
+            <Link
+              href={`/boutique?categorie=${category.slug}`}
+              className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a] transition hover:text-[#171717]"
+            >
               {category.title}
             </Link>
-          ) : (
-            <p className="section-title text-terracotta">Collection</p>
+          )}
+        </div>
+      </div>
+
+      {/* ── Main grid ── */}
+      <div className="mx-auto flex min-h-[calc(100vh-72px)] max-w-[1240px] flex-col justify-center px-6 pb-16 pt-8 md:px-16 lg:grid lg:grid-cols-[1fr_460px] lg:items-center lg:gap-20 lg:px-0 lg:py-16">
+        {/* Gallery */}
+        <div>
+          <ProductGallery productTitle={product.title} images={product.images} />
+        </div>
+
+        {/* Info panel */}
+        <div className="mt-12 lg:sticky lg:top-24 lg:mt-0">
+          {/* Category + title */}
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+            {category?.title ?? "Collection"}
+          </p>
+
+          <h1 className="mt-4 text-[48px] font-[300] leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[64px]">
+            {product.title}
+          </h1>
+
+          {/* Price */}
+          <p className="mt-6 text-[28px] font-[300] tracking-[-0.02em] text-[#171717]">
+            {formatPriceCents(product.priceCents)}
+          </p>
+
+          {/* Short description */}
+          {product.shortDescription && (
+            <p className="mt-6 max-w-sm text-[12px] font-bold uppercase leading-6 tracking-[0.1em] text-slate-500">
+              {product.shortDescription}
+            </p>
           )}
 
-          <h1 className="mt-4 max-w-2xl text-5xl leading-none md:text-7xl">{product.title}</h1>
-          <p className="mt-6 text-2xl font-bold">{formatPriceCents(product.priceCents)}</p>
-
-          {product.shortDescription ? (
-            <p className="mt-6 max-w-xl text-base leading-7 text-muted">{product.shortDescription}</p>
-          ) : null}
-
-          <dl className="mt-8 grid gap-3 border-y border-line py-6 text-sm">
-            <div className="flex justify-between gap-4">
-              <dt className="text-muted">Stock</dt>
-              <dd className="font-bold">{formatStockLabel(product.stock, product.pickupOnly)}</dd>
+          {/* Details */}
+          <dl className="mt-8 border-t border-[#e5e7eb] pt-6 grid gap-3">
+            <div className="flex items-center justify-between">
+              <dt className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">Stock</dt>
+              <dd className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#171717]">
+                {formatStockLabel(product.stock, product.pickupOnly)}
+              </dd>
             </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-muted">SKU</dt>
-              <dd className="font-bold">{product.sku}</dd>
+            <div className="flex items-center justify-between">
+              <dt className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">Livraison</dt>
+              <dd className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#171717]">
+                {product.shippingClass}
+              </dd>
             </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-muted">Classe livraison</dt>
-              <dd className="font-bold">{product.shippingClass}</dd>
+            <div className="flex items-center justify-between border-t border-[#e5e7eb] pt-3">
+              <dt className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">Référence</dt>
+              <dd className="text-[11px] tracking-[0.06em] text-[#b0a99a]">{product.sku}</dd>
             </div>
-            {product.barcode ? (
-              <div className="flex justify-between gap-4">
-                <dt className="text-muted">Barcode</dt>
-                <dd className="font-bold">{product.barcode}</dd>
-              </div>
-            ) : null}
-            {product.externalStockId ? (
-              <div className="flex justify-between gap-4">
-                <dt className="text-muted">Stock externe</dt>
-                <dd className="font-bold">{product.externalStockId}</dd>
-              </div>
-            ) : null}
           </dl>
 
+          {/* Add to cart */}
           <AddToCartButton
             productId={product.id}
             productStock={product.stock}
@@ -123,14 +153,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
             disabled={isUnavailable}
           />
 
-          {product.description ? (
-            <div className="mt-10 max-w-2xl text-base leading-8 text-muted">
-              <h2 className="font-serif text-3xl text-foreground">Details</h2>
-              <p className="mt-3 whitespace-pre-line">{product.description}</p>
+          {/* Long description */}
+          {product.description && (
+            <div className="mt-12 border-t border-[#e5e7eb] pt-8">
+              <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+                Détails
+              </h2>
+              <p className="mt-4 text-[13px] leading-7 text-slate-600 whitespace-pre-line">
+                {product.description}
+              </p>
             </div>
-          ) : null}
+          )}
         </div>
       </div>
-    </article>
+    </main>
   );
 }

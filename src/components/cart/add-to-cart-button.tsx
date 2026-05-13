@@ -14,7 +14,12 @@ type AddToCartButtonProps = {
   disabled?: boolean;
 };
 
-export function AddToCartButton({ productId, productStock, analyticsProduct, disabled = false }: AddToCartButtonProps) {
+export function AddToCartButton({
+  productId,
+  productStock,
+  analyticsProduct,
+  disabled = false,
+}: AddToCartButtonProps) {
   const [added, setAdded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [quantityInCart, setQuantityInCart] = useState(0);
@@ -37,55 +42,57 @@ export function AddToCartButton({ productId, productStock, analyticsProduct, dis
   const remainingStock = Math.max(0, productStock - quantityInCart);
   const isStockLimitReached = remainingStock <= 0;
   const isDisabled = disabled || isStockLimitReached;
+
   const buttonLabel = useMemo(() => {
-    if (disabled) {
-      return "Produit indisponible";
-    }
-
-    if (isStockLimitReached) {
-      return "Stock maximum atteint";
-    }
-
-    return added ? "Ajoute au panier" : "Ajouter au panier";
+    if (disabled) return "Produit indisponible";
+    if (isStockLimitReached) return "Stock maximum atteint";
+    return added ? "Ajouté au panier ✓" : "Ajouter au panier";
   }, [added, disabled, isStockLimitReached]);
 
   return (
-    <div className="mt-8 grid gap-3">
+    <div className="mt-8 flex flex-col gap-3">
       <button
         type="button"
         disabled={isDisabled}
         onClick={() => {
           const result = addCartItem(productId, 1, productStock);
-
           if (!result.ok) {
-            setError("Stock maximum deja atteint dans votre panier.");
+            setError("Stock maximum déjà atteint dans votre panier.");
             return;
           }
-
           trackAddToCart(analyticsProduct, 1);
           setAdded(true);
           setError(null);
         }}
-        className="w-full bg-brand px-6 py-4 text-sm font-bold text-brand-contrast transition hover:bg-terracotta disabled:cursor-not-allowed disabled:bg-muted"
+        className="h-[52px] w-full bg-[#171717] text-[11px] font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[#747b4f] disabled:cursor-not-allowed disabled:bg-[#b0a99a]"
       >
         {buttonLabel}
       </button>
-      {isStockLimitReached ? (
-        <p className="text-sm font-bold text-muted">Stock maximum deja atteint dans votre panier.</p>
-      ) : (
-        <p className="text-sm text-muted">
-          {remainingStock} unite{remainingStock > 1 ? "s" : ""} encore ajoutable{remainingStock > 1 ? "s" : ""} au panier.
-        </p>
-      )}
-      {error ? <p className="text-sm font-bold text-muted">{error}</p> : null}
-      {added ? (
+
+      {added && (
         <Link
           href="/panier"
-          className="w-full border border-line px-6 py-4 text-center text-sm font-bold hover:border-brand"
+          className="flex h-[52px] w-full items-center justify-center border border-[#dedede] text-[11px] font-bold uppercase tracking-[0.16em] text-[#171717] transition hover:border-[#171717]"
         >
           Voir le panier
         </Link>
-      ) : null}
+      )}
+
+      {!isStockLimitReached && !error && (
+        <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#b0a99a]">
+          {remainingStock} unité{remainingStock > 1 ? "s" : ""} disponible{remainingStock > 1 ? "s" : ""}
+        </p>
+      )}
+
+      {isStockLimitReached && (
+        <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#b0a99a]">
+          Stock maximum atteint dans votre panier.
+        </p>
+      )}
+
+      {error && (
+        <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#bd6745]">{error}</p>
+      )}
     </div>
   );
 }

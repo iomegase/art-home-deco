@@ -13,7 +13,12 @@ type BoutiqueFiltersProps = {
   total: number;
 };
 
-export function BoutiqueFilters({ categories, initialQuery, initialCategory, total }: BoutiqueFiltersProps) {
+export function BoutiqueFilters({
+  categories,
+  initialQuery,
+  initialCategory,
+  total,
+}: BoutiqueFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -47,15 +52,10 @@ export function BoutiqueFilters({ categories, initialQuery, initialCategory, tot
         trackSearch(normalizedQuery);
       }
 
-      navigate({
-        q: normalizedQuery,
-        categorie: category,
-        page: 1,
-      });
+      navigate({ q: normalizedQuery, categorie: category, page: 1 });
     }, 300);
 
     return () => window.clearTimeout(timeoutId);
-    // The debounced navigation is keyed only by the controlled filters.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, category]);
 
@@ -72,65 +72,58 @@ export function BoutiqueFilters({ categories, initialQuery, initialCategory, tot
     });
   }
 
+  const tabBase =
+    "text-[11px] font-bold uppercase tracking-[0.14em] pb-1 transition-colors whitespace-nowrap";
+  const tabActive = "text-[#171717] border-b border-[#171717]";
+  const tabInactive = "text-[#b0a99a] hover:text-[#171717]";
+
   return (
-    <section className="mb-12 border-y border-slate-100 bg-white py-8">
-      <div className="grid gap-6 lg:grid-cols-[1.35fr_0.75fr_auto] lg:items-end">
-        <label className="grid gap-2 text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
-          <span>Recherche</span>
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Rechercher un produit…"
-            className="w-full border-b border-slate-200 bg-transparent px-0 py-3 text-sm outline-none transition placeholder:text-slate-300 focus:border-slate-800"
-          />
-        </label>
-
-        <label className="grid gap-2 text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
-          <span>Categorie</span>
-          <select
-            value={category}
-            onChange={(event) => handleCategoryChange(event.target.value)}
-            className="w-full border-b border-slate-200 bg-transparent px-0 py-3 text-sm outline-none transition focus:border-slate-800"
-          >
-            <option value="">Toutes les categories</option>
-            {categories.map((entry) => (
-              <option key={entry.id} value={entry.slug}>
-                {entry.title}
-              </option>
-            ))}
-          </select>
-        </label>
-
+    <div className="mb-16">
+      {/* ── Category tabs ── */}
+      <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-[#e5e7eb] pt-8">
         <button
           type="button"
-          onClick={handleReset}
-          disabled={!hasActiveFilters}
-          className="border border-slate-200 px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+          onClick={() => handleCategoryChange("")}
+          className={`${tabBase} ${!category ? tabActive : tabInactive}`}
         >
-          Reinitialiser
+          Tout
         </button>
+        {categories.map((entry) => (
+          <button
+            key={entry.id}
+            type="button"
+            onClick={() => handleCategoryChange(entry.slug)}
+            className={`${tabBase} ${category === entry.slug ? tabActive : tabInactive}`}
+          >
+            {entry.title}
+          </button>
+        ))}
       </div>
 
-      <div className="mt-8 flex flex-col gap-3 text-sm font-light text-slate-500 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap gap-2">
-          <span className="font-bold text-foreground">{total}</span>
-          <span>{total > 1 ? "produits visibles" : "produit visible"}</span>
-          {query.trim() ? (
-            <span className="bg-slate-50 px-3 py-1 text-xs text-slate-600 rounded-sm">
-              Recherche: {query.trim()}
-            </span>
-          ) : null}
-          {category ? (
-            <span className="bg-slate-50 px-3 py-1 text-xs text-slate-600 rounded-sm">
-              Categorie: {categories.find((entry) => entry.slug === category)?.title ?? category}
-            </span>
-          ) : null}
-        </div>
+      {/* ── Search + count ── */}
+      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Rechercher un produit…"
+          className="w-full max-w-xs border-b border-[#e5e7eb] bg-transparent pb-2 text-[12px] outline-none transition placeholder:text-[#d1d5db] focus:border-[#171717]"
+        />
 
-        <div className="min-h-5 text-xs font-bold uppercase tracking-[0.18em] text-muted">
-          {isPending ? "Mise a jour..." : "URL partageable"}
+        <div className="flex items-center gap-6">
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a]">
+            <span className="text-[#171717]">{total}</span>{" "}
+            {total > 1 ? "produits" : "produit"}
+          </span>
+          <button
+            type="button"
+            onClick={handleReset}
+            disabled={!hasActiveFilters}
+            className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a] transition hover:text-[#171717] disabled:opacity-30"
+          >
+            {isPending ? "…" : "↺ Réinitialiser"}
+          </button>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

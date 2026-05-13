@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Eye, Pen, Trash2, Plus } from "lucide-react";
+import { Eye, Pen, Plus, Sparkles } from "lucide-react";
 import { BlogImage } from "@/components/blog/blog-image";
-import { deleteBlogPostForAdminAction } from "@/features/blog/actions";
 import { listAllBlogPosts } from "@/server/repositories/blog.repository";
+import { DeleteBlogPostButton } from "@/components/admin/blog/delete-blog-post-button";
 
 type AdminBlogPageProps = {
   searchParams?: Promise<{ page?: string; deleted?: string }>;
@@ -12,9 +12,7 @@ const PAGE_SIZE = 8;
 
 function toPage(value: string | undefined): number {
   const parsed = Number.parseInt(value ?? "1", 10);
-  if (Number.isNaN(parsed) || parsed < 1) {
-    return 1;
-  }
+  if (Number.isNaN(parsed) || parsed < 1) return 1;
   return parsed;
 }
 
@@ -23,160 +21,227 @@ export default async function AdminBlogPage({ searchParams }: AdminBlogPageProps
   const posts = await listAllBlogPosts();
   const page = toPage(query?.page);
 
-  const publishedCount = posts.filter((post) => post.status === "published").length;
-  const draftCount = posts.filter((post) => post.status === "draft").length;
+  const publishedCount = posts.filter((p) => p.status === "published").length;
+  const draftCount = posts.filter((p) => p.status === "draft").length;
 
   const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const start = (currentPage - 1) * PAGE_SIZE;
   const paginatedPosts = posts.slice(start, start + PAGE_SIZE);
 
+  const stats = [
+    { label: "Totaux",   value: posts.length,    color: "#ec4899", bg: "#fdf2f8" },
+    { label: "Publiés",  value: publishedCount,  color: "#22c55e", bg: "#f0fdf4" },
+    { label: "Brouillons", value: draftCount,    color: "#f97316", bg: "#fff7ed" },
+  ];
+
   return (
-    <section>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div className="grid gap-10">
+
+      {/* ── Header ── */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="section-title text-terracotta">Blog</p>
-          <h2 className="mt-2 font-serif text-4xl">Suivi editorial</h2>
-          <p className="mt-3 max-w-2xl text-sm text-muted">
-            Gere les brouillons et les publications avec la meme structure de pilotage que le suivi commandes.
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">
+            Suivi éditorial
           </p>
+          <h1 className="mt-2 text-[36px] font-[200] leading-none tracking-[-0.04em] text-[#111]">
+            Blog
+          </h1>
         </div>
-        <Link href="/admin/blog/new" className="bg-brand px-4 py-2 text-sm font-bold text-brand-contrast">
-          <span className="inline-flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Nouveau brouillon
-          </span>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin/blog/new"
+            className="inline-flex items-center gap-2 px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] transition-all hover:brightness-95"
+            style={{ backgroundColor: "#fdf2f8", color: "#ec4899" }}
+          >
+            <Sparkles size={13} />
+            Brouillon IA
+          </Link>
+          <Link
+            href="/admin/blog/new"
+            className="inline-flex items-center gap-2 bg-[#111] px-4 py-2.5 text-[10px] font-bold uppercase tracking-[0.16em] text-white transition-all hover:bg-[#333]"
+          >
+            <Plus size={13} />
+            Nouvel article
+          </Link>
+        </div>
       </div>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
-        <article className="border border-line bg-surface p-5">
-          <p className="text-sm text-muted">Articles totaux</p>
-          <p className="mt-2 font-serif text-4xl">{posts.length}</p>
-        </article>
-        <article className="border border-line bg-surface p-5">
-          <p className="text-sm text-muted">Articles publies</p>
-          <p className="mt-2 font-serif text-4xl">{publishedCount}</p>
-        </article>
-        <article className="border border-line bg-surface p-5">
-          <p className="text-sm text-muted">Brouillons</p>
-          <p className="mt-2 font-serif text-4xl">{draftCount}</p>
-        </article>
+      {/* ── KPI cards ── */}
+      <div className="grid grid-cols-3 gap-3">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="relative overflow-hidden bg-white shadow-[0_4px_16px_rgba(0,0,0,0.10)] p-5"
+          >
+            <span
+              className="absolute inset-y-0 left-0 w-[3px]"
+              style={{ backgroundColor: stat.color }}
+            />
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+              {stat.label}
+            </p>
+            <p
+              className="mt-2 text-[44px] font-[100] leading-none tracking-[-0.04em]"
+              style={{ color: stat.color }}
+            >
+              {stat.value}
+            </p>
+          </div>
+        ))}
       </div>
 
+      {/* ── Delete confirmation ── */}
       {query?.deleted ? (
-        <div className="mt-6 border border-rose-200 bg-rose-50 p-4 text-sm text-rose-600">
-          L&apos;article a ete retire du catalogue.
+        <div className="flex items-center gap-3 border-l-[3px] border-[#ef4444] bg-[#fef2f2] px-4 py-3">
+          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#ef4444]">
+            Article supprimé du catalogue.
+          </span>
         </div>
       ) : null}
 
-      <div className="mt-8 overflow-x-auto border border-line">
-        <table className="w-full min-w-[920px] border-collapse text-left text-sm">
-          <thead className="bg-surface text-xs uppercase text-muted">
-            <tr>
-              <th className="px-4 py-3">Article</th>
-              <th className="px-4 py-3">Statut</th>
-              <th className="px-4 py-3">Publication</th>
-              <th className="px-4 py-3">Slug</th>
-              <th className="px-4 py-3 text-right">Actions</th>
+      {/* ── Table ── */}
+      <div className="overflow-x-auto shadow-[0_4px_16px_rgba(0,0,0,0.10)]">
+        <table className="w-full min-w-[860px] border-collapse text-left">
+          <thead>
+            <tr className="border-b border-[#f0f0f0] bg-[#fafafa]">
+              {["Article", "Statut", "Publication", "Slug", ""].map((h) => (
+                <th
+                  key={h}
+                  className="px-4 py-3 text-[9px] font-bold uppercase tracking-[0.22em] text-slate-400"
+                >
+                  {h}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {paginatedPosts.map((post) => {
               const isPublished = post.status === "published";
-
               return (
-                <tr key={post.id} className="border-t border-line">
-                  <td className="px-4 py-4">
-                    <div className="flex items-center gap-4">
-                      <div className="h-14 w-14 overflow-hidden rounded-full border border-line bg-surface">
+                <tr
+                  key={post.id}
+                  className="group border-b border-[#f8f8f8] bg-white transition-colors hover:bg-[#fafafa]"
+                >
+                  {/* Article */}
+                  <td className="px-4 py-3.5">
+                    <div className="flex items-center gap-3">
+                      <div className="h-11 w-11 flex-shrink-0 overflow-hidden bg-[#f6f5f3]">
                         <BlogImage
                           src={post.imageUrl}
                           alt={post.title}
-                          width={120}
-                          height={120}
-                          className="h-full w-full rounded-full object-cover"
+                          width={88}
+                          height={88}
+                          className="h-full w-full object-cover"
                         />
                       </div>
-                      <div className="min-w-0">
-                        <p className="truncate font-bold text-foreground">{post.title}</p>
-                      </div>
+                      <p className="max-w-[260px] truncate text-[12px] font-bold text-[#111]">
+                        {post.title}
+                      </p>
                     </div>
                   </td>
-                  <td className="px-4 py-4">
+
+                  {/* Statut */}
+                  <td className="px-4 py-3.5">
                     <span
-                      className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${
-                        isPublished ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
-                      }`}
+                      className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.14em]"
+                      style={{ color: isPublished ? "#22c55e" : "#f97316" }}
                     >
-                      {isPublished ? "Publie" : "Brouillon"}
+                      <span
+                        className="h-1.5 w-1.5 rounded-full"
+                        style={{ backgroundColor: isPublished ? "#22c55e" : "#f97316" }}
+                      />
+                      {isPublished ? "Publié" : "Brouillon"}
                     </span>
                   </td>
-                  <td className="px-4 py-4">
-                    {post.publishedAt ? post.publishedAt.toLocaleDateString("fr-FR") : "Non publie"}
+
+                  {/* Date */}
+                  <td className="px-4 py-3.5">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400">
+                      {post.publishedAt
+                        ? post.publishedAt.toLocaleDateString("fr-FR")
+                        : "—"}
+                    </span>
                   </td>
-                  <td className="px-4 py-4 text-muted">{post.slug}</td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center justify-end gap-2">
+
+                  {/* Slug */}
+                  <td className="px-4 py-3.5">
+                    <span className="max-w-[180px] truncate text-[10px] text-slate-400 font-mono">
+                      {post.slug}
+                    </span>
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-4 py-3.5">
+                    <div className="flex items-center justify-end gap-1.5">
+                      {/* Edit */}
                       <Link
                         href={`/admin/blog/${post.id}/edit`}
-                        className="flex h-10 w-10 items-center justify-center border border-line text-muted hover:bg-surface hover:text-foreground"
                         title="Modifier"
                         aria-label={`Modifier ${post.title}`}
+                        className="flex h-8 w-8 items-center justify-center transition-all hover:brightness-95"
+                        style={{ backgroundColor: "#eff6ff", color: "#3b82f6" }}
                       >
-                        <Pen className="h-4 w-4" />
+                        <Pen size={13} strokeWidth={2.5} />
                       </Link>
 
+                      {/* View */}
                       {isPublished ? (
                         <Link
                           href={`/blog/${post.slug}`}
-                          className="flex h-10 w-10 items-center justify-center border border-line text-muted hover:bg-surface hover:text-foreground"
                           title="Voir en ligne"
-                          aria-label={`Voir ${post.title} en ligne`}
+                          aria-label={`Voir ${post.title}`}
+                          className="flex h-8 w-8 items-center justify-center transition-all hover:brightness-95"
+                          style={{ backgroundColor: "#f0fdf4", color: "#22c55e" }}
                         >
-                          <Eye className="h-4 w-4" />
+                          <Eye size={13} strokeWidth={2.5} />
                         </Link>
                       ) : (
-                        <div className="flex h-10 w-10 items-center justify-center border border-line text-slate-300">
-                          <Eye className="h-4 w-4" />
-                        </div>
+                        <span className="flex h-8 w-8 items-center justify-center bg-[#fafafa]">
+                          <Eye size={13} strokeWidth={2} className="text-slate-300" />
+                        </span>
                       )}
 
-                      <form action={deleteBlogPostForAdminAction}>
-                        <input type="hidden" name="id" value={post.id} />
-                        <button
-                          type="submit"
-                          className="flex h-10 w-10 items-center justify-center border border-line text-slate-300 hover:bg-rose-50 hover:text-rose-600"
-                          title="Supprimer"
-                          aria-label={`Supprimer ${post.title}`}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </form>
+                      {/* Delete */}
+                      <DeleteBlogPostButton id={post.id} title={post.title} />
                     </div>
                   </td>
                 </tr>
               );
             })}
+
+            {paginatedPosts.length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-4 py-16 text-center">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-300">
+                    Aucun article pour le moment.
+                  </p>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
-      {posts.length > PAGE_SIZE ? (
-        <div className="mt-8 flex justify-center gap-3">
-          {Array.from({ length: totalPages }, (_, index) => index + 1).map((n) => (
+      {/* ── Pagination ── */}
+      {posts.length > PAGE_SIZE && (
+        <div className="flex items-center justify-center gap-1.5">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
             <Link
               key={n}
               href={`/admin/blog?page=${n}`}
-              className={`flex h-10 w-10 items-center justify-center text-xs font-bold ${
-                n === currentPage ? "bg-brand text-brand-contrast" : "border border-line text-muted hover:bg-surface"
-              }`}
+              className="flex h-8 w-8 items-center justify-center text-[10px] font-bold uppercase tracking-[0.1em] transition-all"
+              style={
+                n === currentPage
+                  ? { backgroundColor: "#ec4899", color: "#fff" }
+                  : { backgroundColor: "#fafafa", color: "#aaa" }
+              }
             >
               {n}
             </Link>
           ))}
         </div>
-      ) : null}
-    </section>
+      )}
+    </div>
   );
 }

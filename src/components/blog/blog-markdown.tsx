@@ -15,21 +15,52 @@ export function BlogMarkdown({ content }: { content: string }) {
   return (
     <ReactMarkdown
       components={{
-        h1: ({ children }) => <h2 className="mt-12 font-serif text-3xl leading-tight md:text-4xl">{children}</h2>,
-        h2: ({ children }) => <h2 className="mt-12 font-serif text-3xl leading-tight md:text-4xl">{children}</h2>,
-        h3: ({ children }) => <h3 className="mt-8 font-serif text-2xl leading-tight">{children}</h3>,
-        p: ({ children }) => <p className="mt-5 text-base leading-8 text-foreground">{children}</p>,
-        ul: ({ children }) => <ul className="mt-5 list-disc space-y-2 pl-6 text-base leading-8">{children}</ul>,
-        ol: ({ children }) => <ol className="mt-5 list-decimal space-y-2 pl-6 text-base leading-8">{children}</ol>,
-        li: ({ children }) => <li>{children}</li>,
-        strong: ({ children }) => <strong className="font-bold text-foreground">{children}</strong>,
+        h1: ({ children }) => (
+          <h2 className="mt-14 text-[32px] font-[300] leading-tight tracking-[-0.03em] text-[#171717] md:text-[40px]">
+            {children}
+          </h2>
+        ),
+        h2: ({ children }) => (
+          <h2 className="mt-14 text-[32px] font-[300] leading-tight tracking-[-0.03em] text-[#171717] md:text-[40px]">
+            {children}
+          </h2>
+        ),
+        h3: ({ children }) => (
+          <h3 className="mt-10 text-[22px] font-[300] leading-tight tracking-[-0.02em] text-[#171717]">
+            {children}
+          </h3>
+        ),
+        p: ({ children }) => (
+          <p className="mt-6 text-[15px] leading-[1.85] text-slate-600">{children}</p>
+        ),
+        ul: ({ children }) => (
+          <ul className="mt-6 space-y-2 pl-5 text-[15px] leading-[1.85] text-slate-600">
+            {children}
+          </ul>
+        ),
+        ol: ({ children }) => (
+          <ol className="mt-6 list-decimal space-y-2 pl-5 text-[15px] leading-[1.85] text-slate-600">
+            {children}
+          </ol>
+        ),
+        li: ({ children }) => (
+          <li className="pl-1">{children}</li>
+        ),
+        strong: ({ children }) => (
+          <strong className="font-bold text-[#171717]">{children}</strong>
+        ),
         a: ({ href, children }) => (
-          <a href={href} className="underline decoration-line underline-offset-4 hover:text-terracotta">
+          <a
+            href={href}
+            className="underline decoration-[#b0a99a] underline-offset-4 transition hover:text-[#747b4f]"
+          >
             {children}
           </a>
         ),
         blockquote: ({ children }) => (
-          <blockquote className="mt-6 border-l-2 border-terracotta pl-4 italic text-muted">{children}</blockquote>
+          <blockquote className="mt-8 border-l-2 border-[#b0a99a] pl-6 text-[16px] font-[300] italic leading-relaxed text-[#b0a99a]">
+            {children}
+          </blockquote>
         ),
       }}
     >

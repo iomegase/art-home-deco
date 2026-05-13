@@ -42,113 +42,106 @@ export default async function BoutiquePage({ searchParams }: BoutiquePageProps) 
   const activeCategory = categories.find((entry) => entry.slug === categorySlug);
 
   return (
-    <main className="min-h-screen bg-white pb-24">
-      <div className="mx-auto max-w-7xl px-5 pt-12 md:px-8 md:pt-20">
-        <TrackViewItemList
-          listName="boutique"
-          products={catalog.products.map((product) => ({
-            item_id: product.id,
-            item_name: product.title,
-            item_category: product.categories[0]?.category.title,
-            price: product.priceCents / 100,
-            quantity: 1,
-            sku: product.sku,
-          }))}
-        />
-        <header className="mb-12 flex flex-col items-center text-center">
-          <h1 className="text-4xl font-thin tracking-tight text-slate-800 md:text-6xl">
-            Collection <span className="font-serif italic text-slate-400">Permanente</span>
-          </h1>
-          <p className="mt-6 max-w-2xl text-sm font-light leading-relaxed text-slate-500 md:text-base">
-            Une sélection de pièces intemporelles pour un intérieur minimaliste et chaleureux. 
-            Découvrez notre univers à travers des matériaux bruts et des lignes épurées.
-          </p>
-        </header>
-
-      <BoutiqueFilters
-        key={`${query}::${categorySlug}`}
-        categories={categories}
-        initialQuery={query}
-        initialCategory={categorySlug}
-        total={catalog.total}
+    <main className="min-h-screen bg-white">
+      <TrackViewItemList
+        listName="boutique"
+        products={catalog.products.map((product) => ({
+          item_id: product.id,
+          item_name: product.title,
+          item_category: product.categories[0]?.category.title,
+          price: product.priceCents / 100,
+          quantity: 1,
+          sku: product.sku,
+        }))}
       />
 
-      {catalog.products.length > 0 ? (
-        <>
-          <section className="mt-10 grid gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {catalog.products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+      {/* ── Hero header ── */}
+      <header className="mx-auto max-w-[1240px] px-6 pb-16 pt-20 md:px-16 md:pt-28 lg:px-0">
+        <p className="mb-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+          Boutique
+        </p>
+        <h1 className="text-[56px] font-[300] leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[88px]">
+          Collection
+          <br />
+          <span className="text-[#b0a99a]">Permanente</span>
+        </h1>
+        <p className="mt-10 max-w-[440px] text-[12px] font-bold uppercase leading-6 tracking-[0.12em] text-slate-500">
+          Une sélection de pièces intemporelles pour un intérieur minimaliste et chaleureux.
+        </p>
+      </header>
+
+      {/* ── Filters + grid ── */}
+      <div className="mx-auto max-w-[1240px] px-6 pb-32 md:px-16 lg:px-0">
+        <BoutiqueFilters
+          key={`${query}::${categorySlug}`}
+          categories={categories}
+          initialQuery={query}
+          initialCategory={categorySlug}
+          total={catalog.total}
+        />
+
+        {catalog.products.length > 0 ? (
+          <>
+            <section className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
+              {catalog.products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </section>
+
+            <BoutiquePagination
+              page={catalog.page}
+              totalPages={catalog.totalPages}
+              q={query}
+              categorie={categorySlug}
+            />
+          </>
+        ) : (
+          <section className="py-32 text-center">
+            <h2 className="text-[40px] font-[300] leading-tight tracking-[-0.03em] text-[#171717]">
+              {query || categorySlug ? "Aucun résultat" : "Aucun produit actif"}
+            </h2>
+            <p className="mx-auto mt-6 max-w-md text-[12px] font-bold uppercase leading-6 tracking-[0.1em] text-slate-400">
+              {query || categorySlug
+                ? `Aucun résultat pour ${query ? `"${query}"` : "les filtres actifs"}${activeCategory ? ` dans ${activeCategory.title}` : ""}.`
+                : "Lancez le seed catalogue ou créez un produit depuis l'admin."}
+            </p>
+            {(query || categorySlug) && (
+              <div className="mt-10">
+                <Link
+                  href={buildBoutiqueHref({ page: 1 })}
+                  className="inline-flex h-[48px] items-center justify-center border border-[#dedede] px-10 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717]"
+                >
+                  Réinitialiser les filtres
+                </Link>
+              </div>
+            )}
           </section>
+        )}
+      </div>
 
-          <BoutiquePagination
-            page={catalog.page}
-            totalPages={catalog.totalPages}
-            q={query}
-            categorie={categorySlug}
-          />
-        </>
-      ) : (
-        <section className="mt-12 py-24 text-center">
-          <h2 className="font-serif text-3xl text-slate-800">
-            {query || categorySlug ? "Aucun produit ne correspond a votre recherche" : "Aucun produit actif"}
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm font-light leading-relaxed text-slate-500">
-            {query || categorySlug
-              ? `Aucun resultat pour ${
-                  query ? `la recherche "${query}"` : "les filtres actifs"
-                }${activeCategory ? ` dans ${activeCategory.title}` : ""}.`
-              : "Lancez le seed catalogue ou creez un produit depuis l&apos;admin."}
-          </p>
-          {(query || categorySlug) && (
-            <div className="mt-8">
-              <Link href={buildBoutiqueHref({ page: 1 })} className="inline-flex border border-slate-200 px-8 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-900 transition-colors hover:bg-slate-50">
-                Reinitialiser les filtres
-              </Link>
+      {/* ── Inspiration strip ── */}
+      <section className="border-t border-[#e5e7eb] py-24">
+        <div className="mx-auto max-w-[1240px] px-6 md:px-16 lg:px-0">
+          <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="mb-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+                Inspiration
+              </p>
+              <h2 className="max-w-[520px] text-[40px] font-[300] leading-[0.94] tracking-[-0.03em] text-[#171717] md:text-[56px]">
+                {latestBlogPost
+                  ? latestBlogPost.title
+                  : "Conseils déco pour votre intérieur"}
+              </h2>
             </div>
-          )}
-        </section>
-      )}
-
-      {catalog.products.length > 0 ? (
-        <section className="mt-24 flex flex-col items-center rounded-sm bg-slate-50 border border-slate-100 p-12 text-center md:p-20">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Inspiration</p>
-          <h2 className="mt-4 font-serif text-3xl text-slate-800 md:text-4xl">
-            {latestBlogPost ? "Conseils deco et idees pour votre interieur" : "Decouvrez notre journal deco"}
-          </h2>
-          <p className="mt-4 max-w-2xl text-sm font-light leading-relaxed text-slate-500">
-            {latestBlogPost
-              ? `Lire l'article: ${latestBlogPost.title}`
-              : "Retrouvez nos articles pour composer un interieur chaleureux et harmonieux."}
-          </p>
-          <div className="mt-6">
             <Link
               href={latestBlogPost ? `/blog/${latestBlogPost.slug}` : "/blog"}
-              className="mt-8 inline-flex border border-slate-200 bg-white px-8 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-900 transition-colors hover:bg-slate-900 hover:text-white"
+              className="inline-flex h-[48px] shrink-0 items-center justify-center border border-[#dedede] px-10 text-[11px] font-bold uppercase tracking-[0.16em] transition hover:border-[#171717]"
             >
-              {latestBlogPost ? "Lire l'article" : "Voir le blog"}
+              {latestBlogPost ? "Lire l'article" : "Voir le journal"}
             </Link>
           </div>
-        </section>
-      ) : (
-        <section className="mt-24 flex flex-col items-center rounded-sm bg-slate-50 border border-slate-100 p-12 text-center md:p-20">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Besoin d&apos;aide</p>
-          <h2 className="mt-4 font-serif text-3xl text-slate-800 md:text-4xl">Affinez votre selection ou contactez la boutique</h2>
-          <p className="mt-4 max-w-2xl text-sm font-light leading-relaxed text-slate-500">
-            Si vous ne trouvez pas encore la bonne piece, nous pouvons vous orienter vers une famille de
-            produits, un style ou un usage precis.
-          </p>
-          <div className="mt-6">
-            <Link
-              href="/contact"
-              className="mt-8 inline-flex border border-slate-200 bg-white px-8 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-900 transition-colors hover:bg-slate-900 hover:text-white"
-            >
-              Contacter la boutique
-            </Link>
-          </div>
-        </section>
-      )}
-      </div>
+        </div>
+      </section>
     </main>
   );
 }
