@@ -141,3 +141,50 @@ a {
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
+
+@keyframes lamp-breathe {
+  0%,
+  100% {
+    opacity: 0.18;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.34;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes lamp-flicker {
+  0%,
+  82%,
+  100% {
+    opacity: 0.1;
+  }
+  83% {
+    opacity: 0.22;
+  }
+  84% {
+    opacity: 0.08;
+  }
+  85% {
+    opacity: 0.2;
+  }
+  86% {
+    opacity: 0.1;
+  }
+}
+
+.lamp-glow-breathe {
+  animation: lamp-breathe 4.2s ease-in-out infinite;
+}
+
+.lamp-glow-flicker {
+  animation: lamp-flicker 9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp-glow-breathe,
+  .lamp-glow-flicker {
+    animation: none;
+  }
+}

@@ -25,7 +25,7 @@ const secondaryLinks = [
 export function SiteNav() {
   const [isOpen, setIsOpen] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
-  const [isHidden, setIsHidden] = useState(false);
+  const [isVisibleOnScroll, setIsVisibleOnScroll] = useState(false);
   const pathname = usePathname();
 
   const closeMenu = () => setIsOpen(false);
@@ -56,23 +56,12 @@ export function SiteNav() {
   }, []);
 
   useEffect(() => {
-    let lastY = window.scrollY;
-
     const onScroll = () => {
       const currentY = window.scrollY;
-      const delta = currentY - lastY;
-
-      if (currentY < 24) {
-        setIsHidden(false);
-      } else if (!isOpen && delta > 6) {
-        setIsHidden(true);
-      } else if (delta < -6) {
-        setIsHidden(false);
-      }
-
-      lastY = currentY;
+      setIsVisibleOnScroll(currentY > 20 || isOpen);
     };
 
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [isOpen]);
@@ -80,7 +69,7 @@ export function SiteNav() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-[100] transition-transform duration-300 ${
-        isHidden ? "-translate-y-full" : "translate-y-0"
+        isVisibleOnScroll ? "translate-y-0" : "-translate-y-full"
       }`}
     >
       <div className="flex h-[72px] items-center justify-between border-b border-white/40 bg-white/70 px-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-xl sm:px-6 lg:px-10">

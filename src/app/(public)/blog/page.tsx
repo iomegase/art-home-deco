@@ -36,7 +36,7 @@ export default async function BlogPage() {
         <p className="mb-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
           Journal
         </p>
-        <h1 className="text-[56px] font-[300] leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[88px]">
+        <h1 className="text-[56px] font-thin! leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[88px]">
           L&apos;Inspiration
           <br />
           <span className="text-[#b0a99a]">Éditoriale.</span>

@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { legalSettingsFromEnv } from "@/data/legal-pages";
 import { db } from "@/server/db/client";
+import { isDatabaseUnavailableError } from "@/server/db/client";
 import {
   defaultHomeContent,
   defaultStoreStatusSettings,
@@ -89,8 +90,8 @@ export async function getSiteSettings() {
     settings = await db.siteSetting.findUnique({ where: { key: SITE_SETTINGS_KEY } });
   } catch (error) {
     if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      (error.code === "P2021" || error.code === "P1001")
+      (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2021")
+      || isDatabaseUnavailableError(error)
     ) {
       return {
         homeContent: defaultHomeContent,
