@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { PublicBlogPost } from "@/server/repositories/blog.repository";
@@ -19,6 +19,8 @@ function clampWords(value: string, maxWords: number) {
 export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"next" | "prev">("next");
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
 
   if (posts.length === 0) return null;
 
@@ -33,6 +35,34 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
   const goPrev = () => {
     setDirection("prev");
     setIndex((current) => (current - 1 + posts.length) % posts.length);
+  };
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLElement>) => {
+    const touch = event.changedTouches[0];
+    touchStartXRef.current = touch.clientX;
+    touchStartYRef.current = touch.clientY;
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLElement>) => {
+    const startX = touchStartXRef.current;
+    const startY = touchStartYRef.current;
+    if (startX === null || startY === null) return;
+
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - startX;
+    const deltaY = touch.clientY - startY;
+    const horizontalThreshold = 45;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > horizontalThreshold) {
+      if (deltaX < 0) {
+        goNext();
+      } else {
+        goPrev();
+      }
+    }
+
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
   };
 
   return (
@@ -62,7 +92,11 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
           </p>
         </div>
       </section>
-      <section className="relative mx-auto grid min-h-[820px] max-w-[1240px] grid-cols-1 items-start overflow-x-clip px-6 pb-16 pt-6 md:px-16 md:pb-24 md:pt-12 lg:grid-cols-[430px_1fr_230px] lg:items-center lg:gap-16 lg:px-0">
+      <section
+        className="relative mx-auto grid min-h-[820px] max-w-[1240px] grid-cols-1 items-start overflow-x-clip px-6 pb-16 pt-6 md:px-16 md:pb-24 md:pt-12 lg:grid-cols-[430px_1fr_230px] lg:items-center lg:gap-16 lg:px-0"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         <style>{`
         .journal-panel-next {
           animation: journal-slide-next 320ms ease;

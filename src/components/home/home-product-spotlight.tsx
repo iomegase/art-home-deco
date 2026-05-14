@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import NextLink from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductImageFallback } from "@/components/product/product-image-fallback";
@@ -30,6 +30,8 @@ function clampWords(value: string, maxWords: number) {
 export function HomeProductSpotlight({ products }: Props) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<"next" | "prev">("next");
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
 
   if (products.length === 0) return null;
 
@@ -51,6 +53,34 @@ export function HomeProductSpotlight({ products }: Props) {
 
   const animClass =
     direction === "next" ? "product-panel-next" : "product-panel-prev";
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLElement>) => {
+    const touch = event.changedTouches[0];
+    touchStartXRef.current = touch.clientX;
+    touchStartYRef.current = touch.clientY;
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLElement>) => {
+    const startX = touchStartXRef.current;
+    const startY = touchStartYRef.current;
+    if (startX === null || startY === null) return;
+
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - startX;
+    const deltaY = touch.clientY - startY;
+    const horizontalThreshold = 45;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > horizontalThreshold) {
+      if (deltaX < 0) {
+        goNext();
+      } else {
+        goPrev();
+      }
+    }
+
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+  };
 
   return (
     <>
@@ -77,7 +107,11 @@ export function HomeProductSpotlight({ products }: Props) {
         </div>
       </div>
 
-    <section className="relative mx-auto grid min-h-[620px] max-w-[1240px] grid-cols-1 items-start overflow-x-clip px-6 pb-10 pt-6 md:min-h-[820px] md:px-16 md:pb-24 md:pt-12 lg:grid-cols-[1fr_480px] lg:items-center lg:px-0">
+    <section
+      className="relative mx-auto grid min-h-[620px] max-w-[1240px] grid-cols-1 items-start overflow-x-clip px-6 pb-10 pt-6 md:min-h-[820px] md:px-16 md:pb-24 md:pt-12 lg:grid-cols-[1fr_480px] lg:items-center lg:px-0"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
         <aside className="timeline absolute left-6 top-24 hidden h-[150px] w-8 md:left-16 md:block lg:left-0">
           <span className="timeline-dot relative mx-auto block h-5 w-5 rounded-full" />
         </aside>
