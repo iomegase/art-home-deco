@@ -146,7 +146,7 @@ export function SiteNav() {
 
         <div
           id="mobile-main-nav"
-          className={`fixed inset-x-0 top-[72px] z-[110] h-[calc(100dvh-72px)] overflow-y-auto border-b border-black/10 bg-white px-6 pb-8 pt-6 shadow-[0_20px_50px_rgba(0,0,0,0.08)] lg:hidden ${
+          className={`fixed inset-x-0 top-[72px] z-[110] h-[calc(100dvh-72px)] overflow-y-auto border-b border-white/40 bg-white/75 px-6 pb-8 pt-6 shadow-[0_20px_50px_rgba(0,0,0,0.14)] backdrop-blur-xl lg:hidden ${
             isOpen ? "block" : "hidden"
           }`}
         >

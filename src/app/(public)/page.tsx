@@ -48,7 +48,7 @@ export default async function Home() {
               Déco
             </h1>
 
-            <p className="mt-12 max-w-[310px] text-[14px] leading-relaxed text-[#8d8d8d]">
+            <p className="hidden md:block mt-12 max-w-[310px] text-[14px] leading-relaxed text-[#8d8d8d]">
               {homeContent.heroParagraph}
             </p>
           </div>
