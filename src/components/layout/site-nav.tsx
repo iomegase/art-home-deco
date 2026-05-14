@@ -25,6 +25,7 @@ const secondaryLinks = [
 export function SiteNav() {
   const [isOpen, setIsOpen] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [isHidden, setIsHidden] = useState(false);
   const pathname = usePathname();
 
   const closeMenu = () => setIsOpen(false);
@@ -54,9 +55,35 @@ export function SiteNav() {
     };
   }, []);
 
+  useEffect(() => {
+    let lastY = window.scrollY;
+
+    const onScroll = () => {
+      const currentY = window.scrollY;
+      const delta = currentY - lastY;
+
+      if (currentY < 24) {
+        setIsHidden(false);
+      } else if (!isOpen && delta > 6) {
+        setIsHidden(true);
+      } else if (delta < -6) {
+        setIsHidden(false);
+      }
+
+      lastY = currentY;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isOpen]);
+
   return (
-    <header className="fixed inset-x-0 top-0 z-[100]">
-      <div className="flex h-[72px] items-center justify-between border-b border-black/[0.05] bg-white/95 px-5 backdrop-blur-xl sm:px-6 lg:px-10">
+    <header
+      className={`fixed inset-x-0 top-0 z-[100] transition-transform duration-300 ${
+        isHidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
+      <div className="flex h-[72px] items-center justify-between border-b border-white/40 bg-white/70 px-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-xl sm:px-6 lg:px-10">
         <NextLink href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-80 lg:mr-10" onClick={closeMenu}>
           <span className="relative block h-9 w-[36px] sm:w-[120px]">
             <Image

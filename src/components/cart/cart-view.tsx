@@ -146,7 +146,7 @@ function updateQuantity(productId: string, quantity: number) {
 
   if (error) {
     return (
-      <div className="border border-line bg-surface p-6">
+      <div className=" bg-surface p-6">
         <p className="font-bold text-brand">{error}</p>
         <button type="button" onClick={() => writeCart([])} className="mt-4 text-sm font-bold underline">
           Vider le panier
@@ -157,7 +157,7 @@ function updateQuantity(productId: string, quantity: number) {
 
   if (!quote || quote.lines.length === 0) {
     return (
-      <div className="border border-line bg-surface p-8">
+      <div className="bg-surface p-8">
         <h2 className="font-serif text-3xl">Votre panier est vide</h2>
         <Link href="/boutique" className="mt-4 inline-flex bg-brand px-5 py-3 text-sm font-bold text-brand-contrast">
           Voir la boutique
