@@ -101,7 +101,7 @@ export function HomeProductSpotlight({ products }: Props) {
             <span className="text-[#b0a99a]">Produits.</span>
           </h2>
           <p className="text-[10px] font-bold uppercase leading-[1.8] tracking-[0.1em] text-slate-400 md:max-w-[400px] md:text-[12px]">
-            Retrouvez nos pièces sélectionnées pour faire dialoguer couleurs,
+            Retrouvez nos articles sélectionnées pour faire dialoguer couleurs,
             volumes et textures dans un esprit calme, élégant et durable.
           </p>
         </div>
