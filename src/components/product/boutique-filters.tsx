@@ -80,7 +80,7 @@ export function BoutiqueFilters({
   return (
     <div className="mb-16">
       {/* ── Category tabs ── */}
-      <div className="flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-[#e5e7eb] pt-8">
+      <div className="flex flex-wrap items-center gap-x-8 gap-y-3 pt-8">
         <button
           type="button"
           onClick={() => handleCategoryChange("")}

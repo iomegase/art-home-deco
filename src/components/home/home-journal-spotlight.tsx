@@ -76,7 +76,7 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
        
         <div className="mt-5 flex flex-col md:flex-row  justify-between gap-6">
           <h2
-            className="shrink-0 text-[42px] font-thin! leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[56px]"
+            className="shrink-0 text-[42px] font-thin leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[56px]"
             style={{
               fontFamily:
                 'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
@@ -143,7 +143,7 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
 
         <a
           href={`/blog/${post.slug}`}
-          className="relative z-10 mt-7 inline-flex h-[46px] w-[146px] items-center justify-center border border-[#171717] bg-[#171717] text-[11px] font-bold uppercase! tracking-widest! text-white transition hover:bg-white hover:text-[#171717]"
+          className="relative z-10 mt-7 inline-flex h-[46px] w-[146px] items-center justify-center border border-[#171717] bg-[#171717] text-[11px] font-bold uppercase tracking-widest text-white transition hover:bg-white hover:text-[#171717]"
         >
           Lire l&apos;article
         </a>

@@ -40,14 +40,14 @@ export function AddToCartButton({
   }, [productId]);
 
   const remainingStock = Math.max(0, productStock - quantityInCart);
-  const isStockLimitReached = remainingStock <= 0;
-  const isDisabled = disabled || isStockLimitReached;
+  const isStockLimitReachedInCart = productStock > 0 && quantityInCart >= productStock;
+  const isDisabled = disabled || isStockLimitReachedInCart;
 
   const buttonLabel = useMemo(() => {
     if (disabled) return "Produit indisponible";
-    if (isStockLimitReached) return "Stock maximum atteint";
+    if (isStockLimitReachedInCart) return "Stock maximum atteint";
     return added ? "Ajouté au panier ✓" : "Ajouter au panier";
-  }, [added, disabled, isStockLimitReached]);
+  }, [added, disabled, isStockLimitReachedInCart]);
 
   return (
     <div className="mt-8 flex flex-col gap-3">
@@ -78,13 +78,19 @@ export function AddToCartButton({
         </Link>
       )}
 
-      {!isStockLimitReached && !error && (
+      {!disabled && !isStockLimitReachedInCart && !error && (
         <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#b0a99a]">
           {remainingStock} unité{remainingStock > 1 ? "s" : ""} disponible{remainingStock > 1 ? "s" : ""}
         </p>
       )}
 
-      {isStockLimitReached && (
+      {disabled && (
+        <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#b0a99a]">
+          Ce produit est actuellement indisponible.
+        </p>
+      )}
+
+      {!disabled && isStockLimitReachedInCart && (
         <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#b0a99a]">
           Stock maximum atteint dans votre panier.
         </p>

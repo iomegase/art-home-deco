@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { TrackViewItem } from "@/components/analytics/TrackViewItem";
 import { ProductGallery } from "@/components/product/product-gallery";
@@ -76,13 +77,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <TrackViewItem product={analyticsProduct} />
 
       {/* ── Breadcrumb ── */}
-      <div className="mx-auto max-w-[1240px] px-6 pt-10 md:px-16 lg:px-0">
+      <div className="mx-auto max-w-[1240px] px-6 pt-25 md:px-16 lg:px-0">
         <div className="flex items-center justify-between">
           <Link
             href="/boutique"
-            className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a] transition hover:text-[#171717]"
+            className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a] transition hover:text-[#171717]"
           >
-            ← Boutique
+            <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.8} />
+            Boutique
           </Link>
           {category && (
             <Link
@@ -109,12 +111,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
             {category?.title ?? "Collection"}
           </p>
 
-          <h1 className="mt-4 text-[48px] font-[300] leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[64px]">
+          <h1 className="mt-4 text-3xl font-light!  leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-4xl">
             {product.title}
           </h1>
 
           {/* Price */}
-          <p className="mt-6 text-[28px] font-[300] tracking-[-0.02em] text-[#171717]">
+          <p className="mt-6 text-[28px] font-bold tracking-[-0.02em] text-[#171717]">
             {formatPriceCents(product.priceCents)}
           </p>
 

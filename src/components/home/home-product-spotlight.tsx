@@ -90,7 +90,7 @@ export function HomeProductSpotlight({ products }: Props) {
         </p>
         <div className="mt-5 flex flex-col md:flex-row  justify-between gap-6">
           <h2
-            className="shrink-0 text-[42px] font-thin! leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[56px]"
+            className="shrink-0 text-[42px] font-thin leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[56px]"
             style={{
               fontFamily:
                 'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
@@ -119,7 +119,7 @@ export function HomeProductSpotlight({ products }: Props) {
         {/* Contenu — en flux normal sur mobile (z-10), colonne droite sur lg (order-2) */}
         <div
           key={`content-${product.id}`}
-          className={`ml-10 mt-10 relative z-10 pl-0 md:pl-20 lg:order-2 lg:pl-0 ${animClass}`}
+          className={`md:ml-10 mt-10 relative z-10 pl-0 md:pl-20 lg:order-2 lg:pl-0 ${animClass}`}
         >
           <p className=" text-[10px] font-bold uppercase tracking-[0.22em] text-[#bd9254] md:mb-8">
             {category}
@@ -138,12 +138,12 @@ export function HomeProductSpotlight({ products }: Props) {
 
           <NextLink
             href={`/boutique/${product.slug}`}
-            className="mt-15 inline-flex h-[46px] w-[146px] items-center justify-center border border-[#171717] bg-[#171717] text-[11px] font-bold uppercase! tracking-widest! text-white transition hover:bg-white hover:text-[#171717]"
+            className="mt-15 inline-flex h-[46px] w-[146px] items-center justify-center border border-[#171717] bg-[#171717] text-[11px] font-bold uppercase tracking-widest text-white transition hover:bg-white hover:text-[#171717]"
           >
             Voir l&apos;article
           </NextLink>
 
-          <p className="mt-10 text-[28px] font-light tracking-[-0.02em] text-[#b0a99a] md:text-[32px]">
+          <p className="mt-10 text-[28px] font-mono! tracking-[-0.02em] text-[#b0a99a] md:text-[32px]">
             {formatPriceCents(product.priceCents)}
           </p>
 

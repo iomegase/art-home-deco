@@ -15,7 +15,7 @@ export default function ContactPage() {
         <p className="mb-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
           Contact
         </p>
-        <h1 className="text-[56px] font-thin! leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[88px]">
+        <h1 className="text-3xl font-thin! leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-5xl">
           Parlons de
           <br />
           <span className="text-[#b0a99a]">votre projet.</span>

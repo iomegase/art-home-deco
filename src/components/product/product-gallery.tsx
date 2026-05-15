@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductImageFallback } from "@/components/product/product-image-fallback";
 
 type ProductGalleryImage = {
@@ -53,7 +54,7 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
     <>
       <div className="flex flex-col gap-4">
         {/* Main image */}
-        <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#f6f5f3]">
+        <div className="relative aspect-[4/4] w-full overflow-hidden bg-white">
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
@@ -72,14 +73,14 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
 
           {/* Nav arrows — bottom right */}
           {hasMultipleImages && (
-            <div className="absolute bottom-5 right-5 z-20 flex items-center gap-5">
+            <div className="absolute bottom-0 right-5 z-20 flex items-center gap-5">
               <button
                 type="button"
                 onClick={goToPrevious}
                 aria-label="Image précédente"
-                className="text-[22px] font-extralight text-[#171717]/40 transition hover:text-[#171717]"
+                className="text-[#171717]/40 transition hover:text-[#171717]"
               >
-                ←
+                <ChevronLeft className="h-7 w-7" strokeWidth={1.4} />
               </button>
               <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">
                 {safeIndex + 1} / {galleryImages.length}
@@ -88,9 +89,9 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
                 type="button"
                 onClick={goToNext}
                 aria-label="Image suivante"
-                className="text-[22px] font-extralight text-[#171717]/40 transition hover:text-[#171717]"
+                className="text-[#171717]/40 transition hover:text-[#171717]"
               >
-                →
+                <ChevronRight className="h-7 w-7" strokeWidth={1.4} />
               </button>
             </div>
           )}
@@ -107,9 +108,9 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
                   type="button"
                   onClick={() => setSelectedIndex(index)}
                   aria-label={`Afficher l'image ${index + 1}`}
-                  className={`relative h-20 w-20 shrink-0 overflow-hidden bg-[#f6f5f3] transition ${
+                  className={`relative h-20 w-20 shrink-0 overflow-hidden bg-white transition mt-4 ${
                     active
-                      ? "ring-1 ring-[#171717]"
+                      ? "shadow-md"
                       : "opacity-50 hover:opacity-100"
                   }`}
                 >
@@ -135,12 +136,11 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
           aria-modal="true"
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-[#e5e7eb] px-6 py-5 md:px-12">
+          <div className="flex items-center justify-between  px-6 py-5 md:px-12">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
-                Visualisation
+              <p className="text-[11px] font-bold mt-6 uppercase tracking-[0.18em] text-[#b0a99a]">zoom sur le produit 
               </p>
-              <h2 className="mt-1 text-[20px] font-[300] leading-tight tracking-[-0.02em] text-[#171717]">
+              <h2 className="mt-1 text-2xl  font-light leading-tight tracking-[-0.02em] text-[#171717]">
                 {productTitle}
               </h2>
             </div>
@@ -155,7 +155,7 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
           </div>
 
           {/* Image */}
-          <div className="relative min-h-0 flex-1 bg-[#f6f5f3]">
+          <div className="relative min-h-0 flex-1 ">
             <ProductImageFallback
               src={selectedImage?.url}
               alt={selectedImage?.alt ?? productTitle}
@@ -170,9 +170,9 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
                   type="button"
                   onClick={goToPrevious}
                   aria-label="Image précédente"
-                  className="text-[26px] font-extralight text-[#171717]/40 transition hover:text-[#171717]"
+                  className="text-[#171717]/40 transition hover:text-[#171717]"
                 >
-                  ←
+                  <ChevronLeft className="h-8 w-8" strokeWidth={1.4} />
                 </button>
                 <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">
                   {safeIndex + 1} / {galleryImages.length}
@@ -181,9 +181,9 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
                   type="button"
                   onClick={goToNext}
                   aria-label="Image suivante"
-                  className="text-[26px] font-extralight text-[#171717]/40 transition hover:text-[#171717]"
+                  className="text-[#171717]/40 transition hover:text-[#171717]"
                 >
-                  →
+                  <ChevronRight className="h-8 w-8" strokeWidth={1.4} />
                 </button>
               </div>
             )}
@@ -191,7 +191,7 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
 
           {/* Thumbnail strip */}
           {hasMultipleImages && (
-            <div className="flex gap-2 overflow-x-auto border-t border-[#e5e7eb] px-6 py-4 md:px-12">
+            <div className="flex gap-2 overflow-x-auto px-6 py-4 md:px-12">
               {galleryImages.map((image, index) => {
                 const active = index === safeIndex;
                 return (
@@ -199,8 +199,8 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
                     key={image.id}
                     type="button"
                     onClick={() => setSelectedIndex(index)}
-                    className={`relative h-16 w-16 shrink-0 overflow-hidden bg-[#f6f5f3] transition ${
-                      active ? "ring-1 ring-[#171717]" : "opacity-50 hover:opacity-100"
+                    className={`relative h-16 w-16 shrink-0 overflow-hidden bg-white transition ${
+                      active ? "ring-2 ring-orange-500/50 rounded-md" : "opacity-50 hover:opacity-100"
                     }`}
                   >
                     <ProductImageFallback

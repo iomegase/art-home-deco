@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { buildBoutiqueHref } from "@/features/product/boutique-query";
 
 type BoutiquePaginationProps = {
@@ -35,11 +36,11 @@ export function BoutiquePagination({
       <Link
         href={buildBoutiqueHref({ q, categorie, page: Math.max(page - 1, 1) })}
         aria-disabled={page <= 1}
-        className={`px-3 py-2 text-[26px] font-extralight text-[#171717]/50 transition hover:text-[#171717] ${
+        className={`px-3 py-2 text-[#171717]/50 transition hover:text-[#171717] ${
           page <= 1 ? "pointer-events-none opacity-20" : ""
         }`}
       >
-        ←
+        <ChevronLeft className="h-7 w-7" strokeWidth={1.4} />
       </Link>
 
       {pages.map((entry, index) => {
@@ -72,11 +73,11 @@ export function BoutiquePagination({
           page: Math.min(page + 1, totalPages),
         })}
         aria-disabled={page >= totalPages}
-        className={`px-3 py-2 text-[26px] font-extralight text-[#171717]/50 transition hover:text-[#171717] ${
+        className={`px-3 py-2 text-[#171717]/50 transition hover:text-[#171717] ${
           page >= totalPages ? "pointer-events-none opacity-20" : ""
         }`}
       >
-        →
+        <ChevronRight className="h-7 w-7" strokeWidth={1.4} />
       </Link>
     </nav>
   );

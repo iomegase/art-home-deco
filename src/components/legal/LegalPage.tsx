@@ -74,7 +74,7 @@ export function LegalPage({ page }: LegalPageProps) {
             Informations légales
           </p>
 
-          <h1 className=" text-4xl font-thin tracking-tight md:text-6xl">
+          <h1 className=" text-4xl font-thin! tracking-tight md:text-6xl">
             {page.title}
           </h1>
 

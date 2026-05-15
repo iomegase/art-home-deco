@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { BlogImage } from "@/components/blog/blog-image";
 import { BlogMarkdown } from "@/components/blog/blog-markdown";
 import { getDefaultBlogAuthorLabel, getDefaultBlogCta } from "@/features/blog/blog-context";
@@ -64,12 +65,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* ── Header ── */}
       <div className="mx-auto max-w-[1240px] px-6 pb-12 pt-10 md:px-16 lg:px-0">
         {/* Breadcrumb */}
-        <div className="flex items-center justify-between">
+        <div className="flex mt-11 items-center justify-between">
           <Link
             href="/blog"
-            className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a] transition hover:text-[#171717]"
+            className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a] transition hover:text-[#171717]"
           >
-            ← Journal
+            <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.8} />
+            Journal
           </Link>
           {post.category && (
             <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a]">
@@ -79,7 +81,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
 
         {/* Title */}
-        <h1 className="mt-10 max-w-[860px] font-thin! text-[48px] leading-[0.94] tracking-[-0.04em] text-[#171717] md:text-[72px]">
+        <h1 className="mt-10 font-thin! text-3xl leading-[0.94] tracking-[-0.04em] text-[#171717] md:text-4xl">
           {post.title}
         </h1>
 
@@ -104,7 +106,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </div>
 
       {/* ── Hero image ── */}
-      <div className="mx-auto max-w-[1240px] px-6 md:px-16 lg:px-0">
+      <div className="mx-auto max-w-[1240px] lg:px-0">
         <div className="relative aspect-[21/9] w-full overflow-hidden bg-[#f6f5f3]">
           <BlogImage
             src={post.imageUrl}
@@ -112,7 +114,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             fill
             sizes="100vw"
             priority
-            className="object-cover"
+            className="object-cover object-[50%_50%]"
           />
         </div>
       </div>
@@ -143,7 +145,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         )}
 
         {/* Author / Date footer */}
-        <div className="mt-16 flex items-center justify-center gap-8 border-t border-[#e5e7eb] pt-8">
+        <div className="mt-16 flex items-center justify-center gap-8  pt-8">
           <div className="text-center">
             <span className="block text-[9px] font-bold uppercase tracking-[0.2em] text-[#b0a99a]">
               Auteur
@@ -212,9 +214,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <div className="border-t border-[#e5e7eb] py-12 text-center">
         <Link
           href="/blog"
-          className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a] transition hover:text-[#171717]"
+          className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a] transition hover:text-[#171717]"
         >
-          ← Retour au journal
+          <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.8} />
+          Retour au journal
         </Link>
       </div>
     </main>

@@ -30,6 +30,7 @@ export function SiteNav() {
 
   const closeMenu = () => setIsOpen(false);
   const isActiveLink = (href: string) => (href === "/" ? pathname === "/" : pathname?.startsWith(href));
+  const isHomePage = pathname === "/";
 
   // Bloquer le scroll du site quand le menu est ouvert
   useEffect(() => {
@@ -58,13 +59,17 @@ export function SiteNav() {
   useEffect(() => {
     const onScroll = () => {
       const currentY = window.scrollY;
+      if (!isHomePage) {
+        setIsVisibleOnScroll(true);
+        return;
+      }
       setIsVisibleOnScroll(currentY > 20 || isOpen);
     };
 
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [isOpen]);
+  }, [isHomePage, isOpen]);
 
   return (
     <header
@@ -92,8 +97,8 @@ export function SiteNav() {
             <NextLink
               key={link.href}
               href={link.href}
-              className={`text-[11px]! font-bold uppercase! tracking-[0.16em]! transition-colors! ${
-                isActiveLink(link.href) ? "text-[#171717]!" : "text-[#171717]/70! hover:text-[#171717]!"
+              className={`text-[11px] font-bold uppercase tracking-[0.16em] transition-colors ${
+                isActiveLink(link.href) ? "text-[#171717]" : "text-[#171717]/70 hover:text-[#171717]"
               }`}
             >
               {link.label}
@@ -135,18 +140,20 @@ export function SiteNav() {
 
         <div
           id="mobile-main-nav"
-          className={`fixed inset-x-0 top-[72px] z-[110] h-[calc(100dvh-72px)] overflow-y-auto border-b border-white/40 bg-white/75 px-6 pb-8 pt-6 shadow-[0_20px_50px_rgba(0,0,0,0.14)] backdrop-blur-xl lg:hidden ${
+          className={`fixed inset-x-0 top-[72px] z-[110] h-[calc(100dvh-72px)] overflow-y-auto border-b border-black/10 bg-white/30 px-6 pb-8 pt-6 shadow-[0_20px_48px_rgba(0,0,0,0.16)] backdrop-blur-2xl backdrop-saturate-125 lg:hidden ${
             isOpen ? "block" : "hidden"
           }`}
         >
-          <nav className="flex min-h-full flex-col gap-2" aria-label="Navigation mobile principale">
+          <nav className="relative z-10 flex min-h-full flex-col gap-2" aria-label="Navigation mobile principale">
             {primaryLinks.map((link) => (
               <NextLink
                 key={link.href}
                 href={link.href}
                 onClick={closeMenu}
-                className={`rounded-xl px-3 py-3 text-base font-semibold tracking-[0.01em] transition-colors hover:bg-black/[0.03] ${
-                  isActiveLink(link.href) ? "bg-black/[0.04] text-[#171717]" : "text-[#171717]"
+                className={`relative rounded-xl border px-3 py-3 text-base font-semibold tracking-[0.01em] transition-colors ${
+                  isActiveLink(link.href)
+                    ? "border-black/20 bg-white/55 text-black"
+                    : "border-transparent bg-transparent text-black/90 hover:border-black/10 hover:bg-white/35"
                 }`}
               >
                 {link.label}
@@ -158,14 +165,14 @@ export function SiteNav() {
             <NextLink
               href="/panier"
               onClick={closeMenu}
-              className="inline-flex w-fit items-center rounded-full border border-foreground px-6 py-2.5 text-sm font-bold uppercase tracking-[0.15em] transition-colors active:bg-foreground active:text-white"
+              className="inline-flex w-fit items-center rounded-full border border-black bg-white/75 px-6 py-2.5 text-sm font-bold uppercase tracking-[0.15em] text-black transition-colors active:bg-black active:text-white"
             >
               Panier ({cartItemCount})
             </NextLink>
 
             <div className="mt-auto border-t border-black/10 pt-5">
-              <div className="sticky bottom-0 bg-white pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-1">
-                <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] uppercase tracking-[0.12em] text-foreground/70">
+              <div className="sticky bottom-0 bg-transparent pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-1">
+                <div className="flex flex-wrap gap-x-4 gap-y-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-black/75">
                   {secondaryLinks.map((link) => (
                     <NextLink key={link.href} href={link.href} onClick={closeMenu}>
                       {link.label}

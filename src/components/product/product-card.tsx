@@ -30,9 +30,9 @@ export function ProductCard({ product }: ProductCardProps) {
         })
       }
     >
-      <article className="flex flex-col gap-5">
+      <article className="flex flex-col gap-4 shadow-md rounded-md">
         {/* Image */}
-        <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#f6f5f3]">
+        <div className="relative aspect-4/4 w-full overflow-hidden bg-white">
           <ProductImageFallback
             src={primaryImage?.url}
             alt={primaryImage?.alt ?? product.title}
@@ -41,21 +41,21 @@ export function ProductCard({ product }: ProductCardProps) {
             className="object-contain p-6 transition-transform duration-700 ease-out group-hover:scale-[1.04]"
           />
           {isUnavailable ? (
-            <span className="absolute left-0 top-4 bg-white px-3 py-1 text-[9px] font-bold uppercase tracking-widest text-[#171717]">
+            <span className="absolute left-0 top-4 bg-red-400 px-3 py-1 text-[9px] font-lignt uppercase tracking-widest text-white rounded-tl-md rounded-br-md shadow-md">
               Rupture
             </span>
           ) : null}
         </div>
 
         {/* Text */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 p-4">
           <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
             {category}
           </p>
-          <h3 className="text-[20px] font-[300] leading-tight tracking-[-0.02em] text-[#171717] transition-colors group-hover:text-[#747b4f]">
+          <h3 className="text-[20px] leading-tight tracking-[-0.02em] text-[#171717] transition-colors group-hover:text-[#747b4f]">
             {product.title}
           </h3>
-          <p className="mt-1 text-[12px] font-bold tracking-[0.06em] text-[#171717]">
+          <p className="mt-1 text-md font-bold! tracking-[0.06em] text-[#171717]">
             {formatPriceCents(product.priceCents)}
           </p>
         </div>
