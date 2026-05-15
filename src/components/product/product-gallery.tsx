@@ -138,7 +138,7 @@ export function ProductGallery({ productTitle, images }: ProductGalleryProps) {
           {/* Header */}
           <div className="flex items-center justify-between  px-6 py-5 md:px-12">
             <div>
-              <p className="text-[11px] font-bold mt-6 uppercase tracking-[0.18em] text-[#b0a99a]">zoom sur le produit 
+              <p className="text-[11px] font-bold mt-6   uppercase tracking-[0.18em] text-[#b0a99a]">zoom sur le produit 
               </p>
               <h2 className="mt-1 text-2xl  font-light leading-tight tracking-[-0.02em] text-[#171717]">
                 {productTitle}

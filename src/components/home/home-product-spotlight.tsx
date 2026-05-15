@@ -174,7 +174,7 @@ export function HomeProductSpotlight({ products }: Props) {
 
           <NextLink
             href={`/boutique/${product.slug}`}
-            className="mt-8 inline-flex h-[46px] w-[146px] items-center justify-center border border-[#171717] bg-[#171717] text-[11px] font-bold uppercase tracking-widest text-white transition hover:bg-white hover:text-[#171717]"
+            className="mt-8 inline-flex h-[46px] w-[180px] items-center justify-center border border-[#171717] bg-[#171717] text-[11px] font-bold uppercase tracking-widest text-white transition hover:bg-white hover:text-[#171717]"
           >
             Ajouter au panier
           </NextLink>

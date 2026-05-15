@@ -69,21 +69,24 @@ export default async function ProductPage({ params }: ProductPageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="relative min-h-screen overflow-x-clip bg-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <TrackViewItem product={analyticsProduct} />
 
+      {/* ── Blob d'arrière-plan très subtil pour l'ADN de la marque ── */}
+      <div className="pointer-events-none absolute left-[-10%] top-[10%] z-0 h-[600px] w-[600px] rotate-[-15deg] rounded-[60%_40%_70%_30%/50%] bg-slate-100/50 mix-blend-multiply blur-3xl md:left-[5%]" />
+
       {/* ── Breadcrumb ── */}
-      <div className="mx-auto max-w-[1240px] px-6 pt-25 md:px-16 lg:px-0">
+      <div className="relative z-10 mx-auto max-w-[1240px] px-6 pt-25 md:px-16 lg:px-0">
         <div className="flex items-center justify-between">
           <Link
             href="/boutique"
-            className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a] transition hover:text-[#171717]"
+            className="group inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#b0a99a] transition hover:text-[#171717]"
           >
-            <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.8} />
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" strokeWidth={1.8} />
             Boutique
           </Link>
           {category && (
@@ -98,72 +101,83 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
 
       {/* ── Main grid ── */}
-      <div className="mx-auto flex min-h-[calc(100vh-72px)] max-w-[1240px] flex-col justify-center px-6 pb-16 pt-8 md:px-16 lg:grid lg:grid-cols-[1fr_460px] lg:items-center lg:gap-20 lg:px-0 lg:py-16">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-72px)] max-w-[1240px] flex-col px-6 pb-16 pt-8 md:px-16 lg:grid lg:grid-cols-[1fr_460px] lg:items-start lg:gap-20 lg:px-0 lg:py-16">
+        
         {/* Gallery */}
-        <div>
+        <div className="lg:sticky lg:top-24">
           <ProductGallery productTitle={product.title} images={product.images} />
         </div>
 
         {/* Info panel */}
-        <div className="mt-12 lg:sticky lg:top-24 lg:mt-0">
-          {/* Category + title */}
+        <div className="mt-12 lg:mt-0">
+          {/* Category */}
           <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
             {category?.title ?? "Collection"}
           </p>
 
-          <h1 className="mt-4 text-3xl font-light!  leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-4xl">
+          {/* Title - Utilisation de la police signature */}
+          <h1 
+            className="mt-4 text-[42px] font-thin leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[52px]"
+            style={{
+              fontFamily: 'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
+            }}
+          >
             {product.title}
           </h1>
 
-          {/* Price */}
-          <p className="mt-6 text-[28px] font-bold tracking-[-0.02em] text-[#171717]">
+          {/* Price - Style monospaced taupe */}
+          <p className="mt-5 text-[28px] font-mono tracking-[-0.02em] text-[#8c8577]">
             {formatPriceCents(product.priceCents)}
           </p>
 
-          {/* Short description */}
+          {/* Short description - Rendu lisible (suppression du uppercase) */}
           {product.shortDescription && (
-            <p className="mt-6 max-w-sm text-[12px] font-bold uppercase leading-6 tracking-[0.1em] text-slate-500">
+            <p className="mt-6 max-w-md text-[14px] leading-relaxed text-slate-600 md:text-[15px]">
               {product.shortDescription}
             </p>
           )}
 
-          {/* Details */}
-          <dl className="mt-8 border-t border-[#e5e7eb] pt-6 grid gap-3">
+          {/* Details - Bordures adoucies */}
+          <dl className="mt-10 grid gap-4 border-t border-slate-100 pt-8">
             <div className="flex items-center justify-between">
               <dt className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">Stock</dt>
-              <dd className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#171717]">
+              <dd className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#171717]">
                 {formatStockLabel(product.stock, product.pickupOnly)}
               </dd>
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">Livraison</dt>
-              <dd className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#171717]">
+              <dd className="text-[11px] font-bold uppercase tracking-[0.08em] text-[#171717]">
                 {product.shippingClass}
               </dd>
             </div>
-            <div className="flex items-center justify-between border-t border-[#e5e7eb] pt-3">
+            <div className="flex items-center justify-between border-t border-slate-100 pt-4">
               <dt className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#b0a99a]">Référence</dt>
-              <dd className="text-[11px] tracking-[0.06em] text-[#b0a99a]">{product.sku}</dd>
+              <dd className="text-[11px] tracking-[0.06em] text-slate-400">{product.sku}</dd>
             </div>
           </dl>
 
           {/* Add to cart */}
-          <AddToCartButton
-            productId={product.id}
-            productStock={product.stock}
-            analyticsProduct={analyticsProduct}
-            disabled={isUnavailable}
-          />
+          <div className="mt-10">
+            <AddToCartButton
+              productId={product.id}
+              productStock={product.stock}
+              analyticsProduct={analyticsProduct}
+              disabled={isUnavailable}
+            />
+          </div>
 
           {/* Long description */}
           {product.description && (
-            <div className="mt-12 border-t border-[#e5e7eb] pt-8">
-              <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
-                Détails
+            <div className="mt-12 border-t border-slate-100 pt-10">
+              <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#171717]">
+                Détails de l&apos;article
               </h2>
-              <p className="mt-4 text-[13px] leading-7 text-slate-600 whitespace-pre-line">
-                {product.description}
-              </p>
+              <div className="prose prose-sm prose-slate mt-5 max-w-none">
+                <p className="text-[14px] leading-7 text-slate-600 whitespace-pre-line">
+                  {product.description}
+                </p>
+              </div>
             </div>
           )}
         </div>

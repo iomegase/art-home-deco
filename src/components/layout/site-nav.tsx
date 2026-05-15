@@ -167,8 +167,8 @@ export function SiteNav() {
                 href={link.href}
                 onClick={closeMenu}
                 style={{ transitionDelay: `${isOpen ? index * 50 : 0}ms` }}
-                className={`text-[2rem] font-medium tracking-tight text-black transition-all duration-500 hover:opacity-70 ${
-                  isOpen ? "translate-x-0 opacity-100" : "-translate-x-8 opacity-0"
+                className={`text-[2rem] font-light! hover:font-bold! uppercase! tracking-normal! text-black! transition-all! duration-500! hover:opacity-70! ${
+                  isOpen ? "translate-x-0! opacity-100!" : "-translate-x-8! opacity-0!"
                 } ${isActiveLink(link.href) ? "font-bold" : ""}`}
               >
                 {link.label}
@@ -186,12 +186,12 @@ export function SiteNav() {
               href="/panier"
               onClick={closeMenu}
               style={{ transitionDelay: `${isOpen ? (primaryLinks.length + 1) * 50 : 0}ms` }}
-              className={`inline-flex w-fit items-center gap-3 rounded-full bg-black px-6 py-3.5 text-sm font-bold uppercase tracking-[0.15em] text-white shadow-lg transition-all duration-500 hover:scale-105 active:scale-95 ${
+              className={`inline-flex w-fit items-center gap-3 rounded-full bg-black px-6 py-3.5 text-sm font-medium! uppercase tracking-[0.15em] text-white shadow-lg transition-all duration-500 hover:scale-105 active:scale-95 ${
                 isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
               }`}
             >
               Panier
-              <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-white/20 px-2 text-xs">
+              <span className="flex  min-w-[24px] items-center justify-center rounded-full bg-white/20 px-2 text-sm">
                 {cartItemCount}
               </span>
             </NextLink>

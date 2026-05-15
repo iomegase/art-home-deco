@@ -215,7 +215,7 @@ export function SiteFooter({ storeStatus }: { storeStatus: StoreStatusSettings }
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#b0a99a]">
               © {currentYear} Art Home Déco
             </p>
-            <div className="flex flex-wrap gap-6 text-[10px] font-light uppercase tracking-[0.12em] text-[#bd9254]">
+            <div className="flex flex-wrap gap-6 text-[10px] font-light uppercase tracking-[0.12em] text-[#5b4321]">
               {siret && <span>SIRET {siret}</span>}
               {vatNumber && <span>TVA {vatNumber}</span>}
             </div>

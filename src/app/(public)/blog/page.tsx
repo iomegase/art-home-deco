@@ -33,7 +33,7 @@ export default async function BlogPage() {
     <main className="min-h-screen bg-white">
       {/* ── Header ── */}
       <header className="mx-auto max-w-[1240px] px-6 pb-16 pt-20 md:px-16 md:pt-28 lg:px-0">
-        <p className="mb-6 text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+        <p className="mb-6 mt-8 text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
           Journal
         </p>
         <h1 className="text-4xl font-thin! leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-6xl">
