@@ -70,14 +70,14 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
 
   return (
     <>
-      {/* ── Section intro — Journal ── */}
+     {/* ── Section intro — Journal ── */}
       <section className="mx-auto max-w-[1240px] px-6 pt-26 md:px-16 md:pt-10 lg:px-0">
         <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#b0a99a]">
           02 — Journal éditorial
         </p>
 
-        {/* Correction : justify-between pour repousser le texte à droite (identique Produits) */}
-        <div className="mt-5 flex flex-col gap-6 md:flex-row md:gap-20 lg:gap-32">
+        {/* NOUVELLE STRUCTURE : On utilise la même grille que le contenu en dessous (1fr et 480px) */}
+        <div className="mt-5 flex flex-col gap-6 lg:grid lg:grid-cols-[1fr_480px]">
           <h2
             className="shrink-0 text-[42px] font-thin leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[56px]"
             style={{
@@ -89,10 +89,14 @@ export function HomeJournalSpotlight({ posts, fallbackImageUrl }: Props) {
             <br />
             <span className="text-[#b0a99a]">Articles</span>
           </h2>
-          <p className="text-[10px] font-bold uppercase leading-[1.8] tracking-[0.1em] text-slate-500 md:max-w-[400px] md:text-[12px]">
-            Inspirations, tendances et conseils pratiques pour faire dialoguer
-            couleurs, volumes et textures dans un esprit élégant et durable.
-          </p>
+          
+          {/* Le lg:pl-10 est la clé : il reproduit le décalage exact du titre "Comment sublimer..." */}
+          <div className="lg:flex lg:items-center lg:pl-10">
+            <p className="text-[10px] font-bold uppercase leading-[1.8] tracking-[0.1em] text-slate-500 md:text-[12px]">
+              Inspirations, tendances et conseils pratiques pour faire dialoguer
+              couleurs, volumes et textures dans un esprit élégant et durable.
+            </p>
+          </div>
         </div>
       </section>
 

@@ -87,11 +87,17 @@ export function HomeProductSpotlight({ products }: Props) {
 
   return (
     <>
-      <div className="mx-auto max-w-[1240px] px-6 pt-14 md:px-16 lg:px-0">
-        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#bd9254]">
-          01 — Galerie produits
+     
+
+
+      {/* ── Section intro — Journal ── */}
+      <section className="mx-auto max-w-[1240px] px-6 pt-26 md:px-16 md:pt-10 lg:px-0">
+        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#b0a99a]">
+      01 — Galerie produits
         </p>
-        <div className="mt-5 flex flex-col justify-between gap-6 md:flex-row">
+
+        {/* NOUVELLE STRUCTURE : On utilise la même grille que le contenu en dessous (1fr et 480px) */}
+        <div className="mt-5 flex flex-col gap-6 lg:grid lg:grid-cols-[1fr_480px]">
           <h2
             className="shrink-0 text-[42px] font-thin leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[56px]"
             style={{
@@ -101,15 +107,18 @@ export function HomeProductSpotlight({ products }: Props) {
           >
             Côté
             <br />
-            <span className="text-[#b0a99a]">Produits.</span>
+            <span className="text-[#b0a99a]">Produits</span>
           </h2>
-          {/* Correction : "sélectionnées" -> "sélectionnés" et assombrissement léger du gris pour l'accessibilité */}
-          <p className="text-[10px] font-bold uppercase leading-[1.8] tracking-[0.1em] text-slate-500 md:max-w-[400px] md:text-[12px]">
+          
+          {/* Le lg:pl-10 est la clé : il reproduit le décalage exact du titre "Comment sublimer..." */}
+          <div className="lg:flex lg:items-center lg:pl-10">
+           <p className="text-[10px] font-bold uppercase leading-[1.8] tracking-[0.1em] text-slate-500 md:max-w-[400px] md:text-[12px]">
             Retrouvez nos articles sélectionnés pour faire dialoguer couleurs,
             volumes et textures dans un esprit calme, élégant et durable.
           </p>
+          </div>
         </div>
-      </div>
+      </section>
 
       <section
         className="relative mx-auto flex min-h-[620px] max-w-[1240px] flex-col overflow-x-clip px-6 pb-10 pt-6 md:min-h-[820px] md:px-16 md:pb-24 md:pt-12 lg:grid lg:grid-cols-[1fr_480px] lg:items-center lg:px-0"
