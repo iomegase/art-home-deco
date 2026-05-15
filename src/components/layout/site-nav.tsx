@@ -167,7 +167,7 @@ export function SiteNav() {
                 href={link.href}
                 onClick={closeMenu}
                 style={{ transitionDelay: `${isOpen ? index * 50 : 0}ms` }}
-                className={`text-[2rem] font-light! hover:font-bold! uppercase! tracking-normal! text-black! transition-all! duration-500! hover:opacity-70! ${
+                className={`text-[2rem] font-light! uppercase! tracking-normal! text-black! transition-all! duration-500! hover:opacity-70! ${
                   isOpen ? "translate-x-0! opacity-100!" : "-translate-x-8! opacity-0!"
                 } ${isActiveLink(link.href) ? "font-bold" : ""}`}
               >
