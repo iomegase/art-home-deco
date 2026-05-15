@@ -54,11 +54,11 @@ export function SiteNav() {
     <>
       {/* HEADER FLOTTANT (Desktop & Mobile) */}
       <header
-        className={`fixed inset-x-0 top-0 z-[100] px-6 pt-4 md:px-16 lg:px-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`fixed inset-x-0 top-0 z-[100] px-4 pt-4 md:px-16 lg:px-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           isVisibleOnScroll ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
         }`}
       >
-        <div className="mx-auto flex h-[64px] w-full max-w-[1240px] items-center justify-between rounded-full border border-white/40 bg-white/40 px-6 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-md backdrop-saturate-150 transition-colors hover:bg-white/50 lg:px-8">
+        <div className="mx-auto flex h-[64px] w-full max-w-[1250px] items-center justify-between rounded-full border border-white/40 bg-white/40 px-6 shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-md backdrop-saturate-150 transition-colors hover:bg-white/50 lg:px-8">
           
           {/* LOGO */}
         {/* LOGO & NOM DE L'ENTREPRISE */}
