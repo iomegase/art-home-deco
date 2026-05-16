@@ -8,9 +8,18 @@ import { listPublishedBlogPosts } from "@/server/repositories/blog.repository";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Journal décoration",
+  title: "Journal decoration et inspirations maison",
   description:
-    "Guides d'achat, conseils déco, idées cadeaux et inspirations maison Art Home Déco.",
+    "Guides d'achat, conseils decoration, inspirations maison et art de vivre alpin signes Art Home Déco.",
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    title: "Journal decoration | Art Home Déco",
+    description:
+      "Guides d'achat, conseils decoration, inspirations maison et art de vivre alpin signes Art Home Déco.",
+    url: "/blog",
+  },
 };
 
 export default async function BlogPage() {

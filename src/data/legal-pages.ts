@@ -1,4 +1,5 @@
 import { defaultLegalSettings, type LegalSettings } from "@/features/admin-home/types";
+import { getSiteUrl } from "@/lib/site-url";
 
 export type LegalBlock =
   | {
@@ -47,10 +48,10 @@ export const legalSettingsFromEnv: LegalSettings = {
   publisher: readLegalEnv("NEXT_PUBLIC_LEGAL_PUBLISHER", "[DIRECTEUR_PUBLICATION]"),
   domain: readLegalEnv(
     "NEXT_PUBLIC_LEGAL_DOMAIN",
-    readLegalEnv("NEXT_PUBLIC_SITE_URL", "[DOMAINE]"),
+    getSiteUrl(),
   ),
-  hostName: readLegalEnv("NEXT_PUBLIC_LEGAL_HOST_NAME", "[HEBERGEUR_NOM]"),
-  hostAddress: readLegalEnv("NEXT_PUBLIC_LEGAL_HOST_ADDRESS", "[HEBERGEUR_ADRESSE]"),
+  hostName: readLegalEnv("NEXT_PUBLIC_LEGAL_HOST_NAME", "Vercel Inc."),
+  hostAddress: readLegalEnv("NEXT_PUBLIC_LEGAL_HOST_ADDRESS", "440 N Barranca Ave #4133, Covina, CA 91723, United States"),
   hostPhone: readLegalEnv("NEXT_PUBLIC_LEGAL_HOST_PHONE", "[HEBERGEUR_TELEPHONE]"),
   mediatorName: readLegalEnv("NEXT_PUBLIC_LEGAL_MEDIATOR_NAME", "[MEDIATEUR_NOM]"),
   mediatorAddress: readLegalEnv("NEXT_PUBLIC_LEGAL_MEDIATOR_ADDRESS", "[MEDIATEUR_ADRESSE]"),

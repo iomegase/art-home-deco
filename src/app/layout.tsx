@@ -19,11 +19,29 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "Art Home Déco",
+    default: "Art Home Déco | Boutique de decoration a Saint-Gervais-les-Bains",
     template: "%s | Art Home Déco",
   },
   description:
-    "Boutique de decoration au style editorial: objets de maison, matieres naturelles et inspirations chaleureuses.",
+    "Boutique de decoration a Saint-Gervais-les-Bains : mobilier, luminaires, senteurs, textiles et objets deco au pied du Mont-Blanc.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "fr_FR",
+    siteName: "Art Home Déco",
+    url: getSiteUrl(),
+    title: "Art Home Déco | Boutique de decoration a Saint-Gervais-les-Bains",
+    description:
+      "Objets deco, mobilier, luminaires, senteurs et creations pour un interieur chaleureux inspire des Alpes.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Art Home Déco | Boutique de decoration a Saint-Gervais-les-Bains",
+    description:
+      "Objets deco, mobilier, luminaires, senteurs et creations pour un interieur chaleureux inspire des Alpes.",
+  },
   icons: {
     icon: [
       { url: "/favicons-package/favicon.ico", sizes: "any" },

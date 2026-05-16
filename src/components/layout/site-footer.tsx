@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import type { StoreStatusSettings } from "@/features/admin-home/types";
+import type { LegalSettings, StoreStatusSettings } from "@/features/admin-home/types";
 import { formatOpenDays, formatOpenHours, isStoreOpenNow } from "@/lib/store-status";
 import { trackEmailClick, trackPhoneClick } from "@/lib/analytics/events";
 
@@ -64,16 +64,20 @@ function ContactLink({
   );
 }
 
-export function SiteFooter({ storeStatus }: { storeStatus: StoreStatusSettings }) {
+export function SiteFooter({
+  legal,
+  storeStatus,
+}: {
+  legal: LegalSettings;
+  storeStatus: StoreStatusSettings;
+}) {
   const currentYear = new Date().getFullYear();
-  const commercialName = process.env.NEXT_PUBLIC_LEGAL_COMMERCIAL_NAME || "Art Home Déco";
-  const legalAddress =
-    process.env.NEXT_PUBLIC_LEGAL_ADDRESS ||
-    "96 rue du Mont Blanc, 74170 Saint-Gervais-les-Bains, France";
-  const legalEmail = process.env.NEXT_PUBLIC_LEGAL_EMAIL || "arthome74@gmail.com";
-  const legalPhone = process.env.NEXT_PUBLIC_LEGAL_PHONE || "06 64 75 35 35";
-  const siret = process.env.NEXT_PUBLIC_LEGAL_SIREN || process.env.NEXT_PUBLIC_COMPANY_SIRET;
-  const vatNumber = process.env.NEXT_PUBLIC_LEGAL_VAT || process.env.NEXT_PUBLIC_COMPANY_VAT;
+  const commercialName = legal.commercialName;
+  const legalAddress = legal.address;
+  const legalEmail = legal.email;
+  const legalPhone = legal.phone;
+  const siret = legal.siren;
+  const vatNumber = legal.vat;
 
   const telHref = `tel:${legalPhone.replace(/\s+/g, "")}`;
   const mailHref = `mailto:${legalEmail}`;
@@ -157,12 +161,15 @@ export function SiteFooter({ storeStatus }: { storeStatus: StoreStatusSettings }
             >
               {legalEmail}
             </ContactLink>
-            <div className="mt-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#171717]">
+            <div className="mt-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[#171717]">
               <span className={`h-2.5 w-2.5 rounded-full ${isStoreOpen ? "bg-green-500" : "bg-red-500"}`} />
-              Boutique Saint Gervais {isStoreOpen ? "ouverte" : "fermée"}
+              Boutique de decoration a Saint-Gervais-les-Bains
             </div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#171717]">
+              Statut actuel : {isStoreOpen ? "ouverte" : "fermee"}
+            </p>
             <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-[#6b7280]">
-              Ouvert {openDaysText} - {openHoursText}
+              Horaires : {openDaysText} - {openHoursText}
             </p>
           </div>
         </div>

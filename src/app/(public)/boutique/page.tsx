@@ -5,14 +5,24 @@ import { BoutiqueFilters } from "@/components/product/boutique-filters";
 import { BoutiquePagination } from "@/components/product/boutique-pagination";
 import { ProductCard } from "@/components/product/product-card";
 import { buildBoutiqueHref } from "@/features/product/boutique-query";
+import { buildBreadcrumbJsonLd, stringifyJsonLd } from "@/lib/seo/local-business";
+import { getSiteUrl } from "@/lib/site-url";
 import { findLatestPublishedBlogPost } from "@/server/repositories/blog.repository";
 import { listActiveProductsPage, listCategories } from "@/server/repositories/catalog.repository";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Boutique",
-  description: "Parcourez les collections Art Home Déco.",
+  title: "Boutique decoration Saint-Gervais-les-Bains",
+  description: "Mobilier, luminaires, senteurs, textiles et objets deco selectionnes par Art Home Déco.",
+  alternates: {
+    canonical: "/boutique",
+  },
+  openGraph: {
+    title: "Boutique | Art Home Déco",
+    description: "Retrouvez notre selection de produits deco, mobilier, luminaires et idees cadeaux.",
+    url: "/boutique",
+  },
 };
 
 type BoutiquePageProps = {
@@ -57,9 +67,17 @@ export default async function BoutiquePage({ searchParams }: BoutiquePageProps) 
         secondaryLabel: "Parcourir la boutique",
         secondaryLink: "/boutique",
       };
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Accueil", item: getSiteUrl() },
+    { name: "Boutique", item: `${getSiteUrl()}/boutique` },
+  ]);
 
   return (
     <main className="min-h-screen mt-6 overflow-x-clip bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: stringifyJsonLd(breadcrumbJsonLd) }}
+      />
       <TrackViewItemList
         listName="boutique"
         products={catalog.products.map((product) => ({

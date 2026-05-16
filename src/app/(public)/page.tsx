@@ -1,16 +1,38 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { HomeJournalSpotlight } from "@/components/home/home-journal-spotlight";
 import { HomeProductSpotlight } from "@/components/home/home-product-spotlight";
 import { defaultHomeContent } from "@/features/admin-home/types";
+import {
+  buildLocalBusinessJsonLd,
+  stringifyJsonLd,
+} from "@/lib/seo/local-business";
 import { getSiteSettings } from "@/server/repositories/site-settings.repository";
 import { listPublishedBlogPosts } from "@/server/repositories/blog.repository";
 import { listActiveProducts } from "@/server/repositories/catalog.repository";
 import { isDatabaseUnavailableError } from "@/server/db/client";
 
+export const metadata: Metadata = {
+  title: "Boutique de decoration a Saint-Gervais-les-Bains",
+  description:
+    "Art Home Déco selectionne mobilier, luminaires, senteurs, textiles et objets deco pour des interieurs chaleureux inspires des Alpes.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Art Home Déco | Boutique de decoration a Saint-Gervais-les-Bains",
+    description:
+      "Mobilier, luminaires, senteurs, textiles et objets deco selectionnes au pied du Mont-Blanc.",
+    url: "/",
+  },
+};
+
 export default async function Home() {
   let homeContent = defaultHomeContent;
   let blogPosts: Awaited<ReturnType<typeof listPublishedBlogPosts>> = [];
   let products: Awaited<ReturnType<typeof listActiveProducts>> = [];
+  let legal = null;
+  let storeStatus = null;
 
   try {
     const result = await Promise.all([
@@ -19,6 +41,8 @@ export default async function Home() {
       listActiveProducts(),
     ]);
     homeContent = result[0].homeContent;
+    legal = result[0].legal;
+    storeStatus = result[0].storeStatus;
     blogPosts = result[1];
     products = result[2];
   } catch (error) {
@@ -33,23 +57,34 @@ export default async function Home() {
     .filter((product) => product.images[0])
     .slice(0, 6);
   const journalPosts = blogPosts.slice(0, 3);
+  const localBusinessJsonLd = legal && storeStatus ? buildLocalBusinessJsonLd(legal, storeStatus) : null;
 
   return (
     <>
+      {localBusinessJsonLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: stringifyJsonLd(localBusinessJsonLd) }}
+        />
+      ) : null}
       <div
         className="overflow-hidden"
         style={{ backgroundColor: homeContent.homeBackgroundColor }}
       >
         <header className="relative mx-auto  grid h-[calc(100svh-72px)] min-h-[620px] max-w-[1240px] grid-cols-1 items-center px-6 py-10 md:min-h-[780px] md:px-16 md:py-16 lg:grid-cols-[430px_1fr] lg:px-0 lg:py-20">
           <div className="relative z-10 flex flex-col pl-10 pt-10 md:items-start md:pt-0 md:text-left md:pl-20 lg:pl-24">
-            <h1 className="max-w-[390px] text-[48px] font-thin! leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-7xl">
-              Art Home
+            <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+              Art Home Déco
+            </p>
+            <h1 className="max-w-[520px] text-[42px] font-thin leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-[64px]">
+              Boutique de decoration
               <br />
-              <span className="text-[#b0a99a]">Déco</span>
+              <span className="text-[#b0a99a]">a Saint-Gervais-les-Bains</span>
             </h1>
 
-            <p className="mt-8  max-w-[310px] text-[14px] leading-relaxed text-[#8d8d8d] md:block">
-              {homeContent.heroParagraph}
+            <p className="mt-8 max-w-[420px] text-[14px] leading-relaxed text-[#8d8d8d] md:block">
+              Art Home Déco selectionne mobilier, luminaires, senteurs, textiles et objets deco pour creer des
+              interieurs chaleureux inspires des Alpes et du Mont-Blanc.
             </p>
           </div>
 
@@ -86,6 +121,36 @@ export default async function Home() {
           posts={journalPosts}
           fallbackImageUrl={homeContent.blogCardImageUrl}
         />
+
+        <section className="mx-auto max-w-[1240px] px-6 pb-24 pt-6 md:px-16 lg:px-0">
+          <div className="max-w-[760px]">
+            <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
+              FAQ locale
+            </p>
+            <h2 className="text-[34px] font-[300] leading-[1.05] tracking-[-0.03em] text-[#171717] md:text-[44px]">
+              Ou trouver une boutique de decoration a Saint-Gervais-les-Bains ?
+            </h2>
+            <div className="mt-8 space-y-5 text-[14px] leading-7 text-slate-600">
+              <p>
+                <strong className="text-[#171717]">Ou se trouve Art Home Déco ?</strong>
+                <br />
+                Art Home Déco est une boutique de decoration situee au 96 rue du Mont-Blanc, 74170
+                Saint-Gervais-les-Bains.
+              </p>
+              <p>
+                <strong className="text-[#171717]">Quels produits trouve-t-on chez Art Home Déco ?</strong>
+                <br />
+                La boutique propose une selection de mobilier, luminaires, linge de maison, vaisselle, senteurs
+                et objets de decoration.
+              </p>
+              <p>
+                <strong className="text-[#171717]">Peut-on acheter en ligne ?</strong>
+                <br />
+                Oui, une partie de la selection est disponible sur arthomedeco.fr selon les stocks disponibles.
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
     </>
   );

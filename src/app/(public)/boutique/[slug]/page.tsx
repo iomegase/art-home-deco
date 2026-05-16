@@ -6,6 +6,8 @@ import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { TrackViewItem } from "@/components/analytics/TrackViewItem";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { formatPriceCents, formatStockLabel } from "@/features/product/format";
+import { buildBreadcrumbJsonLd, stringifyJsonLd } from "@/lib/seo/local-business";
+import { getSiteUrl } from "@/lib/site-url";
 import { findActiveProductBySlug } from "@/server/repositories/catalog.repository";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +27,14 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   return {
     title: product.seoTitle ?? product.title,
     description: product.seoDescription ?? product.shortDescription ?? undefined,
+    alternates: {
+      canonical: `/boutique/${product.slug}`,
+    },
+    openGraph: {
+      title: product.seoTitle ?? product.title,
+      description: product.seoDescription ?? product.shortDescription ?? undefined,
+      url: `/boutique/${product.slug}`,
+    },
   };
 }
 
@@ -46,6 +56,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
     description: product.seoDescription ?? product.shortDescription,
     sku: product.sku,
     image: product.images.map((image) => image.url),
+    brand: {
+      "@type": "Brand",
+      name: "Art Home Déco",
+    },
     category: category?.title,
     offers: {
       "@type": "Offer",
@@ -55,9 +69,19 @@ export default async function ProductPage({ params }: ProductPageProps) {
         product.stock > 0
           ? "https://schema.org/InStock"
           : "https://schema.org/OutOfStock",
-      url: `/boutique/${product.slug}`,
+      url: `${getSiteUrl()}/boutique/${product.slug}`,
+      seller: {
+        "@type": "Organization",
+        name: "Art Home Déco",
+      },
     },
   };
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Accueil", item: getSiteUrl() },
+    { name: "Boutique", item: `${getSiteUrl()}/boutique` },
+    ...(category ? [{ name: category.title, item: `${getSiteUrl()}/categorie/${category.slug}` }] : []),
+    { name: product.title, item: `${getSiteUrl()}/boutique/${product.slug}` },
+  ]);
 
   const analyticsProduct = {
     item_id: product.id,
@@ -72,7 +96,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <main className="relative min-h-screen overflow-x-clip bg-white">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: stringifyJsonLd(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: stringifyJsonLd(breadcrumbJsonLd) }}
       />
       <TrackViewItem product={analyticsProduct} />
 

@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { TrackViewItemList } from "@/components/analytics/TrackViewItemList";
 import { CategoryNav } from "@/components/product/category-nav";
 import { ProductCard } from "@/components/product/product-card";
+import { buildBreadcrumbJsonLd, stringifyJsonLd } from "@/lib/seo/local-business";
+import { getSiteUrl } from "@/lib/site-url";
 import {
   findCategoryBySlug,
   listActiveProducts,
@@ -24,8 +26,12 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   }
 
   return {
-    title: category.title,
-    description: category.description ?? `Selection ${category.title} Art Home Déco.`,
+    title: `${category.title} | Boutique decoration Saint-Gervais-les-Bains`,
+    description:
+      category.description ?? `Selection ${category.title} disponible chez Art Home Déco a Saint-Gervais-les-Bains.`,
+    alternates: {
+      canonical: `/categorie/${category.slug}`,
+    },
   };
 }
 
@@ -41,8 +47,18 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Accueil", item: getSiteUrl() },
+    { name: "Boutique", item: `${getSiteUrl()}/boutique` },
+    { name: category.title, item: `${getSiteUrl()}/categorie/${slug}` },
+  ]);
+
   return (
     <div className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: stringifyJsonLd(breadcrumbJsonLd) }}
+      />
       <TrackViewItemList
         listName={`categorie:${slug}`}
         products={products.map((product) => ({
@@ -57,9 +73,11 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <header className="border-b border-line pb-10">
         <p className="section-title text-terracotta">Categorie</p>
         <h1 className="mt-3 text-5xl leading-none md:text-7xl">{category.title}</h1>
-        {category.description ? (
-          <p className="mt-5 max-w-2xl text-base leading-7 text-muted">{category.description}</p>
-        ) : null}
+        <p className="mt-5 max-w-2xl text-base leading-7 text-muted">
+          {category.description
+            ? category.description
+            : `Retrouvez notre selection ${category.title.toLowerCase()} dans notre boutique de decoration a Saint-Gervais-les-Bains.`}
+        </p>
       </header>
 
       <div className="mt-8">

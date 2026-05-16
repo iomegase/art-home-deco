@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 import { listPublishedBlogPosts } from "@/server/repositories/blog.repository";
 import { listActiveProducts, listCategories } from "@/server/repositories/catalog.repository";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const baseUrl = getSiteUrl();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, categories, posts] = await Promise.all([
@@ -18,11 +19,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/boutique",
     "/blog",
     "/contact",
-    "/panier",
     "/mentions-legales",
     "/cgv",
+    "/cgu",
+    "/cookies",
+    "/donnees-personnelles",
     "/livraison-retours",
-    "/politique-confidentialite",
+    "/politique-de-confidentialite",
+    "/boutique-decoration-saint-gervais-les-bains",
     ...products.map((product) => `/boutique/${product.slug}`),
     ...categories.map((category) => `/categorie/${category.slug}`),
     ...posts.map((post) => `/blog/${post.slug}`),
