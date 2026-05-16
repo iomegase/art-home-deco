@@ -99,15 +99,15 @@ export function HomeProductSpotlight({ products }: Props) {
         {/* NOUVELLE STRUCTURE : On utilise la même grille que le contenu en dessous (1fr et 480px) */}
         <div className="mt-5 flex flex-col gap-6 lg:grid lg:grid-cols-[1fr_480px]">
           <h2
-            className="shrink-0 text-[42px] font-thin leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-[56px]"
+            className="shrink-0 text-2xl font-thin leading-[0.92] tracking-[-0.04em] text-[#171717] md:text-"
             style={{
               fontFamily:
                 'var(--font-elms-sans), "Helvetica Neue", Helvetica, Arial, sans-serif',
             }}
           >
-            Côté
+            Boutique Art Home Déco 
             <br />
-            <span className="text-[#b0a99a]">Produits</span>
+            <span className="text-[#b0a99a]">près du Mont-Blanc</span>
           </h2>
           
           {/* Le lg:pl-10 est la clé : il reproduit le décalage exact du titre "Comment sublimer..." */}
