@@ -14,6 +14,7 @@ const productInclude = {
 
 export type CatalogProduct = Awaited<ReturnType<typeof listActiveProducts>>[number];
 export type CatalogCategory = Awaited<ReturnType<typeof listCategories>>[number];
+export type HomeSpotlightCategory = Awaited<ReturnType<typeof listHomeSpotlightCategories>>[number];
 export type CatalogProductPage = Awaited<ReturnType<typeof listActiveProductsPage>>;
 
 function buildActiveProductWhere(params?: { categorySlug?: string; query?: string }): Prisma.ProductWhereInput {
@@ -111,6 +112,51 @@ export async function listCategories() {
       },
     },
     orderBy: { title: "asc" },
+  });
+}
+
+export async function listHomeSpotlightCategories() {
+  return db.category.findMany({
+    where: {
+      products: {
+        some: {
+          product: {
+            status: "active",
+          },
+        },
+      },
+    },
+    include: {
+      _count: {
+        select: {
+          products: true,
+        },
+      },
+      products: {
+        where: {
+          product: {
+            status: "active",
+          },
+        },
+        include: {
+          product: {
+            include: {
+              images: {
+                orderBy: { position: "asc" as const },
+                take: 1,
+              },
+            },
+          },
+        },
+        orderBy: {
+          product: {
+            createdAt: "desc" as const,
+          },
+        },
+        take: 1,
+      },
+    },
+    orderBy: [{ title: "asc" }],
   });
 }
 

@@ -54,7 +54,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   ]);
 
   return (
-    <div className="mx-auto max-w-7xl px-5 py-12 md:px-8 md:py-16">
+    <div className="mx-auto mt-6 max-w-7xl px-5 py-12 md:px-8 md:py-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: stringifyJsonLd(breadcrumbJsonLd) }}
@@ -71,8 +71,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         }))}
       />
       <header className="border-b border-line pb-10">
-        <p className="section-title text-terracotta">Categorie</p>
-        <h1 className="mt-3 text-5xl leading-none md:text-7xl">{category.title}</h1>
+        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#b0a99a]">Categorie</p>
+        <h1 className="mt-3 text-5xl text-thin! leading-none ">{category.title}</h1>
         <p className="mt-5 max-w-2xl text-base leading-7 text-muted">
           {category.description
             ? category.description

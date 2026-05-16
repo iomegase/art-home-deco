@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import HeroGraphic from "../../components/home/hero-graphic";
 import Faq from "../../components/home/faq-accordion";
+import { HomeCommitments } from "@/components/home/home-commitments";
+import { HomeCategorySpotlight } from "@/components/home/home-category-spotlight";
 import { HomeJournalSpotlight } from "@/components/home/home-journal-spotlight";
 import { HomeProductSpotlight } from "@/components/home/home-product-spotlight";
+import { HomeReassurance } from "@/components/home/home-reassurance";
 import { defaultHomeContent } from "@/features/admin-home/types";
 import {
   buildLocalBusinessJsonLd,
@@ -11,7 +13,10 @@ import {
 } from "@/lib/seo/local-business";
 import { getSiteSettings } from "@/server/repositories/site-settings.repository";
 import { listPublishedBlogPosts } from "@/server/repositories/blog.repository";
-import { listActiveProducts } from "@/server/repositories/catalog.repository";
+import {
+  listActiveProducts,
+  listHomeSpotlightCategories,
+} from "@/server/repositories/catalog.repository";
 import { isDatabaseUnavailableError } from "@/server/db/client";
 
 export const metadata: Metadata = {
@@ -33,6 +38,8 @@ export default async function Home() {
   let homeContent = defaultHomeContent;
   let blogPosts: Awaited<ReturnType<typeof listPublishedBlogPosts>> = [];
   let products: Awaited<ReturnType<typeof listActiveProducts>> = [];
+  let spotlightCategories: Awaited<ReturnType<typeof listHomeSpotlightCategories>> =
+    [];
   let legal = null;
   let storeStatus = null;
 
@@ -41,12 +48,14 @@ export default async function Home() {
       getSiteSettings(),
       listPublishedBlogPosts(),
       listActiveProducts(),
+      listHomeSpotlightCategories(),
     ]);
     homeContent = result[0].homeContent;
     legal = result[0].legal;
     storeStatus = result[0].storeStatus;
     blogPosts = result[1];
     products = result[2];
+    spotlightCategories = result[3];
   } catch (error) {
     if (!isDatabaseUnavailableError(error)) {
       throw error;
@@ -76,7 +85,7 @@ export default async function Home() {
         className="overflow-hidden"
         style={{ backgroundColor: homeContent.homeBackgroundColor }}
       >
-        <header className="relative mx-auto  grid h-[calc(100svh-72px)] min-h-[620px] max-w-[1240px] grid-cols-1 items-center px-6 py-10 md:min-h-[780px] md:px-16 md:py-16 lg:grid-cols-[430px_1fr] lg:px-0 lg:py-20">
+        <header className="relative mx-auto grid max-w-[1240px] grid-cols-1 px-6 py-10 md:h-[calc(100svh-72px)] md:min-h-[780px] md:items-center md:px-16 md:py-16 lg:grid-cols-[430px_1fr] lg:px-0 lg:py-20">
           <div className="relative z-50 flex flex-col pl-10 pt-10 md:items-start md:pt-0 md:text-left md:pl-20 lg:pl-24">
             <h1 className="max-w-[390px] text-5xl font-thin! leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-6xl">
               Art Home
@@ -108,22 +117,32 @@ export default async function Home() {
               intérieurs chaleureux et durables.
             </p>
           </div>
-          <HeroGraphic
-            imageUrl={homeContent.heroImageUrl}
-            imageAlt={homeContent.heroImageAlt}
-          />
+          <div className="hidden md:block">
+            <HeroGraphic
+              imageUrl={homeContent.heroImageUrl}
+              imageAlt={homeContent.heroImageAlt}
+            />
+          </div>
         </header>
-        {/* ── Section intro — Galerie produits ── */}
+
+        <HomeReassurance />
 
         <HomeProductSpotlight products={galleryProducts} />
+
+        <HomeCategorySpotlight categories={spotlightCategories} />
+
+        <HomeCommitments
+          label={homeContent.approachLabel}
+          title={homeContent.approachTitle}
+          paragraph={homeContent.approachParagraph}
+        />
 
         <HomeJournalSpotlight
           posts={journalPosts}
           fallbackImageUrl={homeContent.blogCardImageUrl}
         />
 
-
-<Faq />
+        <Faq />
         {/* <section className="mx-auto max-w-[1240px] px-6 pb-24 pt-6 md:px-16 lg:px-0">
           <div className="max-w-[760px]">
             <p className="mb-5 text-[11px] font-bold uppercase tracking-[0.18em] text-[#b0a99a]">
