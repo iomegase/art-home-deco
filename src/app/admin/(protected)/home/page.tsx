@@ -113,7 +113,49 @@ export default async function AdminHomeContentPage() {
             </div>
           </SectionCard>
 
-          <SectionCard n={4} title="Newsletter" subtitle="Bloc de capture email">
+          <SectionCard n={4} title="Engagements" subtitle="Titre + 6 cartes engagements">
+            <div className="grid gap-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <Input name="commitmentsLabel" label="Section engagements label" defaultValue={homeContent.commitmentsLabel} />
+                <Input name="commitmentsTitle" label="Section engagements titre" defaultValue={homeContent.commitmentsTitle} />
+              </div>
+              <Textarea
+                name="commitmentsParagraph"
+                label="Section engagements paragraphe"
+                defaultValue={homeContent.commitmentsParagraph}
+                rows={3}
+              />
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <Input name="commitmentOneTitle" label="Engagement 1 titre" defaultValue={homeContent.commitmentOneTitle} />
+                <Input name="commitmentTwoTitle" label="Engagement 2 titre" defaultValue={homeContent.commitmentTwoTitle} />
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <Textarea name="commitmentOneText" label="Engagement 1 texte" defaultValue={homeContent.commitmentOneText} rows={3} />
+                <Textarea name="commitmentTwoText" label="Engagement 2 texte" defaultValue={homeContent.commitmentTwoText} rows={3} />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <Input name="commitmentThreeTitle" label="Engagement 3 titre" defaultValue={homeContent.commitmentThreeTitle} />
+                <Input name="commitmentFourTitle" label="Engagement 4 titre" defaultValue={homeContent.commitmentFourTitle} />
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <Textarea name="commitmentThreeText" label="Engagement 3 texte" defaultValue={homeContent.commitmentThreeText} rows={3} />
+                <Textarea name="commitmentFourText" label="Engagement 4 texte" defaultValue={homeContent.commitmentFourText} rows={3} />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <Input name="commitmentFiveTitle" label="Engagement 5 titre" defaultValue={homeContent.commitmentFiveTitle} />
+                <Input name="commitmentSixTitle" label="Engagement 6 titre" defaultValue={homeContent.commitmentSixTitle} />
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <Textarea name="commitmentFiveText" label="Engagement 5 texte" defaultValue={homeContent.commitmentFiveText} rows={3} />
+                <Textarea name="commitmentSixText" label="Engagement 6 texte" defaultValue={homeContent.commitmentSixText} rows={3} />
+              </div>
+            </div>
+          </SectionCard>
+
+          <SectionCard n={5} title="Newsletter" subtitle="Bloc de capture email">
             <div className="grid gap-4">
               <Input name="newsletterTitle" label="Newsletter titre" defaultValue={homeContent.newsletterTitle} />
               <Textarea name="newsletterParagraph" label="Newsletter texte" defaultValue={homeContent.newsletterParagraph} rows={4} />
@@ -156,7 +198,7 @@ export default async function AdminHomeContentPage() {
 
         <aside className="self-start lg:sticky lg:top-6">
           <div className="grid gap-5">
-            <SectionCard n={5} title="Upload image" subtitle="Upload direct vers R2 + affectation champ">
+            <SectionCard n={6} title="Upload image" subtitle="Upload direct vers R2 + affectation champ">
               <form action={uploadHomeImageAction} className="grid gap-4">
                 <label className="grid">
                   <FieldLabel>Champ image à remplacer</FieldLabel>

@@ -1,46 +1,46 @@
 "use client";
 
 import {
-  CheckCircle2,
-  LampDesk,
-  MapPinHouse,
-  PackageCheck,
+ ShieldCheck,
+MapPin,
+PackageCheck,
+MessagesSquare,
 } from "lucide-react";
 
 const reassuranceItems = [
   {
-    icon: MapPinHouse,
-    label: "Boutique locale",
-    text: "Une adresse deco a Saint-Gervais-les-Bains, au coeur du pays du Mont-Blanc.",
+    icon: ShieldCheck,
+    label: "Paiement sécurisé",
+    text: "Transactions protégées par Stripe.",
   },
   {
-    icon: LampDesk,
-    label: "Selection pointue",
-    text: "Mobilier, luminaires, senteurs et objets choisis pour leur caractere.",
-  },
-  {
-    icon: CheckCircle2,
-    label: "Conseil en boutique",
-    text: "Un accompagnement simple pour composer un interieur chaleureux et durable.",
+    icon: MapPin,
+    label: "Retrait en boutique",
+    text: "Commande en ligne, retrait à Saint-Gervais-les-Bains.",
   },
   {
     icon: PackageCheck,
-    label: "Boutique en ligne",
-    text: "Une selection disponible en ligne selon les stocks et les arrivages du moment.",
+    label: "Livraison adaptée",
+    text: "Selon le format, le poids et la disponibilité des articles.",
+  },
+  {
+    icon: MessagesSquare,
+    label: "Conseil personnalisé",
+    text: "Une question ? La boutique vous accompagne directement.",
   },
 ];
 
 export function HomeReassurance() {
   return (
-   <section className="relative z-10 w-full py-12 md:py-16">
-      <div className="mx-auto grid max-w-[1240px] grid-cols-1 gap-4 px-6 grid-cols-2 md:px-16 lg:grid-cols-4 lg:gap-6 lg:px-0">
+   <section className=" bg-[#b0a99a]/10 relative z-10 w-full py-12 md:py-16">
+      <div className="mx-auto grid max-w-[1250px] grid-cols-2 gap-4 px-6 md:px-16 md:grid-cols-4 lg:gap-6 lg:px-0 ">
         {reassuranceItems.map((item) => {
           const Icon = item.icon;
 
           return (
             <article
               key={item.label}
-              className="group relative flex min-h-[160px] flex-col justify-between border border-white/60 bg-white/40 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:bg-white/80 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-2xl"
+              className="group relative flex min-h-[160px] flex-col justify-between  bg-white/40 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.02)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:bg-white/80 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] rounded-bl-2xl rounded-br-2xl"
             >
               <div className="absolute inset-x-0 top-0 h-[2px] w-full origin-left scale-x-0 bg-[#b0a99a] transition-transform duration-500 ease-out group-hover:scale-x-100 "  />
 

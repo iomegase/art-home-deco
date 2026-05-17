@@ -26,6 +26,21 @@ export type HomeContent = {
   blogCardImageAlt: string;
   blogCardTitle: string;
   blogCardParagraph: string;
+  commitmentsLabel: string;
+  commitmentsTitle: string;
+  commitmentsParagraph: string;
+  commitmentOneTitle: string;
+  commitmentOneText: string;
+  commitmentTwoTitle: string;
+  commitmentTwoText: string;
+  commitmentThreeTitle: string;
+  commitmentThreeText: string;
+  commitmentFourTitle: string;
+  commitmentFourText: string;
+  commitmentFiveTitle: string;
+  commitmentFiveText: string;
+  commitmentSixTitle: string;
+  commitmentSixText: string;
   approachLabel: string;
   approachTitle: string;
   approachParagraph: string;
@@ -179,6 +194,28 @@ export const defaultHomeContent: HomeContent = {
   blogCardImageAlt: "Journal",
   blogCardTitle: "Journal maison",
   blogCardParagraph: "Histoires d'objets et d'intérieurs.",
+  commitmentsLabel: "Nos engagements",
+  commitmentsTitle: "Un service pense pour votre decoration.",
+  commitmentsParagraph:
+    "Chaque commande est traitee avec attention, de la selection des pieces a la livraison.",
+  commitmentOneTitle: "Des pieces choisies avec soin",
+  commitmentOneText:
+    "Mobilier, luminaires, senteurs, textiles et objets decoratifs sont selectionnes pour leur style, leur qualite et leur capacite a creer une atmosphere chaleureuse.",
+  commitmentTwoTitle: "Un paiement simple et securise",
+  commitmentTwoText:
+    "Les paiements en ligne sont proteges via Stripe. Art Home Deco ne conserve aucune donnee bancaire.",
+  commitmentThreeTitle: "Retrait possible a Saint-Gervais-les-Bains",
+  commitmentThreeText:
+    "Selon les articles disponibles, vous pouvez commander en ligne et organiser un retrait directement en boutique.",
+  commitmentFourTitle: "Une livraison selon les articles",
+  commitmentFourText:
+    "Les articles eligibles peuvent etre expedies selon leur format, leur poids, leur fragilite et leur disponibilite.",
+  commitmentFiveTitle: "Des disponibilites controlees",
+  commitmentFiveText:
+    "Les stocks sont suivis regulierement afin de limiter les mauvaises surprises au moment de la commande.",
+  commitmentSixTitle: "Un contact direct avec la boutique",
+  commitmentSixText:
+    "Pour une question sur un produit, une idee cadeau ou une disponibilite, vous pouvez contacter directement Art Home Deco.",
   approachLabel: "Notre approche",
   approachTitle: "Une decoration pensee comme une composition.",
   approachParagraph:

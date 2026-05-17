@@ -132,9 +132,35 @@ export default async function Home() {
         <HomeCategorySpotlight categories={spotlightCategories} />
 
         <HomeCommitments
-          label={homeContent.approachLabel}
-          title={homeContent.approachTitle}
-          paragraph={homeContent.approachParagraph}
+          label={homeContent.commitmentsLabel}
+          title={homeContent.commitmentsTitle}
+          paragraph={homeContent.commitmentsParagraph}
+          items={[
+            {
+              title: homeContent.commitmentOneTitle,
+              text: homeContent.commitmentOneText,
+            },
+            {
+              title: homeContent.commitmentTwoTitle,
+              text: homeContent.commitmentTwoText,
+            },
+            {
+              title: homeContent.commitmentThreeTitle,
+              text: homeContent.commitmentThreeText,
+            },
+            {
+              title: homeContent.commitmentFourTitle,
+              text: homeContent.commitmentFourText,
+            },
+            {
+              title: homeContent.commitmentFiveTitle,
+              text: homeContent.commitmentFiveText,
+            },
+            {
+              title: homeContent.commitmentSixTitle,
+              text: homeContent.commitmentSixText,
+            },
+          ]}
         />
 
         <HomeJournalSpotlight
