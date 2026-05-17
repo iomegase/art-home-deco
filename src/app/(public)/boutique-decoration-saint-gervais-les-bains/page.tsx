@@ -139,11 +139,11 @@ export default async function LocalSeoLandingPage() {
 
         {/* SECTION CONTENU & FAQ */}
         <section className=" bg-white">
-          <div className="container mx-auto grid gap-16 px-6 py-20 md:px-16 lg:grid-cols-2 lg:gap-24 lg:px-8 xl:max-w-6xl">
+          <div className="container mx-auto grid gap-16 px-6 py-10 md:py-20 md:px-16 lg:grid-cols-2 lg:gap-24 lg:px-8 xl:max-w-6xl">
             
             {/* Colonne 1 : Présentation (H2) */}
             <article>
-              <h2 className="font-sans text-[40px] font-light! leading-[0.95] tracking-[-0.02em] text-neutral-900/80">
+              <h2 className="font-sans italic text-2xl font-light! leading-7 tracking-[-0.02em] text-neutral-900/80">
                 Une adresse déco en Haute-Savoie
               </h2>
               <div className="mt-8 space-y-6 text-sm leading-7 text-slate-600/80">
@@ -168,7 +168,7 @@ export default async function LocalSeoLandingPage() {
                     <h3 className="text-md font-bold! text-neutral-900">
                       {item.question}
                     </h3>
-                    <p className="mt-3 text-sm leading-7  text-slate-600">
+                    <p className="mt-3 text-sm leading-5  text-slate-600">
                       {item.answer}
                     </p>
                   </article>
