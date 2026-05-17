@@ -18,26 +18,25 @@ export default function LocalSeoLandingPage() {
           Saint-Gervais-les-Bains
         </p>
         <h1 className="max-w-[760px] text-[42px] font-thin leading-[0.96] tracking-[-0.05em] text-[#171717] md:text-[64px]">
-          Boutique de decoration
+          Boutique de décoration
           <br />
-          <span className="text-[#b0a99a]">a Saint-Gervais-les-Bains</span>
+          <span className="text-[#b0a99a]">à Saint-Gervais-les-Bains</span>
         </h1>
         <p className="mt-8 max-w-[760px] text-[15px] leading-8 text-slate-600">
-          Art Home Déco selectionne mobilier, luminaires, senteurs, textiles et objets deco pour des
-          interieurs chaleureux inspires des Alpes. La boutique est situee au coeur de Saint-Gervais-les-Bains,
-          au pied du Mont-Blanc.
+        Art Home Déco sélectionne du mobilier, des luminaires, des senteurs, des textiles et des objets déco pour créer des intérieurs chaleureux, inspirés des Alpes et du Mont-Blanc.
+
+La boutique est située au cœur de Saint-Gervais-les-Bains, au pied du Mont-Blanc.
         </p>
       </section>
 
       <section className="mx-auto grid max-w-[1240px] gap-10 border-t border-slate-100 px-6 py-16 md:px-16 lg:grid-cols-2 lg:px-0">
         <div>
           <h2 className="text-[28px] font-[300] tracking-[-0.03em] text-[#171717] md:text-[36px]">
-            Une adresse deco en Haute-Savoie
+            Une adresse déco en Haute-Savoie
           </h2>
           <div className="mt-6 space-y-4 text-[15px] leading-8 text-slate-600">
             <p>
-              La boutique accueille les habitants de Saint-Gervais-les-Bains, les proprietaires de chalets,
-              les visiteurs du pays du Mont-Blanc et les amateurs d’interieurs apaises.
+             La boutique accueille les habitants de Saint-Gervais-les-Bains, les propriétaires de chalets, les visiteurs du pays du Mont-Blanc et les amateurs d’intérieurs apaisés.
             </p>
             <p>
               Vous y trouverez une selection de pieces pour la maison : luminaires, petits meubles, senteurs,
@@ -52,19 +51,19 @@ export default function LocalSeoLandingPage() {
           </h2>
           <div className="mt-6 space-y-4 text-[15px] leading-8 text-slate-600">
             <p>
-              <strong className="text-[#171717]">Ou acheter de la decoration a Saint-Gervais-les-Bains ?</strong>
+              <strong className="text-[#171717]">Où acheter de la decoration à Saint-Gervais-les-Bains ?</strong>
               <br />
-              Art Home Déco propose une selection de produits pour la maison au 96 rue du Mont-Blanc.
+             Art Home Déco propose une sélection de produits pour la maison au 96 rue du Mont-Blanc, à Saint-Gervais-les-Bains.
             </p>
             <p>
               <strong className="text-[#171717]">Peut-on acheter en ligne ?</strong>
               <br />
-              Oui, une partie de la selection est disponible sur la boutique en ligne selon les stocks.
+             Oui, une partie de la sélection est disponible sur la boutique en ligne, selon les stocks.
             </p>
             <p>
               <strong className="text-[#171717]">Quels produits trouve-t-on en boutique ?</strong>
               <br />
-              Mobilier, luminaires, textiles, senteurs, objets deco et idees cadeaux.
+             La boutique propose du mobilier, des luminaires, des textiles, des senteurs, des objets déco, de la vaisselle et des idées cadeaux.
             </p>
           </div>
         </div>

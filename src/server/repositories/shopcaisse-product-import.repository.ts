@@ -227,7 +227,17 @@ function buildPreviewWhere(filters?: ShopcaisseImportPreviewQuery): Prisma.Shopc
 }
 
 async function ensureCategoryIdByFamilyName(familyName: string) {
-  const normalizedTitle = familyName.trim();
+  const normalizedTitle = familyName.trim().replace(/\s+/g, " ");
+
+  const normalizedKey = normalizedTitle
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+  if (normalizedKey === "pas de famille") {
+    return null;
+  }
+
   const slug = slugify(normalizedTitle);
 
   if (!slug) {

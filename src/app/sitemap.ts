@@ -6,6 +6,9 @@ import { getSiteUrl } from "@/lib/site-url";
 export const dynamic = "force-dynamic";
 
 const baseUrl = getSiteUrl();
+const deployDate = process.env.VERCEL_GIT_COMMIT_TIMESTAMP
+  ? new Date(Number(process.env.VERCEL_GIT_COMMIT_TIMESTAMP) * 1000)
+  : new Date();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, categories, posts] = await Promise.all([
@@ -14,7 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     listPublishedBlogPosts(),
   ]);
 
-  return [
+  const staticEntries = [
     "",
     "/boutique",
     "/blog",
@@ -27,11 +30,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/livraison-retours",
     "/politique-de-confidentialite",
     "/boutique-decoration-saint-gervais-les-bains",
-    ...products.map((product) => `/boutique/${product.slug}`),
-    ...categories.map((category) => `/categorie/${category.slug}`),
-    ...posts.map((post) => `/blog/${post.slug}`),
   ].map((path) => ({
     url: `${baseUrl}${path}`,
-    lastModified: new Date(),
+    lastModified: deployDate,
   }));
+
+  const productEntries = products.map((product) => ({
+    url: `${baseUrl}/boutique/${product.slug}`,
+    lastModified: product.updatedAt,
+  }));
+
+  const categoryEntries = categories.map((category) => ({
+    url: `${baseUrl}/categorie/${category.slug}`,
+    lastModified: category.updatedAt,
+  }));
+
+  const postEntries = posts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: post.updatedAt,
+  }));
+
+  return [...staticEntries, ...productEntries, ...categoryEntries, ...postEntries];
 }

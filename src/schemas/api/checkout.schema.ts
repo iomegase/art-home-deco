@@ -1,6 +1,15 @@
 import { z } from "zod";
 import { cartItemInputSchema } from "./cart.schema";
 
+const optionalTrimmedString = z.preprocess((value) => {
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length === 0 ? undefined : trimmed;
+}, z.string().min(1).optional());
+
 export const checkoutRequestSchema = z
   .object({
     items: z.array(cartItemInputSchema).min(1),
@@ -9,12 +18,12 @@ export const checkoutRequestSchema = z
       email: z.email(),
       firstName: z.string().min(1),
       lastName: z.string().min(1),
-      phone: z.string().optional(),
-      addressLine1: z.string().min(1).optional(),
-      addressLine2: z.string().optional(),
-      postalCode: z.string().min(1).optional(),
-      city: z.string().min(1).optional(),
-      country: z.string().min(1).optional(),
+      phone: optionalTrimmedString,
+      addressLine1: optionalTrimmedString,
+      addressLine2: optionalTrimmedString,
+      postalCode: optionalTrimmedString,
+      city: optionalTrimmedString,
+      country: optionalTrimmedString,
     }),
     successUrl: z.url().optional(),
     cancelUrl: z.url().optional(),

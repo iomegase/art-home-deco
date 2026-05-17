@@ -63,7 +63,11 @@ function getEffectiveAvailableQuantity(cacheEntry: Awaited<ReturnType<typeof fin
     linkedProduct &&
     typeof linkedProduct.stock === "number" &&
     linkedProduct.stock >= 0 &&
-    (linkedProduct.stockSource !== "shopcaisse" || linkedProduct.lastStockSyncStatus === "success")
+    (
+      linkedProduct.stockSource !== "shopcaisse"
+      || linkedProduct.lastStockSyncStatus === "success"
+      || linkedProduct.lastStockSyncStatus === null
+    )
   ) {
     return linkedProduct.stock;
   }
@@ -83,7 +87,11 @@ function getFallbackProductAvailableQuantity(
   if (
     product &&
     typeof product.stock === "number" &&
-    (product.stockSource !== "shopcaisse" || product.lastStockSyncStatus === "success")
+    (
+      product.stockSource !== "shopcaisse"
+      || product.lastStockSyncStatus === "success"
+      || product.lastStockSyncStatus === null
+    )
   ) {
     return product.stock;
   }
