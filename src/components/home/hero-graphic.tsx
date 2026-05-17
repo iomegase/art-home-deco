@@ -10,7 +10,7 @@ type HeroGraphicProps = {
 
 export default function HeroGraphic({ imageUrl, imageAlt }: HeroGraphicProps) {
   return (
-    <div className="relative -mt-8 min-h-[360px] md:mt-12 md:min-h-[460px] lg:mt-0">
+    <div className="relative mt-8 min-h-[360px] md:mt-12 md:min-h-[460px] lg:mt-0">
       
       {/* FORME 1 : Gauche - Mouvement aller-retour fluide (reverse) */}
       <motion.div
@@ -75,7 +75,7 @@ export default function HeroGraphic({ imageUrl, imageAlt }: HeroGraphicProps) {
       />
 
       {/* ── IMAGE PRINCIPALE : STRICTEMENT INTACTE (Aucune animation, filtres conservés) ── */}
-      <figure className="absolute left-1/2 top-[-8px] z-20 h-[340px] w-[230px] -translate-x-1/2 overflow-hidden rounded-[48%] bg-white/10 shadow-[0_45px_90px_rgba(0,0,0,0.08)] md:left-[38%] md:top-[48px] md:h-[520px] md:w-[360px] md:translate-x-0">
+      <figure className="absolute left-1/2 top-[60px] z-20 h-[340px] w-[230px] -translate-x-1/2 overflow-hidden rounded-[48%] bg-white/10 shadow-[0_45px_90px_rgba(0,0,0,0.08)] md:left-[38%] md:top-[48px] md:h-[520px] md:w-[360px] md:translate-x-0">
         <Image
           src={imageUrl}
           alt={imageAlt}
