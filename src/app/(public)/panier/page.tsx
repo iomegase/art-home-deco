@@ -3,6 +3,20 @@ import { CartView } from "@/components/cart/cart-view";
 
 export const metadata: Metadata = {
   title: "Panier",
+  description: "Consultez votre panier Art Home Déco avant validation de votre commande.",
+  alternates: {
+    canonical: "/panier",
+  },
+  openGraph: {
+    title: "Panier | Art Home Déco",
+    description: "Retrouvez les articles sélectionnés dans votre panier Art Home Déco.",
+    url: "/panier",
+    type: "website",
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function CartPage() {

@@ -10,6 +10,15 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${page.title} | Art Home Déco`,
     description: page.description,
+    alternates: {
+      canonical: "/politique-de-confidentialite",
+    },
+    openGraph: {
+      title: `${page.title} | Art Home Déco`,
+      description: page.description,
+      url: "/politique-de-confidentialite",
+      type: "article",
+    },
     robots: {
       index: true,
       follow: true,

@@ -61,24 +61,30 @@ export default function LocalSeoLandingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main className="min-h-screen bg-stone-50 selection:bg-stone-200">
+      <main className="min-h-screen bg-[#b0a99a]/10 mt-6">
         {/* EN-TÊTE / HERO SECTION */}
         <section className="container mx-auto px-6 pb-20 pt-24 md:px-16 lg:px-8 xl:max-w-6xl">
           <header className="max-w-3xl">
-            <span className="mb-6 inline-block text-xs font-bold uppercase tracking-widest text-stone-500">
+            <span className="mb-6 inline-block text-xs font-mono uppercase tracking-widest text-[#b0a99a]">
               Saint-Gervais-les-Bains (74)
             </span>
             
             {/* H1 : Mot-clé principal */}
-            <h1 className="text-4xl font-light! leading-tight tracking-tight text-neutral-900 md:text-5xl lg:text-[64px]">
+            <h1 className="text-4xl font-light! leading-tight tracking-tight text-neutral-900">
               Boutique de décoration
               <br />
-              <span className="text-stone-400 font-thin! text-3xl ">à Saint-Gervais-les-Bains</span>
+              <span className="text-[#b0a99a] font-thin! text-3xl ">à Saint-Gervais-les-Bains</span>
             </h1>
             
             <p className="mt-8 text-base leading-relaxed text-slate-600">
               Art Home Déco sélectionne avec soin du mobilier, des luminaires, des bougies, du linge de maison et des objets décoratifs uniques pour créer des intérieurs chaleureux. Inspirée par l&apos;art de vivre alpin, notre boutique située au cœur de <strong>Saint-Gervais-les-Bains</strong>, au pied du Mont-Blanc, vous accompagne dans vos projets d&apos;aménagement.
             </p>
+              <Link
+                href="/boutique"
+                className="group my-6 max-w-54 flex h-14 items-center justify-center  bg-neutral-900 px-8 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-stone-500 hover:shadow-lg"
+              >
+                Voir la boutique
+              </Link>
           </header>
         </section>
 
@@ -125,7 +131,7 @@ export default function LocalSeoLandingPage() {
         </section>
 
         {/* CALL TO ACTION */}
-        <section className="border-t border-stone-200 bg-stone-100/50 py-20">
+        <section className=" bg-[#b0a99a]/10 py-20">
           <div className="container mx-auto flex flex-col gap-8 px-6 md:px-16 lg:flex-row lg:items-center lg:justify-between lg:px-8 xl:max-w-6xl">
             <h2 className="max-w-md text-3xl font-light tracking-tight text-neutral-900 md:text-4xl">
               La sélection Art Home Déco

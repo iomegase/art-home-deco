@@ -4,6 +4,20 @@ import { CheckoutForm } from "@/components/checkout/checkout-form";
 
 export const metadata: Metadata = {
   title: "Checkout",
+  description: "Finalisez votre commande Art Home Déco en toute sécurité.",
+  alternates: {
+    canonical: "/checkout",
+  },
+  openGraph: {
+    title: "Checkout | Art Home Déco",
+    description: "Validation et paiement sécurisé de votre commande Art Home Déco.",
+    url: "/checkout",
+    type: "website",
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function CheckoutPage() {

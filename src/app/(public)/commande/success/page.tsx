@@ -8,6 +8,20 @@ import { findOrderByStripeSessionId } from "@/server/repositories/order.reposito
 
 export const metadata: Metadata = {
   title: "Commande confirmee",
+  description: "Votre commande Art Home Déco a été confirmée. Retrouvez ici le récapitulatif de paiement.",
+  alternates: {
+    canonical: "/commande/success",
+  },
+  openGraph: {
+    title: "Commande confirmee | Art Home Déco",
+    description: "Confirmation de commande et informations de paiement Art Home Déco.",
+    url: "/commande/success",
+    type: "website",
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 type OrderSuccessPageProps = {

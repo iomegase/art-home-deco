@@ -32,6 +32,13 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     alternates: {
       canonical: `/categorie/${category.slug}`,
     },
+    openGraph: {
+      title: `${category.title} | Art Home Déco`,
+      description:
+        category.description ?? `Selection ${category.title} disponible chez Art Home Déco a Saint-Gervais-les-Bains.`,
+      url: `/categorie/${category.slug}`,
+      type: "website",
+    },
   };
 }
 

@@ -3,6 +3,20 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Paiement annule",
+  description: "Le paiement n'a pas été confirmé. Vous pouvez revenir au panier et finaliser votre commande.",
+  alternates: {
+    canonical: "/commande/cancel",
+  },
+  openGraph: {
+    title: "Paiement annule | Art Home Déco",
+    description: "Paiement interrompu: votre panier est conservé pour reprendre la commande.",
+    url: "/commande/cancel",
+    type: "website",
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function OrderCancelPage() {

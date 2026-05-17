@@ -6,6 +6,20 @@ import { getOrderByTrackingToken } from "@/server/repositories/customer-order.re
 
 export const metadata: Metadata = {
   title: "Suivi de commande",
+  description: "Suivez l'etat de votre commande Art Home Déco via votre lien de suivi.",
+  alternates: {
+    canonical: "/commande/suivi",
+  },
+  openGraph: {
+    title: "Suivi de commande | Art Home Déco",
+    description: "Consultez le statut, la livraison et le detail de votre commande Art Home Déco.",
+    url: "/commande/suivi",
+    type: "website",
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 type OrderTrackingPageProps = {
