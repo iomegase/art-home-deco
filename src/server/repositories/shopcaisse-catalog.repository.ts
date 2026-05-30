@@ -4,6 +4,7 @@ import { getEnv } from "@/server/env";
 import { listShopcaisseStocks } from "@/server/services/shopcaisse/client";
 import type { ShopcaisseCatalogItem, ShopcaisseFamilyRecord } from "@/server/services/shopcaisse/catalog.types";
 import { normalizeFamilyRecords, buildUniqueCategorySlug } from "@/server/services/shopcaisse/families";
+import { slugify } from "@/lib/slugify";
 
 type SyncError = {
   externalProductId: string;
@@ -246,7 +247,9 @@ export async function syncShopcaisseCategories(families: ShopcaisseFamilyRecord[
       continue;
     }
 
-    const candidateSlug = buildUniqueCategorySlug(family.name, new Set());
+    // Name-based adoption: only matches the unsuffixed canonical slug.
+    // A pre-existing category created with a collision suffix won't be adopted here.
+    const candidateSlug = slugify(family.name) || "categorie";
     const matchedBySlug = bySlug.get(candidateSlug);
     if (matchedBySlug && !matchedBySlug.externalFamilyId) {
       await db.category.update({
@@ -258,7 +261,12 @@ export async function syncShopcaisseCategories(families: ShopcaisseFamilyRecord[
           source: "shopcaisse",
         },
       });
-      byExternalId.set(family.externalFamilyId, { ...matchedBySlug, externalFamilyId: family.externalFamilyId });
+      const adopted = { ...matchedBySlug, externalFamilyId: family.externalFamilyId };
+      byExternalId.set(family.externalFamilyId, adopted);
+      // Keep bySlug current so a later family with the same canonical slug
+      // takes the update-by-externalFamilyId path instead of re-adopting the
+      // now-linked row (which would hit the unique constraint).
+      bySlug.set(candidateSlug, adopted);
       adoptedCount += 1;
       continue;
     }
