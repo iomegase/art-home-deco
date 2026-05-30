@@ -6,12 +6,12 @@
 
 **Architecture:** The `ShopcaisseProductCache` table (1998 rows) stays the source of truth for "everything Shopcaisse"; the `Product` table stays the curated subset that is shown on the site. We fetch the `/families` endpoint, persist all families as `Category` rows keyed by a stable `externalFamilyId`, store `familyId` on each cache row, and reuse the existing `importShopcaisseProductsToCatalog` flow (already creates draft Products and links cache rows) for publishing. New status actions handle activate/archive. A new admin page lists cache rows by category with bulk actions.
 
-**Tech Stack:** Next.js App Router, TypeScript, Prisma 6 (Postgres, `prisma db push`), Zod 4, Node built-in test runner (`node --experimental-strip-types --test`).
+**Tech Stack:** Next.js App Router, TypeScript, Prisma 6 (Postgres, `prisma db push`), Zod 4, Node built-in test runner (`node --experimental-strip-types --import ./scripts/register-test-hooks.mjs --test`).
 
 **Reference spec:** `docs/superpowers/specs/2026-05-30-shopcaisse-categories-curation-design.md`
 
 **Conventions used in this repo (do not deviate):**
-- Tests: files named `*.test.ts`, using `import test from "node:test"` + `import assert from "node:assert/strict"`. Run a single file with: `node --experimental-strip-types --test <path>`.
+- Tests: files named `*.test.ts`, using `import test from "node:test"` + `import assert from "node:assert/strict"`. Run a single file with: `node --experimental-strip-types --import ./scripts/register-test-hooks.mjs --test <path>`.
 - DB schema changes are applied with `npm run db:push` (no migration files in this project), then `npm run db:generate`.
 - Type check the whole project with `npm run typecheck`.
 - Admin API routes call `await requireAdmin();` first and `revalidatePath(...)` after mutations.
@@ -145,7 +145,7 @@ test("buildUniqueCategorySlug suffixes on collision", () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `node --experimental-strip-types --test src/server/services/shopcaisse/families.test.ts`
+Run: `node --experimental-strip-types --import ./scripts/register-test-hooks.mjs --test src/server/services/shopcaisse/families.test.ts`
 Expected: FAIL — cannot resolve `./families.ts` (module not found).
 
 - [ ] **Step 3: Write the implementation**
@@ -214,7 +214,7 @@ export function buildUniqueCategorySlug(name: string, used: Set<string>): string
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `node --experimental-strip-types --test src/server/services/shopcaisse/families.test.ts`
+Run: `node --experimental-strip-types --import ./scripts/register-test-hooks.mjs --test src/server/services/shopcaisse/families.test.ts`
 Expected: PASS — `# pass 3`, `# fail 0`.
 
 - [ ] **Step 5: Commit**
@@ -725,7 +725,7 @@ test("isPublicationStatus accepts only known statuses", () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `node --experimental-strip-types --test src/server/repositories/product-publication.test.ts`
+Run: `node --experimental-strip-types --import ./scripts/register-test-hooks.mjs --test src/server/repositories/product-publication.test.ts`
 Expected: FAIL — module not found.
 
 - [ ] **Step 3: Write the implementation**
@@ -759,7 +759,7 @@ export async function archiveProducts(ids: string[]) {
 
 - [ ] **Step 4: Run test to verify it passes**
 
-Run: `node --experimental-strip-types --test src/server/repositories/product-publication.test.ts`
+Run: `node --experimental-strip-types --import ./scripts/register-test-hooks.mjs --test src/server/repositories/product-publication.test.ts`
 Expected: PASS — `# pass 1`.
 
 - [ ] **Step 5: Commit**
@@ -1433,7 +1433,7 @@ Expected: PASS.
 
 - [ ] **Run the full unit test suite**
 
-Run: `node --experimental-strip-types --test src/server/services/shopcaisse/families.test.ts src/server/repositories/product-publication.test.ts`
+Run: `node --experimental-strip-types --import ./scripts/register-test-hooks.mjs --test src/server/services/shopcaisse/families.test.ts src/server/repositories/product-publication.test.ts`
 Expected: all pass.
 
 - [ ] **End-to-end editorial check**
