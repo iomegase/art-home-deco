@@ -6,6 +6,16 @@ import { defaultHomeContent } from "@/features/admin-home/types";
 import { isDatabaseUnavailableError } from "@/server/db/client";
 import { getSiteSettings } from "@/server/repositories/site-settings.repository";
 
+function sanitizeImageUrl(input: string) {
+  const trimmed = input.trim().replace(/^"+|"+$/g, "");
+
+  try {
+    return new URL(trimmed).toString();
+  } catch {
+    return defaultHomeContent.heroImageUrl;
+  }
+}
+
 // 1. Métadonnées optimisées pour le SEO
 export async function generateMetadata(): Promise<Metadata> {
   let homeContent = defaultHomeContent;
@@ -18,6 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
       throw error;
     }
   }
+
+  const ogImageUrl = sanitizeImageUrl(homeContent.heroImageUrl);
 
   return {
     title: "Boutique de décoration à Saint-Gervais-les-Bains | Art Home Déco",
@@ -34,7 +46,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       images: [
         {
-          url: homeContent.heroImageUrl,
+          url: ogImageUrl,
           alt: homeContent.heroImageAlt,
         },
       ],

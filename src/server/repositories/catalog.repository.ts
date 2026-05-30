@@ -50,6 +50,10 @@ export async function listActiveProducts(params?: { categorySlug?: string }) {
   });
 }
 
+export async function countActiveProducts(params?: { categorySlug?: string; query?: string }) {
+  return db.product.count({ where: buildActiveProductWhere(params) });
+}
+
 export async function listActiveProductsPage(params?: {
   categorySlug?: string;
   query?: string;
