@@ -2,7 +2,9 @@ import { Prisma } from "@prisma/client";
 import { db, getDbClient } from "@/server/db/client";
 import { getEnv } from "@/server/env";
 import { listShopcaisseStocks } from "@/server/services/shopcaisse/client";
-import type { ShopcaisseCatalogItem } from "@/server/services/shopcaisse/catalog.types";
+import type { ShopcaisseCatalogItem, ShopcaisseFamilyRecord } from "@/server/services/shopcaisse/catalog.types";
+import { normalizeFamilyRecords, buildUniqueCategorySlug } from "@/server/services/shopcaisse/families";
+import { slugify } from "@/lib/slugify";
 
 type SyncError = {
   externalProductId: string;
@@ -124,6 +126,7 @@ export async function syncShopcaisseCatalogCache(items: ShopcaisseCatalogItem[])
           currency: item.currency ?? null,
           stockQuantity: item.stockQuantity ?? null,
           familyName: item.familyName ?? null,
+          familyId: item.familyId ?? null,
           source: "shopcaisse",
           rawJson: toRawJson(item.raw),
           lastShopcaisseSyncAt: syncedAt,
@@ -143,6 +146,7 @@ export async function syncShopcaisseCatalogCache(items: ShopcaisseCatalogItem[])
           currency: item.currency ?? null,
           stockQuantity: item.stockQuantity ?? null,
           familyName: item.familyName ?? null,
+          familyId: item.familyId ?? null,
           source: "shopcaisse",
           rawJson: toRawJson(item.raw),
           lastShopcaisseSyncAt: syncedAt,
@@ -216,6 +220,79 @@ export async function findShopcaisseCacheEntries(items: ShopcaisseCacheLookupIte
   });
 }
 
+export async function syncShopcaisseCategories(families: ShopcaisseFamilyRecord[]) {
+  const normalized = normalizeFamilyRecords(families);
+
+  const existing = await db.category.findMany({
+    select: { id: true, slug: true, externalFamilyId: true },
+  });
+  const usedSlugs = new Set(existing.map((category) => category.slug));
+  const bySlug = new Map(existing.map((category) => [category.slug, category]));
+  const byExternalId = new Map(
+    existing
+      .filter((category) => category.externalFamilyId)
+      .map((category) => [category.externalFamilyId as string, category]),
+  );
+
+  let createdCount = 0;
+  let updatedCount = 0;
+  let adoptedCount = 0;
+
+  for (const family of normalized) {
+    const matchedById = byExternalId.get(family.externalFamilyId);
+    if (matchedById) {
+      await db.category.update({
+        where: { id: matchedById.id },
+        data: { title: family.name, position: family.position, source: "shopcaisse" },
+      });
+      updatedCount += 1;
+      continue;
+    }
+
+    // Name-based adoption: only matches the unsuffixed canonical slug.
+    // A pre-existing category created with a collision suffix won't be adopted here.
+    const candidateSlug = slugify(family.name) || "categorie";
+    const matchedBySlug = bySlug.get(candidateSlug);
+    if (matchedBySlug && !matchedBySlug.externalFamilyId) {
+      await db.category.update({
+        where: { id: matchedBySlug.id },
+        data: {
+          externalFamilyId: family.externalFamilyId,
+          title: family.name,
+          position: family.position,
+          source: "shopcaisse",
+        },
+      });
+      const adopted = { ...matchedBySlug, externalFamilyId: family.externalFamilyId };
+      byExternalId.set(family.externalFamilyId, adopted);
+      // Keep bySlug current so a later family with the same canonical slug
+      // takes the update-by-externalFamilyId path instead of re-adopting the
+      // now-linked row (which would hit the unique constraint).
+      bySlug.set(candidateSlug, adopted);
+      adoptedCount += 1;
+      continue;
+    }
+
+    const slug = buildUniqueCategorySlug(family.name, usedSlugs);
+    usedSlugs.add(slug);
+    const created = await db.category.create({
+      data: {
+        title: family.name,
+        slug,
+        position: family.position,
+        source: "shopcaisse",
+        externalFamilyId: family.externalFamilyId,
+      },
+      select: { id: true, slug: true, externalFamilyId: true },
+    });
+    bySlug.set(created.slug, created);
+    byExternalId.set(family.externalFamilyId, created);
+    createdCount += 1;
+  }
+
+  return { createdCount, updatedCount, adoptedCount, total: normalized.length };
+}
+
 export async function refreshShopcaisseCacheStockQuantities() {
   const env = getEnv();
   const client = getDbClient();
@@ -258,4 +335,61 @@ export async function refreshShopcaisseCacheStockQuantities() {
     updatedCount,
     syncedAt,
   };
+}
+
+export async function listCacheForCuration(params: {
+  familyId?: string | null;
+  q?: string | null;
+  page?: number;
+  pageSize?: number;
+}) {
+  const pageSize = Math.min(Math.max(params.pageSize ?? 50, 1), 100);
+  const requestedPage = Math.max(params.page ?? 1, 1);
+
+  const where: Prisma.ShopcaisseProductCacheWhereInput = {};
+  if (params.familyId) {
+    where.familyId = params.familyId;
+  }
+  if (params.q && params.q.trim()) {
+    const term = params.q.trim();
+    where.OR = [
+      { name: { contains: term, mode: "insensitive" } },
+      { sku: { contains: term, mode: "insensitive" } },
+      { barcode: { contains: term, mode: "insensitive" } },
+    ];
+  }
+
+  const total = await db.shopcaisseProductCache.count({ where });
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const page = Math.min(requestedPage, totalPages);
+
+  const rows = await db.shopcaisseProductCache.findMany({
+    where,
+    orderBy: { name: "asc" },
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+    select: {
+      id: true,
+      shopcaisseProductId: true,
+      name: true,
+      sku: true,
+      barcode: true,
+      imageUrl: true,
+      priceCents: true,
+      stockQuantity: true,
+      familyId: true,
+      linkedProductId: true,
+      linkedProduct: { select: { id: true, status: true } },
+    },
+  });
+
+  return { rows, total, page, pageSize, totalPages };
+}
+
+export async function listCacheProductIdsByFamily(familyId: string): Promise<string[]> {
+  const rows = await db.shopcaisseProductCache.findMany({
+    where: { familyId },
+    select: { shopcaisseProductId: true },
+  });
+  return Array.from(new Set(rows.map((row) => row.shopcaisseProductId)));
 }

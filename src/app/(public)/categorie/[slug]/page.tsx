@@ -6,6 +6,7 @@ import { ProductCard } from "@/components/product/product-card";
 import { buildBreadcrumbJsonLd, stringifyJsonLd } from "@/lib/seo/local-business";
 import { getSiteUrl } from "@/lib/site-url";
 import {
+  countActiveProducts,
   findCategoryBySlug,
   listActiveProducts,
   listCategories,
@@ -19,7 +20,10 @@ type CategoryPageProps = {
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = await findCategoryBySlug(slug);
+  const [category, activeCount] = await Promise.all([
+    findCategoryBySlug(slug),
+    countActiveProducts({ categorySlug: slug }),
+  ]);
 
   if (!category) {
     return {};
@@ -39,6 +43,7 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
       url: `/categorie/${category.slug}`,
       type: "website",
     },
+    ...(activeCount === 0 ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git reset *)",
+      "Bash(git restore *)",
+      "Bash(python3 -c \"import sys,json;d=json.load\\(sys.stdin\\);print\\('families:',len\\(d.get\\('items',[]\\)\\),'hasNextPage:',d.get\\('hasNextPage'\\)\\)\")",
+      "Bash(node --env-file=.env --experimental-strip-types --import ./scripts/register-test-hooks.mjs ./scripts/_verify-task4.ts)"
+    ]
+  }
+}

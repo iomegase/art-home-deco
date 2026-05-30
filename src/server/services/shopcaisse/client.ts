@@ -3,6 +3,7 @@ import { ShopcaisseConfigError, ShopcaisseResponseError } from "./errors";
 import type {
   ShopcaisseCatalogItem,
   ShopcaisseCatalogSnapshot,
+  ShopcaisseFamilyRecord,
   ShopcaissePriceListRecord,
   ShopcaissePriceRecord,
   ShopcaisseProductRecord,
@@ -386,6 +387,7 @@ function normalizeShopcaisseCatalogItems(input: {
     const productId = coerceString(product.id) ?? "";
     const inlinePrice = toPriceCents(product.defaultPrice);
     const familyName = coerceString(product.family?.name);
+    const familyId = coerceString(product.family?.id);
     const images = extractProductImages(product);
 
     return {
@@ -400,6 +402,7 @@ function normalizeShopcaisseCatalogItems(input: {
       currency: "EUR",
       stockQuantity: stockByItemId.get(productId) ?? null,
       familyName,
+      familyId,
       raw: {
         product,
         price: input.prices.find((entry) => entry.item === productId) ?? null,
@@ -581,11 +584,23 @@ export async function listShopcaisseStocks(): Promise<ShopcaisseStockRecord[]> {
   );
 }
 
+export async function listShopcaisseFamilies(): Promise<ShopcaisseFamilyRecord[]> {
+  const env = assertShopcaisseCatalogEnv();
+
+  return fetchPaginatedShopcaisse<ShopcaisseFamilyRecord>((page) =>
+    `/v1/companies/${env.SHOPCAISSE_COMPANY_ID}/families${buildQuery({
+      page,
+      pageSize: 200,
+    })}`,
+  );
+}
+
 export async function getShopcaisseCatalogSnapshot(): Promise<ShopcaisseCatalogSnapshot> {
-  const [products, priceLists, stocks] = await Promise.all([
+  const [products, priceLists, stocks, families] = await Promise.all([
     listShopcaisseProducts(),
     listShopcaissePriceLists(),
     listShopcaisseStocks(),
+    listShopcaisseFamilies(),
   ]);
   const prices = await listShopcaissePricesFromPriceLists(priceLists);
 
@@ -594,6 +609,7 @@ export async function getShopcaisseCatalogSnapshot(): Promise<ShopcaisseCatalogS
     priceLists,
     prices,
     stocks,
+    families,
     items: normalizeShopcaisseCatalogItems({ products, prices, stocks }),
   };
 }

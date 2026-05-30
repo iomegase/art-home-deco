@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/server/security/auth";
 import { logger } from "@/lib/logger";
-import { syncShopcaisseCatalogCache } from "@/server/repositories/shopcaisse-catalog.repository";
+import { syncShopcaisseCatalogCache, syncShopcaisseCategories } from "@/server/repositories/shopcaisse-catalog.repository";
 import { getShopcaisseCatalogSnapshot } from "@/server/services/shopcaisse/client";
 import { ShopcaisseConfigError, ShopcaisseResponseError } from "@/server/services/shopcaisse/errors";
 
@@ -23,6 +23,7 @@ export async function POST() {
 
     const snapshot = await getShopcaisseCatalogSnapshot();
     const result = await syncShopcaisseCatalogCache(snapshot.items);
+    const categoryResult = await syncShopcaisseCategories(snapshot.families);
 
     await logger.integration("info", {
       provider: "shopcaisse",
@@ -34,6 +35,9 @@ export async function POST() {
         updatedCount: result.updatedCount,
         skippedCount: result.skippedCount,
         errors: result.errors.length,
+        categoriesCreated: categoryResult.createdCount,
+        categoriesAdopted: categoryResult.adoptedCount,
+        categoriesUpdated: categoryResult.updatedCount,
       },
     });
 
@@ -44,6 +48,7 @@ export async function POST() {
       skippedCount: result.skippedCount,
       errors: result.errors,
       syncedAt: result.syncedAt.toISOString(),
+      categories: categoryResult,
     });
   } catch (error) {
     const status = error instanceof Error && error.message === "Unauthorized" ? 401 : resolveStatus(error);

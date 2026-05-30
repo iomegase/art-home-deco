@@ -63,12 +63,15 @@ model ProductImage {
 }
 
 model Category {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               String   @id @default(cuid())
+  title            String
+  slug             String   @unique
+  description      String?
+  externalFamilyId String?  @unique
+  position         Int      @default(0)
+  source           String   @default("local")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   products ProductCategory[]
 }
@@ -216,6 +219,7 @@ model ShopcaisseProductCache {
   currency             String?
   stockQuantity        Int?
   familyName           String?
+  familyId             String?
   source               String   @default("shopcaisse")
   rawJson              Json
   lastShopcaisseSyncAt DateTime
@@ -227,6 +231,7 @@ model ShopcaisseProductCache {
   @@index([shopcaisseProductId])
   @@index([shopcaisseStoreId])
   @@index([linkedProductId])
+  @@index([familyId])
 }
 
 model WhatsAppConversation {
