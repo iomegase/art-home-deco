@@ -336,3 +336,60 @@ export async function refreshShopcaisseCacheStockQuantities() {
     syncedAt,
   };
 }
+
+export async function listCacheForCuration(params: {
+  familyId?: string | null;
+  q?: string | null;
+  page?: number;
+  pageSize?: number;
+}) {
+  const pageSize = Math.min(Math.max(params.pageSize ?? 50, 1), 100);
+  const requestedPage = Math.max(params.page ?? 1, 1);
+
+  const where: Prisma.ShopcaisseProductCacheWhereInput = {};
+  if (params.familyId) {
+    where.familyId = params.familyId;
+  }
+  if (params.q && params.q.trim()) {
+    const term = params.q.trim();
+    where.OR = [
+      { name: { contains: term, mode: "insensitive" } },
+      { sku: { contains: term, mode: "insensitive" } },
+      { barcode: { contains: term, mode: "insensitive" } },
+    ];
+  }
+
+  const total = await db.shopcaisseProductCache.count({ where });
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const page = Math.min(requestedPage, totalPages);
+
+  const rows = await db.shopcaisseProductCache.findMany({
+    where,
+    orderBy: { name: "asc" },
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+    select: {
+      id: true,
+      shopcaisseProductId: true,
+      name: true,
+      sku: true,
+      barcode: true,
+      imageUrl: true,
+      priceCents: true,
+      stockQuantity: true,
+      familyId: true,
+      linkedProductId: true,
+      linkedProduct: { select: { id: true, status: true } },
+    },
+  });
+
+  return { rows, total, page, pageSize, totalPages };
+}
+
+export async function listCacheProductIdsByFamily(familyId: string): Promise<string[]> {
+  const rows = await db.shopcaisseProductCache.findMany({
+    where: { familyId },
+    select: { shopcaisseProductId: true },
+  });
+  return Array.from(new Set(rows.map((row) => row.shopcaisseProductId)));
+}
