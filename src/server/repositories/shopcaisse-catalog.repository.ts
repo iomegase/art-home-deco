@@ -2,7 +2,8 @@ import { Prisma } from "@prisma/client";
 import { db, getDbClient } from "@/server/db/client";
 import { getEnv } from "@/server/env";
 import { listShopcaisseStocks } from "@/server/services/shopcaisse/client";
-import type { ShopcaisseCatalogItem } from "@/server/services/shopcaisse/catalog.types";
+import type { ShopcaisseCatalogItem, ShopcaisseFamilyRecord } from "@/server/services/shopcaisse/catalog.types";
+import { normalizeFamilyRecords, buildUniqueCategorySlug } from "@/server/services/shopcaisse/families";
 
 type SyncError = {
   externalProductId: string;
@@ -214,6 +215,72 @@ export async function findShopcaisseCacheEntries(items: ShopcaisseCacheLookupIte
       },
     },
   });
+}
+
+export async function syncShopcaisseCategories(families: ShopcaisseFamilyRecord[]) {
+  const normalized = normalizeFamilyRecords(families);
+
+  const existing = await db.category.findMany({
+    select: { id: true, slug: true, externalFamilyId: true },
+  });
+  const usedSlugs = new Set(existing.map((category) => category.slug));
+  const bySlug = new Map(existing.map((category) => [category.slug, category]));
+  const byExternalId = new Map(
+    existing
+      .filter((category) => category.externalFamilyId)
+      .map((category) => [category.externalFamilyId as string, category]),
+  );
+
+  let createdCount = 0;
+  let updatedCount = 0;
+  let adoptedCount = 0;
+
+  for (const family of normalized) {
+    const matchedById = byExternalId.get(family.externalFamilyId);
+    if (matchedById) {
+      await db.category.update({
+        where: { id: matchedById.id },
+        data: { title: family.name, position: family.position, source: "shopcaisse" },
+      });
+      updatedCount += 1;
+      continue;
+    }
+
+    const candidateSlug = buildUniqueCategorySlug(family.name, new Set());
+    const matchedBySlug = bySlug.get(candidateSlug);
+    if (matchedBySlug && !matchedBySlug.externalFamilyId) {
+      await db.category.update({
+        where: { id: matchedBySlug.id },
+        data: {
+          externalFamilyId: family.externalFamilyId,
+          title: family.name,
+          position: family.position,
+          source: "shopcaisse",
+        },
+      });
+      byExternalId.set(family.externalFamilyId, { ...matchedBySlug, externalFamilyId: family.externalFamilyId });
+      adoptedCount += 1;
+      continue;
+    }
+
+    const slug = buildUniqueCategorySlug(family.name, usedSlugs);
+    usedSlugs.add(slug);
+    const created = await db.category.create({
+      data: {
+        title: family.name,
+        slug,
+        position: family.position,
+        source: "shopcaisse",
+        externalFamilyId: family.externalFamilyId,
+      },
+      select: { id: true, slug: true, externalFamilyId: true },
+    });
+    bySlug.set(created.slug, created);
+    byExternalId.set(family.externalFamilyId, created);
+    createdCount += 1;
+  }
+
+  return { createdCount, updatedCount, adoptedCount, total: normalized.length };
 }
 
 export async function refreshShopcaisseCacheStockQuantities() {
