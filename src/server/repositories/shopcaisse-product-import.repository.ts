@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { db } from "@/server/db/client";
 import { slugify } from "@/lib/slugify";
+import { buildUniqueCategorySlug } from "@/server/services/shopcaisse/families";
 import type { ShopcaisseImportPreviewQuery, ShopcaisseImportProductsRequest } from "@/schemas/api/shopcaisse-import.schema";
 
 type CachePreviewRow = {
@@ -15,6 +16,7 @@ type CachePreviewRow = {
   priceCents: number | null;
   stockQuantity: number | null;
   familyName: string | null;
+  familyId: string | null;
   updatedAt: Date;
 };
 
@@ -253,6 +255,57 @@ async function ensureCategoryIdByFamilyName(familyName: string) {
   return category.id;
 }
 
+async function ensureCategoryByFamilyId(input: { familyId: string; familyName: string | null }) {
+  const existing = await db.category.findUnique({
+    where: { externalFamilyId: input.familyId },
+    select: { id: true },
+  });
+  if (existing) {
+    return existing.id;
+  }
+
+  // Fallback: family not yet synced as a category — create it from the name.
+  const title = (input.familyName ?? "").trim();
+  if (!title) {
+    return null;
+  }
+  const normalizedKey = title
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  if (normalizedKey === "pas de famille" || normalizedKey === "system family") {
+    return null;
+  }
+  const slug = slugify(title);
+  if (!slug) {
+    return null;
+  }
+
+  // A category with this slug may already exist (a local/manual one, or one
+  // created before familyId existed). Adopt it when it isn't already linked to
+  // another family; otherwise mint a collision-free slug so the create below
+  // never trips the unique slug constraint (which would silently skip the row).
+  const slugMatch = await db.category.findUnique({
+    where: { slug },
+    select: { id: true, externalFamilyId: true },
+  });
+  if (slugMatch && (!slugMatch.externalFamilyId || slugMatch.externalFamilyId === input.familyId)) {
+    await db.category.update({
+      where: { id: slugMatch.id },
+      data: { externalFamilyId: input.familyId, title, source: "shopcaisse" },
+    });
+    return slugMatch.id;
+  }
+
+  const existingSlugs = await db.category.findMany({ select: { slug: true } });
+  const uniqueSlug = buildUniqueCategorySlug(title, new Set(existingSlugs.map((category) => category.slug)));
+
+  const category = await db.category.create({
+    data: { externalFamilyId: input.familyId, slug: uniqueSlug, title, source: "shopcaisse" },
+  });
+  return category.id;
+}
+
 async function linkCacheRowsToProduct(shopcaisseProductId: string, productId: string) {
   await db.shopcaisseProductCache.updateMany({
     where: { shopcaisseProductId },
@@ -349,6 +402,7 @@ async function listCacheRows(filter?: {
       priceCents: true,
       stockQuantity: true,
       familyName: true,
+      familyId: true,
       updatedAt: true,
     },
   });
@@ -522,7 +576,11 @@ export async function importShopcaisseProductsToCatalog(input: ShopcaisseImportP
 
       const sku = buildDerivedSku(row, existingSkuSet);
       const slug = buildUniqueSlug(row, existingSlugSet);
-      const categoryId = row.familyName ? await ensureCategoryIdByFamilyName(row.familyName) : null;
+      const categoryId = row.familyId
+        ? await ensureCategoryByFamilyId({ familyId: row.familyId, familyName: row.familyName })
+        : row.familyName
+          ? await ensureCategoryIdByFamilyName(row.familyName)
+          : null;
 
       const product = await db.product.create({
         data: {
