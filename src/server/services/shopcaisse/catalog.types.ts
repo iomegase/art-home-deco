@@ -10,6 +10,7 @@ export type ShopcaisseCatalogItem = {
   currency?: string | null;
   stockQuantity?: number | null;
   familyName?: string | null;
+  familyId?: string | null;
   raw: unknown;
 };
 
@@ -55,10 +56,19 @@ export type ShopcaisseStockRecord = {
   [key: string]: unknown;
 };
 
+export type ShopcaisseFamilyRecord = {
+  id: string;
+  name?: string;
+  position?: number;
+  active?: boolean;
+  [key: string]: unknown;
+};
+
 export type ShopcaisseCatalogSnapshot = {
   products: ShopcaisseProductRecord[];
   priceLists: ShopcaissePriceListRecord[];
   prices: ShopcaissePriceRecord[];
   stocks: ShopcaisseStockRecord[];
+  families: ShopcaisseFamilyRecord[];
   items: ShopcaisseCatalogItem[];
 };
