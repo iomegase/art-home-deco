@@ -1,0 +1,46 @@
+name: Sync catalogue Shopcaisse
+
+# Remplit le cache catalogue en base (produits, prix, stocks, familles) que
+# l'écran d'import admin lit. Le fetch complet (~20s+) dépasse le timeout Vercel
+# Hobby (10s), donc on l'exécute ici, sans limite de durée.
+on:
+  schedule:
+    # Toutes les 6h (UTC). La sync dure ~12 min (écritures Neon lentes), donc en
+    # horaire on dépasserait le quota GitHub Actions gratuit d'un repo privé.
+    # Pour un rafraîchissement immédiat après ajout d'un produit, lance la sync
+    # manuellement via "Run workflow" (workflow_dispatch) dans l'onglet Actions.
+    - cron: "0 */6 * * *"
+  workflow_dispatch: {} # Permet de lancer la sync manuellement depuis l'onglet Actions.
+
+# Évite deux syncs en parallèle (une planifiée + un lancement manuel).
+concurrency:
+  group: sync-catalogue-shopcaisse
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Shopcaisse catalog sync
+        run: npx --yes tsx scripts/sync-shopcaisse.mts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SHOPCAISSE_API_URL: ${{ secrets.SHOPCAISSE_API_URL }}
+          SHOPCAISSE_API_KEY: ${{ secrets.SHOPCAISSE_API_KEY }}
+          SHOPCAISSE_COMPANY_ID: ${{ secrets.SHOPCAISSE_COMPANY_ID }}
+          SHOPCAISSE_STORE_ID: ${{ secrets.SHOPCAISSE_STORE_ID }}
+          SHOPCAISSE_POS_ID: ${{ secrets.SHOPCAISSE_POS_ID }}
+          SHOPCAISSE_API_TIMEOUT_MS: ${{ secrets.SHOPCAISSE_API_TIMEOUT_MS }}
