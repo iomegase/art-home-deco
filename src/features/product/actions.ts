@@ -2,16 +2,21 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { parseProductBulkDeleteIds } from "@/schemas/forms/product-bulk-delete.schema";
 import { productAiDraftSchema, productEditorSchema } from "@/schemas/forms/product-editor.schema";
 import { productImportSchema } from "@/schemas/forms/product-import.schema";
 import { createIntegrationEvent } from "@/server/repositories/integration.repository";
 import {
   archiveProductForAdmin,
+  deleteProductsPermanently,
+  findProductDeleteTargets,
   findProductForAdmin,
   updateProductAiDraft,
   updateProductForAdmin,
 } from "@/server/repositories/admin-product.repository";
 import { requireAdmin } from "@/server/security/auth";
+import { deleteProductImageObjects } from "@/server/services/product-image/delete-product-images";
+import { deleteProductsPermanentlyUseCase } from "@/server/use-cases/delete-products-permanently.use-case";
 import { importProductsCsvUseCase } from "@/server/use-cases/import-products-csv.use-case";
 import { generateAiProductDraftUseCase } from "@/server/use-cases/generate-ai-product-draft.use-case";
 
@@ -112,6 +117,32 @@ export async function archiveProductForAdminAction(formData: FormData) {
   revalidatePath("/admin/products");
   revalidatePath(`/admin/products/${product.id}/edit`);
   revalidatePath(`/boutique/${product.slug}`);
+}
+
+export async function deleteProductsPermanentlyForAdminAction(formData: FormData) {
+  await requireAdmin();
+
+  try {
+    const ids = parseProductBulkDeleteIds(formData.getAll("ids").map(String));
+    const { deletedCount } = await deleteProductsPermanentlyUseCase(ids, {
+      findTargets: findProductDeleteTargets,
+      deleteStorageObjects: deleteProductImageObjects,
+      deleteProducts: deleteProductsPermanently,
+    });
+
+    revalidatePath("/admin/products");
+    revalidatePath("/boutique");
+    revalidatePath("/", "layout");
+
+    return { ok: true as const, deletedCount };
+  } catch (error) {
+    console.error("Bulk product deletion failed", error);
+
+    return {
+      ok: false as const,
+      error: error instanceof Error ? error.message : "La suppression a échoué.",
+    };
+  }
 }
 
 export async function generateAiProductDraftAction(formData: FormData) {
