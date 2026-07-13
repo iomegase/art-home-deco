@@ -1,4 +1,5 @@
-import { updateHomeContentAction, uploadHomeImageAction } from "@/features/admin-home/actions";
+import { setMaintenanceModeAction, updateHomeContentAction, uploadHomeImageAction } from "@/features/admin-home/actions";
+import { ConfirmSubmitButton } from "@/features/admin-home/components/confirm-submit-button";
 import { getSiteSettings } from "@/server/repositories/site-settings.repository";
 
 const inputClass =
@@ -48,7 +49,7 @@ function SectionCard({ n, title, subtitle, children }: { n: number; title: strin
 }
 
 export default async function AdminHomeContentPage() {
-  const { homeContent } = await getSiteSettings();
+  const { homeContent, maintenance } = await getSiteSettings();
 
   return (
     <div className="mx-auto grid w-full max-w-7xl gap-6 pb-10">
@@ -58,6 +59,35 @@ export default async function AdminHomeContentPage() {
         <p className="mt-2 max-w-3xl text-[12px] text-slate-500">
           Tous les titres, paragraphes et visuels de la page d&apos;accueil sont éditables ici.
         </p>
+
+        <div className="mt-5 flex flex-col gap-3 rounded-xl border border-[#f0e6da] bg-[#fbf7f2] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-[12px] font-semibold text-[#0f1115]">Mode maintenance</p>
+            <p className="mt-1 text-[11px] text-slate-500">
+              {maintenance.enabled
+                ? "⚠ Activé — les visiteurs voient la page « Site en maintenance ». Vous (admin) voyez le vrai site."
+                : "Désactivé — le site public est visible par tous."}
+            </p>
+          </div>
+          {maintenance.enabled ? (
+            <form action={setMaintenanceModeAction}>
+              <input type="hidden" name="enabled" value="false" />
+              <ConfirmSubmitButton className="inline-flex shrink-0 items-center rounded-lg bg-[#181713] px-4 py-2 text-[12px] font-semibold text-white transition hover:opacity-90">
+                Désactiver la maintenance
+              </ConfirmSubmitButton>
+            </form>
+          ) : (
+            <form action={setMaintenanceModeAction}>
+              <input type="hidden" name="enabled" value="true" />
+              <ConfirmSubmitButton
+                confirmMessage="Activer le mode maintenance ? Les visiteurs verront la page « Site en maintenance »."
+                className="inline-flex shrink-0 items-center rounded-lg border border-[#e3b23c] bg-[#fdf6e3] px-4 py-2 text-[12px] font-semibold text-[#8a6d1a] transition hover:bg-[#fbeecb]"
+              >
+                Activer le mode maintenance
+              </ConfirmSubmitButton>
+            </form>
+          )}
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
