@@ -283,3 +283,21 @@ export async function updateStoreStatusSettingsAction(formData: FormData) {
   revalidatePath("/", "layout");
   revalidatePath("/admin/settings");
 }
+
+export async function setMaintenanceModeAction(formData: FormData) {
+  await requireAdmin();
+
+  const enabled = formData.get("enabled") === "true";
+  const current = await getSiteSettings();
+
+  await upsertSiteSettings({
+    homeContent: current.homeContent,
+    theme: current.theme,
+    legal: current.legal,
+    storeStatus: current.storeStatus,
+    maintenance: { enabled },
+  });
+
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/home");
+}
