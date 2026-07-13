@@ -29,12 +29,21 @@ if (existsSync(envPath)) {
   }
 }
 
+// The cache sync fires upserts concurrently (see syncShopcaisseCatalogCache).
+// Prisma's default pool (~5 on a 2-CPU CI runner) would serialize them, so raise
+// the connection limit for this one-off script. Done before the Prisma client is
+// imported/instantiated so it picks up the value.
+if (process.env.DATABASE_URL && !/[?&]connection_limit=/.test(process.env.DATABASE_URL)) {
+  const separator = process.env.DATABASE_URL.includes("?") ? "&" : "?";
+  process.env.DATABASE_URL += `${separator}connection_limit=16&pool_timeout=30`;
+}
+
 async function main() {
-  const { getShopcaisseCatalogSnapshot } = await import("../src/server/services/shopcaisse/client.ts");
+  const { getShopcaisseCatalogSnapshot } = await import("../src/server/services/shopcaisse/client");
   const { syncShopcaisseCatalogCache, syncShopcaisseCategories } = await import(
-    "../src/server/repositories/shopcaisse-catalog.repository.ts"
+    "../src/server/repositories/shopcaisse-catalog.repository"
   );
-  const { db } = await import("../src/server/db/client.ts");
+  const { db } = await import("../src/server/db/client");
 
   const startedAt = Date.now();
   console.log("[sync-shopcaisse] Fetching catalog snapshot from Shopcaisse...");

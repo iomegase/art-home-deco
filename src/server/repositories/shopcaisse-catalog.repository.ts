@@ -32,35 +32,96 @@ function buildExternalKey(item: ShopcaisseCatalogItem, storeId: string) {
   return `${storeId}:${item.externalProductId}:${item.externalVariantId ?? "base"}`;
 }
 
-async function findLinkedProductId(item: ShopcaisseCatalogItem) {
-  const matchers: Array<Record<string, string>> = [];
+type LinkedProductLookup = {
+  byExternalStockId: Map<string, string>;
+  bySku: Map<string, string>;
+  byBarcode: Map<string, string>;
+};
 
+// Batched replacement for the former per-item findFirst: a single findMany over
+// every candidate identifier builds in-memory maps, turning ~2000 sequential DB
+// round-trips into one. Matching priority is preserved (externalProductId, then
+// sku, then barcode), matching the original OR matcher order.
+async function buildLinkedProductLookup(items: ShopcaisseCatalogItem[]): Promise<LinkedProductLookup> {
+  const externalStockIds = new Set<string>();
+  const skus = new Set<string>();
+  const barcodes = new Set<string>();
+
+  for (const item of items) {
+    if (item.externalProductId) externalStockIds.add(item.externalProductId);
+    if (item.sku) skus.add(item.sku);
+    if (item.barcode) barcodes.add(item.barcode);
+  }
+
+  const or: Prisma.ProductWhereInput[] = [];
+  if (externalStockIds.size > 0) or.push({ externalStockId: { in: Array.from(externalStockIds) } });
+  if (skus.size > 0) or.push({ sku: { in: Array.from(skus) } });
+  if (barcodes.size > 0) or.push({ barcode: { in: Array.from(barcodes) } });
+
+  const byExternalStockId = new Map<string, string>();
+  const bySku = new Map<string, string>();
+  const byBarcode = new Map<string, string>();
+
+  if (or.length === 0) {
+    return { byExternalStockId, bySku, byBarcode };
+  }
+
+  const products = await db.product.findMany({
+    where: { OR: or },
+    select: { id: true, externalStockId: true, sku: true, barcode: true },
+  });
+
+  for (const product of products) {
+    if (product.externalStockId && !byExternalStockId.has(product.externalStockId)) {
+      byExternalStockId.set(product.externalStockId, product.id);
+    }
+    if (product.sku && !bySku.has(product.sku)) {
+      bySku.set(product.sku, product.id);
+    }
+    if (product.barcode && !byBarcode.has(product.barcode)) {
+      byBarcode.set(product.barcode, product.id);
+    }
+  }
+
+  return { byExternalStockId, bySku, byBarcode };
+}
+
+function resolveLinkedProductId(item: ShopcaisseCatalogItem, lookup: LinkedProductLookup): string | null {
   if (item.externalProductId) {
-    matchers.push({ externalStockId: item.externalProductId });
+    const matched = lookup.byExternalStockId.get(item.externalProductId);
+    if (matched) return matched;
   }
 
   if (item.sku) {
-    matchers.push({ sku: item.sku });
+    const matched = lookup.bySku.get(item.sku);
+    if (matched) return matched;
   }
 
   if (item.barcode) {
-    matchers.push({ barcode: item.barcode });
+    const matched = lookup.byBarcode.get(item.barcode);
+    if (matched) return matched;
   }
 
-  if (matchers.length === 0) {
-    return null;
-  }
+  return null;
+}
 
-  const product = await db.product.findFirst({
-    where: {
-      OR: matchers,
-    },
-    select: {
-      id: true,
-    },
+// Runs `worker` over `items` with a bounded number of in-flight promises so the
+// independent upserts execute concurrently against the DB pool instead of one
+// at a time. JS is single-threaded, so the shared counters mutated inside the
+// worker stay consistent between awaits.
+async function runWithConcurrency<T>(items: T[], limit: number, worker: (item: T) => Promise<void>) {
+  let cursor = 0;
+  const workerCount = Math.max(1, Math.min(limit, items.length));
+
+  const runners = Array.from({ length: workerCount }, async () => {
+    while (cursor < items.length) {
+      const current = items[cursor];
+      cursor += 1;
+      await worker(current);
+    }
   });
 
-  return product?.id ?? null;
+  await Promise.all(runners);
 }
 
 export async function syncShopcaisseCatalogCache(items: ShopcaisseCatalogItem[]) {
@@ -98,14 +159,16 @@ export async function syncShopcaisseCatalogCache(items: ShopcaisseCatalogItem[])
   });
   const existingKeySet = new Set(existingRows.map((row) => row.shopcaisseExternalKey));
 
-  for (const item of items) {
+  const linkedProductLookup = await buildLinkedProductLookup(items);
+
+  await runWithConcurrency(items, 12, async (item) => {
     if (!item.externalProductId) {
       skippedCount += 1;
-      continue;
+      return;
     }
 
     try {
-      const linkedProductId = await findLinkedProductId(item);
+      const linkedProductId = resolveLinkedProductId(item, linkedProductLookup);
       const shopcaisseExternalKey = buildExternalKey(item, storeId);
 
       await cacheDelegate.upsert({
@@ -168,7 +231,7 @@ export async function syncShopcaisseCatalogCache(items: ShopcaisseCatalogItem[])
         });
       }
     }
-  }
+  });
 
   return {
     createdCount,
