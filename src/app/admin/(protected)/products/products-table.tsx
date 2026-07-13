@@ -2,7 +2,15 @@
 
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Pen, Trash2, ImageOff, Package, Search } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Pen,
+  Trash2,
+  ImageOff,
+  Package,
+  Search,
+} from "lucide-react";
 import { ProductImageFallback } from "@/components/product/product-image-fallback";
 import { formatPriceCents } from "@/features/product/format";
 import { archiveProductForAdminAction } from "@/features/product/actions";
@@ -11,6 +19,10 @@ import {
   toggleFilteredSelection,
   toggleProductSelection,
 } from "@/features/product/admin-product-selection";
+import {
+  getAdminProductsPaginationItems,
+  getAdminProductsPaginationState,
+} from "@/features/product/admin-product-pagination";
 import type { listAdminProducts } from "@/server/repositories/admin-product.repository";
 import { BulkDeleteProductsDialog } from "./bulk-delete-products-dialog";
 
@@ -58,6 +70,7 @@ function SelectionCheckbox({
 
 export function ProductsTable({ products }: { products: AdminProduct[] }) {
   const [query, setQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -72,10 +85,22 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
     return products.filter((product) => normalize(product.title).includes(needle));
   }, [products, trimmedQuery]);
 
-  const filteredIds = useMemo(() => filtered.map((product) => product.id), [filtered]);
+  const pagination = getAdminProductsPaginationState(filtered.length, currentPage);
+  const visibleProducts = useMemo(
+    () => filtered.slice(pagination.startIndex, pagination.endIndex),
+    [filtered, pagination.startIndex, pagination.endIndex],
+  );
+  const visibleIds = useMemo(
+    () => visibleProducts.map((product) => product.id),
+    [visibleProducts],
+  );
+  const paginationItems = getAdminProductsPaginationItems(
+    pagination.totalPages,
+    pagination.currentPage,
+  );
   const selectedProducts = products.filter((product) => selectedIds.has(product.id));
   const selectedProductIds = selectedProducts.map((product) => product.id);
-  const headerState = getHeaderSelectionState(selectedIds, filteredIds);
+  const headerState = getHeaderSelectionState(selectedIds, visibleIds);
 
   return (
     <div className="grid gap-4">
@@ -90,7 +115,10 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
             ref={searchInputRef}
             type="search"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setCurrentPage(1);
+            }}
             placeholder="Rechercher un produit…"
             aria-label="Rechercher un produit par nom"
             className="w-full border border-[#ececec] bg-white py-2.5 pl-9 pr-3 text-[12px] text-[#111] outline-none transition focus:border-[#3b82f6]"
@@ -128,8 +156,9 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
       )}
 
       {/* ── Table ── */}
-      <div className="overflow-x-auto bg-white shadow-[0_4px_16px_rgba(0,0,0,0.10)]">
-        <table className="w-full min-w-[1100px] border-collapse text-left">
+      <div className="bg-white shadow-[0_4px_16px_rgba(0,0,0,0.10)]">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[1100px] border-collapse text-left">
           <thead>
             <tr className="border-b border-[#f0f0f0] bg-[#fafafa]">
               <th className="px-4 py-3">
@@ -137,14 +166,14 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
                   checked={headerState.checked}
                   indeterminate={headerState.indeterminate}
                   onChange={() =>
-                    setSelectedIds((current) => toggleFilteredSelection(current, filteredIds))
+                    setSelectedIds((current) => toggleFilteredSelection(current, visibleIds))
                   }
                   ariaLabel={
                     headerState.checked
-                      ? "Désélectionner tous les produits filtrés"
-                      : "Sélectionner tous les produits filtrés"
+                      ? "Désélectionner les produits de la page courante"
+                      : "Sélectionner les produits de la page courante"
                   }
-                  disabled={filteredIds.length === 0}
+                  disabled={visibleIds.length === 0}
                 />
               </th>
               {["#", "Produit", "SKU", "Statut", "Prix", "Stock", "Livraison", "Source", ""].map((h) => (
@@ -158,7 +187,7 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((product, index) => {
+            {visibleProducts.map((product, index) => {
               const isActive = product.status === "active";
               const stockColor =
                 product.stock === 0
@@ -192,7 +221,7 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
                   {/* # */}
                   <td className="px-4 py-3.5">
                     <span className="text-[11px] font-bold tabular-nums text-slate-300">
-                      {String(index + 1).padStart(2, "0")}
+                      {String(pagination.startIndex + index + 1).padStart(2, "0")}
                     </span>
                   </td>
 
@@ -330,7 +359,69 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
               </tr>
             )}
           </tbody>
-        </table>
+          </table>
+        </div>
+
+        {filtered.length > 0 && (
+          <nav
+            aria-label="Pagination des produits"
+            className="flex flex-col gap-3 border-t border-[#f0f0f0] px-4 py-4 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
+              {pagination.startIndex + 1}–{pagination.endIndex} sur {filtered.length} produit
+              {filtered.length !== 1 ? "s" : ""}
+            </p>
+            <div className="flex flex-wrap items-center gap-1">
+              <button
+                type="button"
+                disabled={pagination.currentPage === 1}
+                onClick={() => setCurrentPage(pagination.currentPage - 1)}
+                aria-label="Page précédente"
+                className="flex h-8 items-center gap-1 px-2 text-[9px] font-bold uppercase tracking-[0.12em] text-slate-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                <ChevronLeft size={12} /> Précédent
+              </button>
+
+              {paginationItems.map((item) =>
+                typeof item === "number" ? (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setCurrentPage(item)}
+                    aria-label={`Page ${item}`}
+                    aria-current={item === pagination.currentPage ? "page" : undefined}
+                    className="flex h-8 min-w-8 items-center justify-center text-[10px] font-bold transition hover:bg-slate-50"
+                    style={
+                      item === pagination.currentPage
+                        ? { backgroundColor: "#111", color: "#fff" }
+                        : { color: "#64748b" }
+                    }
+                  >
+                    {item}
+                  </button>
+                ) : (
+                  <span
+                    key={item}
+                    aria-hidden="true"
+                    className="flex h-8 min-w-6 items-center justify-center text-slate-300"
+                  >
+                    …
+                  </span>
+                ),
+              )}
+
+              <button
+                type="button"
+                disabled={pagination.currentPage === pagination.totalPages}
+                onClick={() => setCurrentPage(pagination.currentPage + 1)}
+                aria-label="Page suivante"
+                className="flex h-8 items-center gap-1 px-2 text-[9px] font-bold uppercase tracking-[0.12em] text-slate-500 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-30"
+              >
+                Suivant <ChevronRight size={12} />
+              </button>
+            </div>
+          </nav>
+        )}
       </div>
 
       <BulkDeleteProductsDialog

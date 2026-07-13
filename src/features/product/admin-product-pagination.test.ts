@@ -1,10 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
+const paginationModule = (await import(
+  new URL("./admin-product-pagination.ts", import.meta.url).href
+)) as typeof import("./admin-product-pagination");
+
+const {
   ADMIN_PRODUCTS_PAGE_SIZE,
   getAdminProductsPaginationItems,
   getAdminProductsPaginationState,
-} from "./admin-product-pagination.ts";
+} = paginationModule;
 
 test("271 products are split into ten pages of thirty", () => {
   assert.deepEqual(getAdminProductsPaginationState(271, 1), {
