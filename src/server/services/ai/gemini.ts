@@ -73,7 +73,7 @@ export async function generateGeminiJson<T>(input: GeminiJsonInput) {
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const modelName = input.model ?? env.GEMINI_MODEL ?? "gemini-2.5-flash";
+  const modelName = input.model ?? env.GEMINI_MODEL ?? "gemini-3-flash-preview";
   console.info("Gemini generateContent model", { model: modelName });
   const model = genAI.getGenerativeModel({
     model: modelName,
