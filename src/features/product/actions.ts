@@ -6,6 +6,7 @@ import { ZodError } from "zod";
 import { parseProductBulkDeleteIds } from "@/schemas/forms/product-bulk-delete.schema";
 import { productAiDraftSchema, productEditorSchema } from "@/schemas/forms/product-editor.schema";
 import { productImportSchema } from "@/schemas/forms/product-import.schema";
+import { PRODUCT_DELETE_REVALIDATION_PATHS } from "@/features/product/product-revalidation";
 import { createIntegrationEvent } from "@/server/repositories/integration.repository";
 import {
   archiveProductForAdmin,
@@ -131,8 +132,9 @@ export async function deleteProductsPermanentlyForAdminAction(formData: FormData
       deleteProducts: deleteProductsPermanently,
     });
 
-    revalidatePath("/admin/products");
-    revalidatePath("/boutique");
+    for (const path of PRODUCT_DELETE_REVALIDATION_PATHS) {
+      revalidatePath(path);
+    }
     revalidatePath("/", "layout");
 
     return { ok: true as const, deletedCount };

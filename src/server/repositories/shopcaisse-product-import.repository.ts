@@ -3,6 +3,10 @@ import { db } from "@/server/db/client";
 import { slugify } from "@/lib/slugify";
 import { buildUniqueCategorySlug } from "@/server/services/shopcaisse/families";
 import type { ShopcaisseImportPreviewQuery, ShopcaisseImportProductsRequest } from "@/schemas/api/shopcaisse-import.schema";
+import {
+  buildProductsMissingImagesWhere,
+  type ProductsMissingImagesFilters,
+} from "@/server/repositories/shopcaisse-product-missing-images.query";
 
 type CachePreviewRow = {
   id: string;
@@ -655,57 +659,9 @@ export async function importShopcaisseProductsToCatalog(input: ShopcaisseImportP
   };
 }
 
-export async function listProductsMissingImages(filters: {
-  family?: string | null;
-  status?: string | null;
-  q?: string | null;
-  withStockOnly?: boolean;
-  shopcaisseOnly?: boolean;
-}) {
-  const and: Prisma.ProductWhereInput[] = [
-    {
-      images: {
-        none: {},
-      },
-    },
-  ];
-
-  if (filters.family) {
-    and.push({
-      categories: {
-        some: {
-          category: {
-            slug: slugify(filters.family),
-          },
-        },
-      },
-    });
-  }
-
-  if (filters.status) {
-    and.push({ status: filters.status });
-  }
-
-  if (filters.withStockOnly) {
-    and.push({ stock: { gt: 0 } });
-  }
-
-  if (filters.shopcaisseOnly) {
-    and.push({ externalProvider: "shopcaisse" });
-  }
-
-  if (filters.q) {
-    and.push({
-      OR: [
-        { title: { contains: filters.q, mode: "insensitive" } },
-        { sku: { contains: filters.q, mode: "insensitive" } },
-        { barcode: { contains: filters.q, mode: "insensitive" } },
-      ],
-    });
-  }
-
+export async function listProductsMissingImages(filters: ProductsMissingImagesFilters) {
   return db.product.findMany({
-    where: { AND: and },
+    where: buildProductsMissingImagesWhere(filters),
     include: {
       images: { orderBy: { position: "asc" }, take: 1 },
       categories: { include: { category: true } },
