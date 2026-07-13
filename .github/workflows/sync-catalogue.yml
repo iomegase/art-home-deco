@@ -5,10 +5,11 @@ name: Sync catalogue Shopcaisse
 # Hobby (10s), donc on l'exécute ici, sans limite de durée.
 on:
   schedule:
-    # Toutes les 6h (UTC). La sync dure ~12 min (écritures Neon lentes), donc en
-    # horaire on dépasserait le quota GitHub Actions gratuit d'un repo privé.
-    # Pour un rafraîchissement immédiat après ajout d'un produit, lance la sync
-    # manuellement via "Run workflow" (workflow_dispatch) dans l'onglet Actions.
+    # Toutes les 6h (UTC). La sync dure ~12 min (écritures Neon lentes). 6h est
+    # un bon compromis pour une boutique : les nouveaux produits Shopcaisse
+    # apparaissent au plus tard dans 6h. Pour un rafraîchissement immédiat après
+    # ajout d'un produit, lance la sync manuellement via "Run workflow"
+    # (workflow_dispatch) dans l'onglet Actions.
     - cron: "0 */6 * * *"
   workflow_dispatch: {} # Permet de lancer la sync manuellement depuis l'onglet Actions.
 
