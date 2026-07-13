@@ -6,7 +6,13 @@ import { Pen, Trash2, ImageOff, Package, Search } from "lucide-react";
 import { ProductImageFallback } from "@/components/product/product-image-fallback";
 import { formatPriceCents } from "@/features/product/format";
 import { archiveProductForAdminAction } from "@/features/product/actions";
+import {
+  getHeaderSelectionState,
+  toggleFilteredSelection,
+  toggleProductSelection,
+} from "@/features/product/admin-product-selection";
 import type { listAdminProducts } from "@/server/repositories/admin-product.repository";
+import { BulkDeleteProductsDialog } from "./bulk-delete-products-dialog";
 
 type AdminProduct = Awaited<ReturnType<typeof listAdminProducts>>[number];
 
@@ -18,8 +24,42 @@ function normalize(value: string) {
     .toLowerCase();
 }
 
+type SelectionCheckboxProps = {
+  checked: boolean;
+  indeterminate?: boolean;
+  onChange: () => void;
+  ariaLabel: string;
+  disabled?: boolean;
+};
+
+function SelectionCheckbox({
+  checked,
+  indeterminate = false,
+  onChange,
+  ariaLabel,
+  disabled = false,
+}: SelectionCheckboxProps) {
+  return (
+    <input
+      type="checkbox"
+      checked={checked}
+      ref={(node) => {
+        if (node) {
+          node.indeterminate = indeterminate;
+        }
+      }}
+      onChange={onChange}
+      aria-label={ariaLabel}
+      disabled={disabled}
+      className="h-4 w-4 cursor-pointer accent-[#ef4444] disabled:cursor-not-allowed disabled:opacity-40"
+    />
+  );
+}
+
 export function ProductsTable({ products }: { products: AdminProduct[] }) {
   const [query, setQuery] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const trimmedQuery = query.trim();
 
@@ -30,6 +70,11 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
     const needle = normalize(trimmedQuery);
     return products.filter((product) => normalize(product.title).includes(needle));
   }, [products, trimmedQuery]);
+
+  const filteredIds = useMemo(() => filtered.map((product) => product.id), [filtered]);
+  const selectedProducts = products.filter((product) => selectedIds.has(product.id));
+  const selectedProductIds = selectedProducts.map((product) => product.id);
+  const headerState = getHeaderSelectionState(selectedIds, filteredIds);
 
   return (
     <div className="grid gap-4">
@@ -54,11 +99,52 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
         </span>
       </div>
 
+      {selectedProducts.length > 0 && (
+        <div className="flex flex-col gap-3 border border-[#fecaca] bg-[#fef2f2] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#b91c1c]">
+            {selectedProducts.length} produit{selectedProducts.length > 1 ? "s" : ""} sélectionné
+            {selectedProducts.length > 1 ? "s" : ""}
+          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSelectedIds(new Set())}
+              className="px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-500 transition hover:text-[#111]"
+            >
+              Tout désélectionner
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeleteDialogOpen(true)}
+              className="flex items-center gap-2 bg-[#ef4444] px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-white transition hover:brightness-90"
+            >
+              <Trash2 size={11} strokeWidth={2.5} />
+              Supprimer définitivement
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── Table ── */}
       <div className="overflow-x-auto bg-white shadow-[0_4px_16px_rgba(0,0,0,0.10)]">
         <table className="w-full min-w-[1100px] border-collapse text-left">
           <thead>
             <tr className="border-b border-[#f0f0f0] bg-[#fafafa]">
+              <th className="px-4 py-3">
+                <SelectionCheckbox
+                  checked={headerState.checked}
+                  indeterminate={headerState.indeterminate}
+                  onChange={() =>
+                    setSelectedIds((current) => toggleFilteredSelection(current, filteredIds))
+                  }
+                  ariaLabel={
+                    headerState.checked
+                      ? "Désélectionner tous les produits filtrés"
+                      : "Sélectionner tous les produits filtrés"
+                  }
+                  disabled={filteredIds.length === 0}
+                />
+              </th>
               {["#", "Produit", "SKU", "Statut", "Prix", "Stock", "Livraison", "Source", ""].map((h) => (
                 <th
                   key={h}
@@ -79,12 +165,28 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
                   ? "#f97316"
                   : "#22c55e";
               const isShopcaisse = Boolean(product.externalStockId);
+              const isSelected = selectedIds.has(product.id);
 
               return (
                 <tr
                   key={product.id}
-                  className="group border-b border-[#f8f8f8] bg-white transition-colors hover:bg-[#fafafa]"
+                  className={`group border-b border-[#f8f8f8] transition-colors hover:bg-[#fafafa] ${
+                    isSelected ? "bg-[#fff7f7]" : "bg-white"
+                  }`}
                 >
+                  {/* Sélection */}
+                  <td className="px-4 py-3.5">
+                    <SelectionCheckbox
+                      checked={isSelected}
+                      onChange={() =>
+                        setSelectedIds((current) => toggleProductSelection(current, product.id))
+                      }
+                      ariaLabel={`${isSelected ? "Désélectionner" : "Sélectionner"} ${
+                        product.title
+                      }`}
+                    />
+                  </td>
+
                   {/* # */}
                   <td className="px-4 py-3.5">
                     <span className="text-[11px] font-bold tabular-nums text-slate-300">
@@ -215,7 +317,7 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
 
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-4 py-16 text-center">
+                <td colSpan={10} className="px-4 py-16 text-center">
                   <Package size={28} className="mx-auto mb-4 text-slate-200" />
                   <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-300">
                     {trimmedQuery
@@ -228,6 +330,14 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
           </tbody>
         </table>
       </div>
+
+      <BulkDeleteProductsDialog
+        productIds={selectedProductIds}
+        includesShopcaisseProducts={selectedProducts.some((product) => product.externalStockId)}
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onDeleted={() => setSelectedIds(new Set())}
+      />
     </div>
   );
 }
