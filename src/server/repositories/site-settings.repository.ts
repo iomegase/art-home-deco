@@ -1,13 +1,16 @@
 import { Prisma } from "@prisma/client";
 import { legalSettingsFromEnv } from "@/data/legal-pages";
+import { parseMaintenanceSettings } from "@/features/admin-home/maintenance";
 import { db } from "@/server/db/client";
 import { isDatabaseUnavailableError } from "@/server/db/client";
 import {
   defaultHomeContent,
+  defaultMaintenanceSettings,
   defaultStoreStatusSettings,
   defaultThemeSettings,
   type HomeContent,
   type LegalSettings,
+  type MaintenanceSettings,
   type StoreStatusSettings,
   type ThemeSettings,
 } from "@/features/admin-home/types";
@@ -15,6 +18,7 @@ import {
 const SITE_SETTINGS_KEY = "default";
 const LEGAL_STORAGE_KEY = "_legalSettings";
 const STORE_STATUS_STORAGE_KEY = "_storeStatusSettings";
+const MAINTENANCE_STORAGE_KEY = "_maintenanceSettings";
 const BROKEN_ADVICE_CARD_IMAGE_URL =
   "https://images.unsplash.com/photo-1616628182509-6e05d4a2f079?auto=format&fit=crop&w=1200&q=85";
 
@@ -29,6 +33,7 @@ function asHomeContent(value: Prisma.JsonValue): HomeContent {
   const homeSource = { ...source };
   delete homeSource[LEGAL_STORAGE_KEY];
   delete homeSource[STORE_STATUS_STORAGE_KEY];
+  delete homeSource[MAINTENANCE_STORAGE_KEY];
   const merged = {
     ...defaultHomeContent,
     ...(homeSource as Partial<HomeContent>),
@@ -83,6 +88,11 @@ function extractStoreStatusSettings(homeContentJson: Prisma.JsonValue): StoreSta
   return asStoreStatusSettings(source[STORE_STATUS_STORAGE_KEY]);
 }
 
+function extractMaintenanceSettings(homeContentJson: Prisma.JsonValue): MaintenanceSettings {
+  const source = asJsonObject(homeContentJson);
+  return parseMaintenanceSettings(source[MAINTENANCE_STORAGE_KEY]);
+}
+
 export async function getSiteSettings() {
   let settings: Awaited<ReturnType<typeof db.siteSetting.findUnique>> = null;
 
@@ -98,6 +108,7 @@ export async function getSiteSettings() {
         theme: defaultThemeSettings,
         legal: legalSettingsFromEnv,
         storeStatus: defaultStoreStatusSettings,
+        maintenance: defaultMaintenanceSettings,
       };
     }
     throw error;
@@ -109,6 +120,7 @@ export async function getSiteSettings() {
       theme: defaultThemeSettings,
       legal: legalSettingsFromEnv,
       storeStatus: defaultStoreStatusSettings,
+      maintenance: defaultMaintenanceSettings,
     };
   }
 
@@ -117,6 +129,7 @@ export async function getSiteSettings() {
     theme: asThemeSettings(settings.themeJson),
     legal: extractLegalSettings(settings.homeContentJson),
     storeStatus: extractStoreStatusSettings(settings.homeContentJson),
+    maintenance: extractMaintenanceSettings(settings.homeContentJson),
   };
 }
 
@@ -125,14 +138,17 @@ export async function upsertSiteSettings(input: {
   theme: ThemeSettings;
   legal?: LegalSettings;
   storeStatus?: StoreStatusSettings;
+  maintenance?: MaintenanceSettings;
 }) {
   const existing = await getSiteSettings();
   const legal = input.legal ?? existing.legal;
   const storeStatus = input.storeStatus ?? existing.storeStatus;
+  const maintenance = input.maintenance ?? existing.maintenance;
   const homeContentJson = {
     ...input.homeContent,
     [LEGAL_STORAGE_KEY]: legal,
     [STORE_STATUS_STORAGE_KEY]: storeStatus,
+    [MAINTENANCE_STORAGE_KEY]: maintenance,
   };
 
   try {
