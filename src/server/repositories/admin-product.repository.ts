@@ -164,6 +164,42 @@ export async function archiveProductForAdmin(productId: string) {
   return product;
 }
 
+export async function findProductDeleteTargets(ids: string[]) {
+  const products = await db.product.findMany({
+    where: {
+      id: { in: ids },
+    },
+    select: {
+      id: true,
+      images: {
+        where: {
+          storageKey: { not: null },
+        },
+        select: {
+          storageKey: true,
+        },
+      },
+    },
+  });
+
+  return products.map((product) => ({
+    id: product.id,
+    storageKeys: product.images
+      .map((image) => image.storageKey)
+      .filter((storageKey): storageKey is string => storageKey !== null),
+  }));
+}
+
+export async function deleteProductsPermanently(ids: string[]) {
+  const result = await db.product.deleteMany({
+    where: {
+      id: { in: ids },
+    },
+  });
+
+  return result.count;
+}
+
 export async function findProductForAdmin(id: string) {
   return db.product.findUnique({
     where: { id },
