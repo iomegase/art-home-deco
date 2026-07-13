@@ -95,7 +95,7 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
           />
         </div>
         <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">
-          {filtered.length} produit{filtered.length > 1 ? "s" : ""}
+          {filtered.length} produit{filtered.length !== 1 ? "s" : ""}
         </span>
       </div>
 

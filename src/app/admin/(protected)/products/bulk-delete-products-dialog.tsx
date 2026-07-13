@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, Trash2, X } from "lucide-react";
 import { deleteProductsPermanentlyForAdminAction } from "@/features/product/actions";
@@ -23,6 +23,83 @@ export function BulkDeleteProductsDialog({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const pendingRef = useRef(isPending);
+
+  useEffect(() => {
+    pendingRef.current = isPending;
+  }, [isPending]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const previouslyFocusedElement =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    cancelButtonRef.current?.focus();
+
+    function handleKeyDown(event: KeyboardEvent) {
+      const dialog = dialogRef.current;
+      if (!dialog) {
+        return;
+      }
+
+      if (event.key === "Escape") {
+        if (pendingRef.current) {
+          return;
+        }
+
+        event.preventDefault();
+        setError(null);
+        onOpenChange(false);
+        return;
+      }
+
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const focusableElements = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        dialog.focus();
+        return;
+      }
+
+      const firstFocusableElement = focusableElements[0];
+      const lastFocusableElement = focusableElements[focusableElements.length - 1];
+      const focusNeedsEntry =
+        document.activeElement === dialog || !dialog.contains(document.activeElement);
+
+      if (event.shiftKey && (document.activeElement === firstFocusableElement || focusNeedsEntry)) {
+        event.preventDefault();
+        lastFocusableElement.focus();
+      } else if (
+        !event.shiftKey &&
+        (document.activeElement === lastFocusableElement || focusNeedsEntry)
+      ) {
+        event.preventDefault();
+        firstFocusableElement.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousBodyOverflow;
+      previouslyFocusedElement?.focus();
+    };
+  }, [open, onOpenChange]);
 
   if (!open) {
     return null;
@@ -83,10 +160,12 @@ export function BulkDeleteProductsDialog({
         }}
       >
         <div
+          ref={dialogRef}
           role="alertdialog"
           aria-modal="true"
           aria-labelledby="bulk-delete-products-title"
           aria-describedby="bulk-delete-products-description"
+          tabIndex={-1}
           className="w-full max-w-[400px] overflow-hidden rounded-2xl bg-white shadow-[0_16px_48px_rgba(0,0,0,0.20)]"
           style={{ animation: "modalIn 0.18s cubic-bezier(0.22,1,0.36,1) both" }}
         >
@@ -146,6 +225,7 @@ export function BulkDeleteProductsDialog({
 
           <div className="flex items-center justify-end gap-2 px-6 py-4">
             <button
+              ref={cancelButtonRef}
               type="button"
               onClick={() => handleOpenChange(false)}
               disabled={isPending}
