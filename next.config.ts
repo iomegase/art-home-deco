@@ -33,6 +33,14 @@ const allowedDevOrigins: string[] =
 
 const nextConfig: NextConfig = {
   allowedDevOrigins,
+  // The AI blog-generation Server Action reads these markdown/JSON files from
+  // disk at runtime (see src/features/ai/server/build-blog-prompt.ts). Their
+  // paths are built dynamically, so Next's file tracing can't detect them and
+  // they get dropped from the serverless bundle in production. Force-include
+  // the whole ai/ directory for the admin routes that trigger the action.
+  outputFileTracingIncludes: {
+    "/admin/**": ["./ai/**/*"],
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: "6mb",
