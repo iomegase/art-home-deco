@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { ZodError } from "zod";
 import { parseProductBulkDeleteIds } from "@/schemas/forms/product-bulk-delete.schema";
 import { productAiDraftSchema, productEditorSchema } from "@/schemas/forms/product-editor.schema";
 import { productImportSchema } from "@/schemas/forms/product-import.schema";
@@ -138,9 +139,17 @@ export async function deleteProductsPermanentlyForAdminAction(formData: FormData
   } catch (error) {
     console.error("Bulk product deletion failed", error);
 
+    const publicError =
+      error instanceof ZodError
+        ? "La sélection de produits est invalide."
+        : error instanceof Error &&
+            error.message === "Aucun produit sélectionné n'existe encore."
+          ? error.message
+          : "La suppression a échoué.";
+
     return {
       ok: false as const,
-      error: error instanceof Error ? error.message : "La suppression a échoué.",
+      error: publicError,
     };
   }
 }
