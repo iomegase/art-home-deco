@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Pen, Trash2, ImageOff, Package, Search } from "lucide-react";
 import { ProductImageFallback } from "@/components/product/product-image-fallback";
@@ -60,6 +60,7 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
   const [query, setQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const trimmedQuery = query.trim();
 
@@ -86,6 +87,7 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
             className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
           />
           <input
+            ref={searchInputRef}
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -337,6 +339,7 @@ export function ProductsTable({ products }: { products: AdminProduct[] }) {
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         onDeleted={() => setSelectedIds(new Set())}
+        fallbackFocusRef={searchInputRef}
       />
     </div>
   );

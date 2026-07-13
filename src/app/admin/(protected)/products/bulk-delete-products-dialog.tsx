@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
+import type { RefObject } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, Trash2, X } from "lucide-react";
 import { deleteProductsPermanentlyForAdminAction } from "@/features/product/actions";
@@ -11,6 +12,7 @@ type BulkDeleteProductsDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onDeleted: () => void;
+  fallbackFocusRef: RefObject<HTMLElement | null>;
 };
 
 export function BulkDeleteProductsDialog({
@@ -19,6 +21,7 @@ export function BulkDeleteProductsDialog({
   open,
   onOpenChange,
   onDeleted,
+  fallbackFocusRef,
 }: BulkDeleteProductsDialogProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -38,6 +41,7 @@ export function BulkDeleteProductsDialog({
 
     const previouslyFocusedElement =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const fallbackFocusElement = fallbackFocusRef.current;
     const previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     cancelButtonRef.current?.focus();
@@ -49,11 +53,11 @@ export function BulkDeleteProductsDialog({
       }
 
       if (event.key === "Escape") {
+        event.preventDefault();
         if (pendingRef.current) {
           return;
         }
 
-        event.preventDefault();
         setError(null);
         onOpenChange(false);
         return;
@@ -97,9 +101,13 @@ export function BulkDeleteProductsDialog({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = previousBodyOverflow;
-      previouslyFocusedElement?.focus();
+      if (previouslyFocusedElement?.isConnected) {
+        previouslyFocusedElement.focus();
+      } else if (fallbackFocusElement?.isConnected) {
+        fallbackFocusElement.focus();
+      }
     };
-  }, [open, onOpenChange]);
+  }, [fallbackFocusRef, open, onOpenChange]);
 
   if (!open) {
     return null;
@@ -125,6 +133,7 @@ export function BulkDeleteProductsDialog({
     }
 
     setError(null);
+    pendingRef.current = true;
     startTransition(async () => {
       const formData = new FormData();
       for (const productId of productIds) {
