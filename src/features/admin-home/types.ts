@@ -115,6 +115,10 @@ export type StoreStatusSettings = {
   vacationReturnDate: string;
 };
 
+export type MaintenanceSettings = {
+  enabled: boolean;
+};
+
 export const defaultThemeSettings: ThemeSettings = {
   background: "#ffffff",
   foreground: "#171714",
@@ -169,6 +173,10 @@ export const defaultStoreStatusSettings: StoreStatusSettings = {
   closedMessage: "La boutique physique est actuellement fermée.",
   vacationMessage: "La boutique est en vacances, retour le",
   vacationReturnDate: "",
+};
+
+export const defaultMaintenanceSettings: MaintenanceSettings = {
+  enabled: false,
 };
 
 export const defaultHomeContent: HomeContent = {
