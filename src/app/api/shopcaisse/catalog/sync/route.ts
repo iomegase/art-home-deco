@@ -5,6 +5,14 @@ import { syncShopcaisseCatalogCache, syncShopcaisseCategories } from "@/server/r
 import { getShopcaisseCatalogSnapshot } from "@/server/services/shopcaisse/client";
 import { ShopcaisseConfigError, ShopcaisseResponseError } from "@/server/services/shopcaisse/errors";
 
+// Fetching the full Shopcaisse catalog (2000+ products + prices, paginated and
+// sequential) takes ~20s before the DB writes even start. Vercel's default
+// serverless timeout (10s Hobby / 15s Pro) kills the function mid-sync, leaving
+// the cache empty -> the import list shows nothing. Give it the room it needs.
+// NB: maxDuration > 10s requires a Vercel Pro plan (Hobby is capped at 10s).
+export const runtime = "nodejs";
+export const maxDuration = 300;
+
 function resolveStatus(error: unknown) {
   if (error instanceof ShopcaisseResponseError && error.statusCode) {
     if ([401, 403, 404].includes(error.statusCode)) {

@@ -4,6 +4,12 @@ import { logger } from "@/lib/logger";
 import { ShopcaisseConfigError, ShopcaisseResponseError } from "@/server/services/shopcaisse/errors";
 import { getShopcaisseCatalogSnapshot } from "@/server/services/shopcaisse/client";
 
+// This route also fetches the full Shopcaisse catalog live (~20s), so it needs
+// the same extended timeout as the sync route. See the note there.
+// NB: maxDuration > 10s requires a Vercel Pro plan (Hobby is capped at 10s).
+export const runtime = "nodejs";
+export const maxDuration = 300;
+
 function resolveStatus(error: unknown) {
   if (error instanceof ShopcaisseResponseError && error.statusCode) {
     if ([401, 403, 404].includes(error.statusCode)) {
