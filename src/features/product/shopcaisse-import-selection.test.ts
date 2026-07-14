@@ -6,6 +6,8 @@ const {
   canContinueToShopcaisseImportConfirmation,
   clearShopcaisseImportSelection,
   resolveShopcaissePreviewSelection,
+  selectShopcaisseImportPage,
+  switchShopcaisseImportMode,
   toggleShopcaisseImportSelection,
 } = (await import(
   new URL("./shopcaisse-import-selection.ts", import.meta.url).href
@@ -97,4 +99,42 @@ test("les modes globaux conservent leur périmètre sans identifiants cochés", 
     mode: "in_stock_only",
     publishByDefault: false,
   });
+});
+
+test("passer d'un mode global au mode selected supprime les identifiants invisibles", () => {
+  assert.deepEqual(
+    switchShopcaisseImportMode({
+      currentMode: "families",
+      nextMode: "selected",
+      selectedIds: Array.from({ length: 11 }, (_, index) => `ancien-${index + 1}`),
+    }),
+    {
+      selectedIds: [],
+      importMode: "selected",
+    },
+  );
+});
+
+test("rester en mode selected conserve la sélection manuelle", () => {
+  assert.deepEqual(
+    switchShopcaisseImportMode({
+      currentMode: "selected",
+      nextMode: "selected",
+      selectedIds: ["david"],
+    }),
+    {
+      selectedIds: ["david"],
+      importMode: "selected",
+    },
+  );
+});
+
+test("tout sélectionner ajoute uniquement les produits importables de la page sans doublon", () => {
+  assert.deepEqual(
+    selectShopcaisseImportPage(["page-precedente", "article-1"], ["article-1", "article-2"]),
+    {
+      selectedIds: ["page-precedente", "article-1", "article-2"],
+      importMode: "selected",
+    },
+  );
 });

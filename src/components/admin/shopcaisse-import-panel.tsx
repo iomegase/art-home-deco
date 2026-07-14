@@ -7,6 +7,8 @@ import {
   canContinueToShopcaisseImportConfirmation,
   clearShopcaisseImportSelection,
   resolveShopcaissePreviewSelection,
+  selectShopcaisseImportPage,
+  switchShopcaisseImportMode,
   toggleShopcaisseImportSelection,
   type ShopcaisseImportMode as ImportMode,
 } from "@/features/product/shopcaisse-import-selection";
@@ -177,7 +179,7 @@ export function ShopcaisseImportPanel({
   const [previewFilter, setPreviewFilter] = useState<PreviewFilter>("all");
   const [publishByDefault, setPublishByDefault] = useState(false);
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
-  const [importMode, setImportMode] = useState<ImportMode>("families");
+  const [importMode, setImportMode] = useState<ImportMode>("selected");
 
   useEffect(() => {
     void handlePreview(1);
@@ -246,10 +248,30 @@ export function ShopcaisseImportPanel({
     setImportMode(next.importMode);
   }
 
+  function selectCurrentPage() {
+    const pageImportableIds = visiblePreviewItems
+      .filter((item) => !item.alreadyImported && item.priceCents !== null)
+      .map((item) => item.shopcaisseProductId);
+    const next = selectShopcaisseImportPage(selectedIds, pageImportableIds);
+    setSelectedIds(next.selectedIds);
+    setImportMode(next.importMode);
+  }
+
   function toggleFamily(familyName: string) {
+    setSelectedIds([]);
     setSelectedFamilies((current) =>
       current.includes(familyName) ? current.filter((value) => value !== familyName) : [...current, familyName],
     );
+  }
+
+  function chooseImportMode(nextMode: ImportMode) {
+    const next = switchShopcaisseImportMode({
+      currentMode: importMode,
+      nextMode,
+      selectedIds,
+    });
+    setSelectedIds(next.selectedIds);
+    setImportMode(next.importMode);
   }
 
   async function handleValidateConnection() {
@@ -727,7 +749,7 @@ export function ShopcaisseImportPanel({
                 <button
                   key={mode}
                   type="button"
-                  onClick={() => setImportMode(mode)}
+                  onClick={() => chooseImportMode(mode)}
                   className={cn(
                     "border p-4 text-left",
                     importMode === mode ? "border-[#111] bg-[#111] text-white" : "border-[#ececef] bg-white",
@@ -869,11 +891,23 @@ export function ShopcaisseImportPanel({
                       </span>
                       <button
                         type="button"
+                        onClick={selectCurrentPage}
+                        disabled={
+                          !visiblePreviewItems.some(
+                            (item) => !item.alreadyImported && item.priceCents !== null,
+                          )
+                        }
+                        className="border border-[#ececef] bg-white px-3 py-2 text-xs font-semibold disabled:opacity-50"
+                      >
+                        Tout sélectionner
+                      </button>
+                      <button
+                        type="button"
                         onClick={clearSelected}
                         disabled={selectedIds.length === 0}
                         className="border border-[#ececef] bg-white px-3 py-2 text-xs font-semibold disabled:opacity-50"
                       >
-                        Tout decocher
+                        Tout désélectionner
                       </button>
                     </div>
                   </div>
