@@ -45,6 +45,13 @@ lots volontaires.
 
 - Cocher une ligne ajoute son identifiant et bascule immédiatement le mode sur
   `selected`.
+- Un bouton `Tout décocher`, placé à côté du compteur de sélection, vide tous
+  les identifiants sélectionnés et bascule le mode sur `selected`.
+- Après `Tout décocher`, l'administrateur coche manuellement uniquement les
+  articles qu'il souhaite importer.
+- En mode `selected`, une pagination ou une nouvelle prévisualisation conserve
+  exactement la sélection manuelle et ne recoche jamais automatiquement des
+  articles.
 - Décocher la dernière ligne laisse le mode `selected`, mais empêche de passer
   la confirmation tant qu'aucune nouvelle ligne n'est cochée ou qu'un autre
   mode n'est explicitement choisi.
@@ -67,13 +74,15 @@ confirmation du périmètre ; le backend continue à filtrer par
 
 La décision de mode est extraite dans une fonction pure du domaine produit :
 
-- entrée : mode courant, identifiants sélectionnés et identifiant cliqué ;
+- entrée : identifiants sélectionnés et identifiant cliqué ;
 - sortie : nouvelle sélection et mode effectif ;
 - règle principale : une sélection non vide implique `selected`.
 
 Les tests couvrent :
 
 - cocher une ligne depuis le mode `families` bascule vers `selected` ;
+- tout décocher retourne une sélection vide en mode `selected` ;
+- paginer ou actualiser après cette action conserve la sélection vide ;
 - ajouter puis retirer des identifiants conserve une sélection exacte ;
 - le périmètre de confirmation en mode `selected` correspond au nombre réel
   d'identifiants ;
