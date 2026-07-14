@@ -30,6 +30,7 @@ import assert from "node:assert/strict";
 import {
   buildShopcaisseImportPayload,
   canContinueToShopcaisseImportConfirmation,
+  clearShopcaisseImportSelection,
   toggleShopcaisseImportSelection,
 } from "./shopcaisse-import-selection";
 
@@ -42,6 +43,13 @@ test("une case cochée bascule le mode familles vers selected", () => {
 
 test("décocher la dernière ligne conserve le mode selected avec une liste vide", () => {
   assert.deepEqual(toggleShopcaisseImportSelection(["david"], "david"), {
+    selectedIds: [],
+    importMode: "selected",
+  });
+});
+
+test("tout décocher vide la sélection et force le mode selected", () => {
+  assert.deepEqual(clearShopcaisseImportSelection(), {
     selectedIds: [],
     importMode: "selected",
   });
@@ -83,6 +91,10 @@ Expected: échec `ERR_MODULE_NOT_FOUND`.
 
 ```ts
 export type ShopcaisseImportMode = "families" | "selected" | "all" | "in_stock_only";
+
+export function clearShopcaisseImportSelection() {
+  return { selectedIds: [], importMode: "selected" as const };
+}
 
 export function toggleShopcaisseImportSelection(
   selectedIds: string[],
@@ -141,6 +153,7 @@ Expected: 4 tests réussis, 0 échec.
 import {
   buildShopcaisseImportPayload,
   canContinueToShopcaisseImportConfirmation,
+  clearShopcaisseImportSelection,
   toggleShopcaisseImportSelection,
   type ShopcaisseImportMode as ImportMode,
 } from "@/features/product/shopcaisse-import-selection";
@@ -148,7 +161,24 @@ import {
 
 Supprimer le type local `ImportMode`.
 
-- [ ] **Step 2: Rendre la sélection manuelle prioritaire**
+- [ ] **Step 2: Ajouter le bouton Tout décocher**
+
+```tsx
+<button
+  type="button"
+  onClick={() => {
+    const next = clearShopcaisseImportSelection();
+    setSelectedIds(next.selectedIds);
+    setImportMode(next.importMode);
+  }}
+  disabled={selectedIds.length === 0}
+  className="border border-[#ececef] px-3 py-2 text-xs font-semibold disabled:opacity-50"
+>
+  Tout décocher
+</button>
+```
+
+- [ ] **Step 3: Rendre la sélection manuelle prioritaire**
 
 ```ts
 function toggleSelected(shopcaisseProductId: string) {
@@ -160,7 +190,7 @@ function toggleSelected(shopcaisseProductId: string) {
 }
 ```
 
-- [ ] **Step 3: Construire le payload testé**
+- [ ] **Step 4: Construire le payload testé**
 
 ```ts
 body: JSON.stringify(
@@ -173,7 +203,7 @@ body: JSON.stringify(
 ),
 ```
 
-- [ ] **Step 4: Bloquer une confirmation selected vide**
+- [ ] **Step 5: Bloquer une confirmation selected vide**
 
 ```tsx
 disabled={
@@ -185,14 +215,14 @@ disabled={
 }
 ```
 
-- [ ] **Step 5: Clarifier le résumé**
+- [ ] **Step 6: Clarifier le résumé**
 
 ```tsx
 <span>{importMode === "selected" ? "Produits selectionnes" : "Produits vises"}</span>
 <strong>{estimatedImportCount}</strong>
 ```
 
-- [ ] **Step 6: Vérifier le correctif complet**
+- [ ] **Step 7: Vérifier le correctif complet**
 
 Run:
 ```bash
@@ -201,9 +231,10 @@ npx eslint src/features/product/shopcaisse-import-selection.ts src/features/prod
 npm run typecheck
 npm run build
 ```
-Expected: chaque commande termine avec le code 0.
+Expected: chaque commande termine avec le code 0 et le test ciblé contient
+désormais 6 assertions réussies.
 
-- [ ] **Step 7: Commit**
+- [ ] **Step 8: Commit**
 
 ```bash
 git add src/features/product/shopcaisse-import-selection.ts src/features/product/shopcaisse-import-selection.test.ts src/components/admin/shopcaisse-import-panel.tsx
