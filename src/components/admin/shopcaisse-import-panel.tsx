@@ -6,6 +6,7 @@ import {
   buildShopcaisseImportPayload,
   canContinueToShopcaisseImportConfirmation,
   clearShopcaisseImportSelection,
+  resolveShopcaissePreviewSelection,
   toggleShopcaisseImportSelection,
   type ShopcaisseImportMode as ImportMode,
 } from "@/features/product/shopcaisse-import-selection";
@@ -334,11 +335,16 @@ export function ShopcaisseImportPanel({
       const payload = (await response.json()) as PreviewResponse;
       setPreview(payload);
       setBrokenImages([]);
-      setSelectedIds(
+      const previewImportableIds = payload.sampleItems
+        .filter((item) => !item.alreadyImported && item.priceCents !== null)
+        .map((item) => item.shopcaisseProductId);
+      setSelectedIds((current) =>
         payload.success
-          ? payload.sampleItems
-              .filter((item) => !item.alreadyImported && item.priceCents !== null)
-              .map((item) => item.shopcaisseProductId)
+          ? resolveShopcaissePreviewSelection({
+              importMode,
+              selectedIds: current,
+              previewImportableIds,
+            })
           : [],
       );
 

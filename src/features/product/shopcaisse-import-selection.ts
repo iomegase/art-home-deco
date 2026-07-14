@@ -7,6 +7,14 @@ export function clearShopcaisseImportSelection() {
   };
 }
 
+export function resolveShopcaissePreviewSelection(input: {
+  importMode: ShopcaisseImportMode;
+  selectedIds: string[];
+  previewImportableIds: string[];
+}) {
+  return input.importMode === "selected" ? input.selectedIds : input.previewImportableIds;
+}
+
 export function toggleShopcaisseImportSelection(
   selectedIds: string[],
   shopcaisseProductId: string,

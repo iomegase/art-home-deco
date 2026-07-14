@@ -5,6 +5,7 @@ const {
   buildShopcaisseImportPayload,
   canContinueToShopcaisseImportConfirmation,
   clearShopcaisseImportSelection,
+  resolveShopcaissePreviewSelection,
   toggleShopcaisseImportSelection,
 } = (await import(
   new URL("./shopcaisse-import-selection.ts", import.meta.url).href
@@ -29,6 +30,28 @@ test("tout décocher vide la sélection et force le mode selected", () => {
     selectedIds: [],
     importMode: "selected",
   });
+});
+
+test("une nouvelle prévisualisation ne recoche rien après tout décocher", () => {
+  assert.deepEqual(
+    resolveShopcaissePreviewSelection({
+      importMode: "selected",
+      selectedIds: [],
+      previewImportableIds: ["article-1", "article-2"],
+    }),
+    [],
+  );
+});
+
+test("une prévisualisation conserve l'auto-sélection dans un mode global", () => {
+  assert.deepEqual(
+    resolveShopcaissePreviewSelection({
+      importMode: "families",
+      selectedIds: [],
+      previewImportableIds: ["article-1", "article-2"],
+    }),
+    ["article-1", "article-2"],
+  );
 });
 
 test("la confirmation selected exige au moins un identifiant", () => {

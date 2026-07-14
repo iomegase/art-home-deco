@@ -31,6 +31,7 @@ import {
   buildShopcaisseImportPayload,
   canContinueToShopcaisseImportConfirmation,
   clearShopcaisseImportSelection,
+  resolveShopcaissePreviewSelection,
   toggleShopcaisseImportSelection,
 } from "./shopcaisse-import-selection";
 
@@ -53,6 +54,17 @@ test("tout décocher vide la sélection et force le mode selected", () => {
     selectedIds: [],
     importMode: "selected",
   });
+});
+
+test("une nouvelle prévisualisation ne recoche rien après tout décocher", () => {
+  assert.deepEqual(
+    resolveShopcaissePreviewSelection({
+      importMode: "selected",
+      selectedIds: [],
+      previewImportableIds: ["article-1", "article-2"],
+    }),
+    [],
+  );
 });
 
 test("la confirmation selected exige au moins un identifiant", () => {
@@ -94,6 +106,14 @@ export type ShopcaisseImportMode = "families" | "selected" | "all" | "in_stock_o
 
 export function clearShopcaisseImportSelection() {
   return { selectedIds: [], importMode: "selected" as const };
+}
+
+export function resolveShopcaissePreviewSelection(input: {
+  importMode: ShopcaisseImportMode;
+  selectedIds: string[];
+  previewImportableIds: string[];
+}) {
+  return input.importMode === "selected" ? input.selectedIds : input.previewImportableIds;
 }
 
 export function toggleShopcaisseImportSelection(
@@ -232,7 +252,7 @@ npm run typecheck
 npm run build
 ```
 Expected: chaque commande termine avec le code 0 et le test ciblé contient
-désormais 6 assertions réussies.
+désormais 8 assertions réussies.
 
 - [ ] **Step 8: Commit**
 
