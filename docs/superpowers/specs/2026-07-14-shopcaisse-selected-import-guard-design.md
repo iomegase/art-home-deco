@@ -20,6 +20,12 @@ La recherche et les cases à cocher filtrent ou sélectionnent la
 prévisualisation, mais ne modifient actuellement pas le mode d'import choisi à
 l'étape précédente. Cette séparation rend l'écran trompeur.
 
+Un second incident a ensuite montré `11` produits sélectionnés dans la
+confirmation alors qu'une seule case était cochée dans la famille `Bijoux`,
+qui ne contient que 7 produits. Les 10 identifiants invisibles provenaient
+d'une prévisualisation antérieure : le mode global les avait auto-sélectionnés,
+puis le passage au mode `selected` les avait conservés hors du tableau courant.
+
 ## Approches examinées
 
 ### 1. Bascule automatique vers le mode sélectionné — retenue
@@ -43,15 +49,25 @@ lots volontaires.
 
 ## Comportement retenu
 
+- Au chargement et à la première prévisualisation, aucun produit n'est
+  sélectionné. Le mode initial est `selected` avec une liste vide.
+- Le passage depuis un mode global vers le mode `selected` réinitialise la
+  sélection afin qu'aucun identifiant auto-sélectionné ne soit conservé.
+- Un changement de famille réinitialise également la sélection manuelle : les
+  identifiants d'un ancien périmètre ne peuvent pas rester invisibles dans le
+  nouveau tableau.
 - Cocher une ligne ajoute son identifiant et bascule immédiatement le mode sur
   `selected`.
-- Un bouton `Tout décocher`, placé à côté du compteur de sélection, vide tous
-  les identifiants sélectionnés et bascule le mode sur `selected`.
-- Après `Tout décocher`, l'administrateur coche manuellement uniquement les
-  articles qu'il souhaite importer.
+- Un bouton `Tout sélectionner`, placé à côté du compteur de sélection, ajoute
+  uniquement les produits importables de la page affichée et bascule le mode
+  sur `selected`.
+- Un bouton `Tout désélectionner` vide tous les identifiants sélectionnés et
+  laisse le mode sur `selected`.
+- Après `Tout désélectionner`, l'administrateur coche manuellement uniquement
+  les articles qu'il souhaite importer.
 - En mode `selected`, une pagination ou une nouvelle prévisualisation conserve
-  exactement la sélection manuelle et ne recoche jamais automatiquement des
-  articles.
+  exactement la sélection manuelle du même périmètre et ne recoche jamais
+  automatiquement des articles.
 - Décocher la dernière ligne laisse le mode `selected`, mais empêche de passer
   la confirmation tant qu'aucune nouvelle ligne n'est cochée ou qu'un autre
   mode n'est explicitement choisi.
@@ -72,21 +88,32 @@ confirmation du périmètre ; le backend continue à filtrer par
 
 ## Architecture et tests
 
-La décision de mode est extraite dans une fonction pure du domaine produit :
+Les décisions de sélection sont extraites dans des fonctions pures du domaine
+produit :
 
-- entrée : identifiants sélectionnés et identifiant cliqué ;
-- sortie : nouvelle sélection et mode effectif ;
-- règle principale : une sélection non vide implique `selected`.
+- la sélection ou désélection d'une ligne ;
+- la sélection de toutes les lignes importables de la page courante ;
+- la remise à zéro lors d'un changement de stratégie ou de famille ;
+- la validation et la construction du payload final.
 
 Les tests couvrent :
 
+- la sélection initiale est vide, même si la première prévisualisation contient
+  des produits importables ;
+- passer d'un mode global à `selected` supprime les identifiants précédemment
+  auto-sélectionnés ;
+- changer de famille vide la sélection de l'ancien périmètre ;
+- `Tout sélectionner` ajoute uniquement les identifiants importables de la page
+  courante, sans doublon ;
 - cocher une ligne depuis le mode `families` bascule vers `selected` ;
-- tout décocher retourne une sélection vide en mode `selected` ;
+- tout désélectionner retourne une sélection vide en mode `selected` ;
 - paginer ou actualiser après cette action conserve la sélection vide ;
 - ajouter puis retirer des identifiants conserve une sélection exacte ;
 - le périmètre de confirmation en mode `selected` correspond au nombre réel
   d'identifiants ;
-- une sélection vide bloque la confirmation dans ce mode.
+- une sélection vide bloque la confirmation dans ce mode ;
+- une seule case cochée produit un compteur de confirmation égal à `1` et un
+  payload contenant exactement un identifiant.
 
 ## Hors périmètre
 
