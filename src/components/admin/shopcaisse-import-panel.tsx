@@ -2,6 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { formatPriceCents } from "@/features/product/format";
+import {
+  buildShopcaisseImportPayload,
+  canContinueToShopcaisseImportConfirmation,
+  toggleShopcaisseImportSelection,
+  type ShopcaisseImportMode as ImportMode,
+} from "@/features/product/shopcaisse-import-selection";
 
 type PreviewItem = {
   shopcaisseProductId: string;
@@ -75,7 +81,6 @@ type SyncResponse = {
   syncedAt: string;
 };
 
-type ImportMode = "families" | "selected" | "all" | "in_stock_only";
 type PreviewFilter = "all" | "importable" | "linked" | "no_stock" | "no_price" | "no_image";
 
 type Props = {
@@ -228,11 +233,9 @@ export function ShopcaisseImportPanel({
   }, [importMode, preview, selectedIds.length]);
 
   function toggleSelected(shopcaisseProductId: string) {
-    setSelectedIds((current) =>
-      current.includes(shopcaisseProductId)
-        ? current.filter((id) => id !== shopcaisseProductId)
-        : [...current, shopcaisseProductId],
-    );
+    const next = toggleShopcaisseImportSelection(selectedIds, shopcaisseProductId);
+    setSelectedIds(next.selectedIds);
+    setImportMode(next.importMode);
   }
 
   function toggleFamily(familyName: string) {
@@ -403,12 +406,14 @@ export function ShopcaisseImportPanel({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          mode: importMode,
-          shopcaisseProductIds: importMode === "selected" ? selectedIds : undefined,
-          familyNames: importMode === "families" ? selectedFamilies : undefined,
-          publishByDefault,
-        }),
+        body: JSON.stringify(
+          buildShopcaisseImportPayload({
+            importMode,
+            selectedIds,
+            selectedFamilies,
+            publishByDefault,
+          }),
+        ),
       });
       const payload = (await response.json()) as ImportResponse;
       setImportResult(payload);
@@ -997,7 +1002,13 @@ export function ShopcaisseImportPanel({
               <button
                 type="button"
                 onClick={() => goToStep(5)}
-                disabled={!preview?.success}
+                disabled={
+                  !canContinueToShopcaisseImportConfirmation(
+                    preview?.success ?? false,
+                    importMode,
+                    selectedIds.length,
+                  )
+                }
                 className="bg-[#111] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
               >
                 Continuer vers la confirmation
@@ -1023,16 +1034,18 @@ export function ShopcaisseImportPanel({
                     <span>Mode choisi</span>
                     <strong>{getImportModeLabel(importMode)}</strong>
                   </div>
-                  <div className="flex items-center justify-between gap-4">
-                    <span>Familles concernees</span>
-                    <strong>{selectedFamilies.length > 0 ? selectedFamilies.join(", ") : "Toutes les familles"}</strong>
-                  </div>
+                  {importMode !== "selected" ? (
+                    <div className="flex items-center justify-between gap-4">
+                      <span>Familles concernees</span>
+                      <strong>{selectedFamilies.length > 0 ? selectedFamilies.join(", ") : "Toutes les familles"}</strong>
+                    </div>
+                  ) : null}
                   <div className="flex items-center justify-between gap-4">
                     <span>Statut final</span>
                     <strong>{publishByDefault ? "Publie" : "Brouillon"}</strong>
                   </div>
                   <div className="flex items-center justify-between gap-4">
-                    <span>Produits vises</span>
+                    <span>{importMode === "selected" ? "Produits selectionnes" : "Produits vises"}</span>
                     <strong>{estimatedImportCount}</strong>
                   </div>
                 </div>

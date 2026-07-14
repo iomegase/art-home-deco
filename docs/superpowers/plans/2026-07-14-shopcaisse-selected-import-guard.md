@@ -34,14 +34,14 @@ import {
 } from "./shopcaisse-import-selection";
 
 test("une case cochée bascule le mode familles vers selected", () => {
-  assert.deepEqual(toggleShopcaisseImportSelection([], "david", "families"), {
+  assert.deepEqual(toggleShopcaisseImportSelection([], "david"), {
     selectedIds: ["david"],
     importMode: "selected",
   });
 });
 
 test("décocher la dernière ligne conserve le mode selected avec une liste vide", () => {
-  assert.deepEqual(toggleShopcaisseImportSelection(["david"], "david", "selected"), {
+  assert.deepEqual(toggleShopcaisseImportSelection(["david"], "david"), {
     selectedIds: [],
     importMode: "selected",
   });
@@ -87,7 +87,6 @@ export type ShopcaisseImportMode = "families" | "selected" | "all" | "in_stock_o
 export function toggleShopcaisseImportSelection(
   selectedIds: string[],
   shopcaisseProductId: string,
-  _currentMode: ShopcaisseImportMode,
 ) {
   const nextIds = selectedIds.includes(shopcaisseProductId)
     ? selectedIds.filter((id) => id !== shopcaisseProductId)
@@ -154,7 +153,7 @@ Supprimer le type local `ImportMode`.
 ```ts
 function toggleSelected(shopcaisseProductId: string) {
   setSelectedIds((current) => {
-    const next = toggleShopcaisseImportSelection(current, shopcaisseProductId, importMode);
+    const next = toggleShopcaisseImportSelection(current, shopcaisseProductId);
     setImportMode(next.importMode);
     return next.selectedIds;
   });

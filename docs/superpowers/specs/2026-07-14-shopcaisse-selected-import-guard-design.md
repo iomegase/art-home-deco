@@ -67,7 +67,7 @@ confirmation du périmètre ; le backend continue à filtrer par
 
 La décision de mode est extraite dans une fonction pure du domaine produit :
 
-- entrée : mode courant, identifiants sélectionnés et identifiant cliqué ;
+- entrée : identifiants sélectionnés et identifiant cliqué ;
 - sortie : nouvelle sélection et mode effectif ;
 - règle principale : une sélection non vide implique `selected`.
 
