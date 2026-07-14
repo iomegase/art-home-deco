@@ -1,5 +1,12 @@
 export type ShopcaisseImportMode = "families" | "selected" | "all" | "in_stock_only";
 
+export function clearShopcaisseImportSelection() {
+  return {
+    selectedIds: [],
+    importMode: "selected" as const,
+  };
+}
+
 export function toggleShopcaisseImportSelection(
   selectedIds: string[],
   shopcaisseProductId: string,

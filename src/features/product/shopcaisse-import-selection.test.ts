@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 const {
   buildShopcaisseImportPayload,
   canContinueToShopcaisseImportConfirmation,
+  clearShopcaisseImportSelection,
   toggleShopcaisseImportSelection,
 } = (await import(
   new URL("./shopcaisse-import-selection.ts", import.meta.url).href
@@ -18,6 +19,13 @@ test("une case cochée bascule le mode familles vers selected", () => {
 
 test("décocher la dernière ligne conserve le mode selected avec une liste vide", () => {
   assert.deepEqual(toggleShopcaisseImportSelection(["david"], "david"), {
+    selectedIds: [],
+    importMode: "selected",
+  });
+});
+
+test("tout décocher vide la sélection et force le mode selected", () => {
+  assert.deepEqual(clearShopcaisseImportSelection(), {
     selectedIds: [],
     importMode: "selected",
   });

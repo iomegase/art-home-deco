@@ -5,6 +5,7 @@ import { formatPriceCents } from "@/features/product/format";
 import {
   buildShopcaisseImportPayload,
   canContinueToShopcaisseImportConfirmation,
+  clearShopcaisseImportSelection,
   toggleShopcaisseImportSelection,
   type ShopcaisseImportMode as ImportMode,
 } from "@/features/product/shopcaisse-import-selection";
@@ -234,6 +235,12 @@ export function ShopcaisseImportPanel({
 
   function toggleSelected(shopcaisseProductId: string) {
     const next = toggleShopcaisseImportSelection(selectedIds, shopcaisseProductId);
+    setSelectedIds(next.selectedIds);
+    setImportMode(next.importMode);
+  }
+
+  function clearSelected() {
+    const next = clearShopcaisseImportSelection();
     setSelectedIds(next.selectedIds);
     setImportMode(next.importMode);
   }
@@ -850,9 +857,19 @@ export function ShopcaisseImportPanel({
                 <article className="border border-[#ececef] bg-[#fafafa] p-4 text-sm">
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <strong>Produits previsualises</strong>
-                    <span className="text-slate-500">
-                      Selection locale: {selectedIds.length} · Page {preview.page}/{preview.totalPages}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="text-slate-500">
+                        Selection locale: {selectedIds.length} · Page {preview.page}/{preview.totalPages}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={clearSelected}
+                        disabled={selectedIds.length === 0}
+                        className="border border-[#ececef] bg-white px-3 py-2 text-xs font-semibold disabled:opacity-50"
+                      >
+                        Tout decocher
+                      </button>
+                    </div>
                   </div>
                   <div className="mt-4 overflow-x-auto">
                     <table className="w-full min-w-[980px] border-collapse text-left text-sm">
