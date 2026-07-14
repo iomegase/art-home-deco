@@ -7,6 +7,30 @@ export function clearShopcaisseImportSelection() {
   };
 }
 
+export function selectShopcaisseImportPage(
+  selectedIds: string[],
+  pageImportableIds: string[],
+) {
+  return {
+    selectedIds: Array.from(new Set([...selectedIds, ...pageImportableIds])),
+    importMode: "selected" as const,
+  };
+}
+
+export function switchShopcaisseImportMode(input: {
+  currentMode: ShopcaisseImportMode;
+  nextMode: ShopcaisseImportMode;
+  selectedIds: string[];
+}) {
+  return {
+    selectedIds:
+      input.nextMode === "selected" && input.currentMode !== "selected"
+        ? []
+        : input.selectedIds,
+    importMode: input.nextMode,
+  };
+}
+
 export function resolveShopcaissePreviewSelection(input: {
   importMode: ShopcaisseImportMode;
   selectedIds: string[];
